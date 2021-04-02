@@ -18,12 +18,6 @@
     <a href="https://github.com/spacelab-ufsc/ttc2/commits/master">
         <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/spacelab-ufsc/ttc2/dev_hardware?style=for-the-badge">
     </a>
-    <a href="https://github.com/spacelab-ufsc/ttc2/releases">
-        <img alt="GitHub commits since latest release (by date)" src="https://img.shields.io/github/commits-since/spacelab-ufsc/ttc2/latest?style=for-the-badge">
-    </a>
-    <a href="https://github.com/spacelab-ufsc/ttc2/commits/master">
-        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/spacelab-ufsc/ttc2?style=for-the-badge">
-    </a>
     <a href="https://github.com/spacelab-ufsc/ttc2/issues">
         <img alt="GitHub issues (branch)" src="https://img.shields.io/github/issues/spacelab-ufsc/ttc2/hardware?style=for-the-badge">
     </a>
