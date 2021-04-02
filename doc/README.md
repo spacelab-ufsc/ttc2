@@ -1,6 +1,6 @@
-# SpaceLab Document Template
+# TTC 2.0 Documentation
 
-This a LaTeX template to use in the SpaceLab projects.
+Documentation of the Telemetry, Tracking and Command 2.0.
 
 ## Dependencies
 
