@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.0
+ * \version 0.0.1
  * 
  * \date 2021/04/04
  * 
@@ -33,8 +33,16 @@
  * \{
  */
 
+#include <FreeRTOS.h>
+#include <task.h>
+
 void main(void)
 {
+    /* Start the scheduler */
+    vTaskStartScheduler();
+
+    /* Will only get here if there was insufficient memory to create the idle and/or timer task */
+    while(1);
 }
 
 /** \} End of main group */
