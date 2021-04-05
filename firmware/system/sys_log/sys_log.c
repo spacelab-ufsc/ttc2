@@ -1,22 +1,22 @@
 /*
  * sys_log.c
  * 
- * Copyright (C) 2020, SpaceLab.
+ * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.16
+ * \version 0.0.3
  * 
- * \date 03/11/2019
+ * \date 2019/11/03
  * 
  * \addtogroup sys_log
  * \{
@@ -43,7 +43,7 @@
 #include "sys_log.h"
 #include "sys_log_config.h"
 
-int sys_log_init()
+int sys_log_init(void)
 {
     if (sys_log_uart_init())
     {
@@ -117,7 +117,7 @@ void sys_log_set_color(uint8_t color)
     }
 }
 
-void sys_log_reset_color()
+void sys_log_reset_color(void)
 {
     sys_log_print_msg("\033[0m");
 }
@@ -185,7 +185,7 @@ void sys_log_print_msg(const char *msg)
     }
 }
 
-void sys_log_new_line()
+void sys_log_new_line(void)
 {
     sys_log_reset_color();
     sys_log_print_msg("\n\r");
@@ -325,7 +325,7 @@ void sys_log_print_byte(uint8_t byte)
     sys_log_uart_write_byte(byte);
 }
 
-void sys_log_print_system_time()
+void sys_log_print_system_time(void)
 {
     sys_log_set_color(SYS_LOG_SYSTEM_TIME_COLOR);
 
@@ -336,9 +336,9 @@ void sys_log_print_system_time()
     sys_log_reset_color();
 }
 
-void sys_log_print_license_msg()
+void sys_log_print_license_msg(void)
 {
-    sys_log_print_msg("OBDH 2.0 Copyright (C) 2020, SpaceLab;");
+    sys_log_print_msg("TTC 2.0 Copyright (C) 2021, SpaceLab;");
     sys_log_new_line();
     sys_log_print_msg("This program comes with ABSOLUTELY NO WARRANTY.");
     sys_log_new_line();
@@ -347,13 +347,13 @@ void sys_log_print_license_msg()
     sys_log_print_msg("under certain conditions.");
     sys_log_new_line();
     sys_log_new_line();
-    sys_log_print_msg("Source code: https://github.com/spacelab-ufsc/obdh2");
+    sys_log_print_msg("Source code: https://github.com/spacelab-ufsc/ttc2");
     sys_log_new_line();
-    sys_log_print_msg("Documentation: https://github.com/spacelab-ufsc/obdh2/doc");
+    sys_log_print_msg("Documentation: https://github.com/spacelab-ufsc/ttc2/doc");
     sys_log_new_line();
 }
 
-void sys_log_print_splash_screen()
+void sys_log_print_splash_screen(void)
 {
     sys_log_print_msg("                                                                   ");
     sys_log_new_line();
@@ -379,15 +379,15 @@ void sys_log_print_splash_screen()
     sys_log_new_line();
     sys_log_print_msg("..........                                               ..........");
     sys_log_new_line();
-    sys_log_print_msg("..........     ___  ____  ____  _   _   ____    ___      ..........");
+    sys_log_print_msg("..........        _____ _____ ____   ____    ___         ..........");
     sys_log_new_line();
-    sys_log_print_msg("..........    / _ \\| __ )|  _ \\| | | | |___ \\  / _ \\     ..........");
+    sys_log_print_msg("..........       |_   _|_   _/ ___| |___ \\  / _ \\        ..........");
     sys_log_new_line();
-    sys_log_print_msg("..........   | | | |  _ \\| | | | |_| |   __) || | | |    ..........");
+    sys_log_print_msg("..........         | |   | || |       __) || | | |       ..........");
     sys_log_new_line();
-    sys_log_print_msg("..........   | |_| | |_) | |_| |  _  |  / __/ | |_| |    ..........");
+    sys_log_print_msg("..........         | |   | || |___   / __/ | |_| |       ..........");
     sys_log_new_line();
-    sys_log_print_msg("..........    \\___/|____/|____/|_| |_| |_____(_)___/     ..........");
+    sys_log_print_msg("..........         |_|   |_| \\____| |_____(_)___/        ..........");
     sys_log_new_line();
     sys_log_print_msg("..........                                               ..........");
     sys_log_new_line();
@@ -403,7 +403,7 @@ void sys_log_print_splash_screen()
     sys_log_new_line();
 }
 
-void sys_log_print_firmware_version()
+void sys_log_print_firmware_version(void)
 {
     sys_log_print_msg("[ ");
     sys_log_print_msg(FIRMWARE_VERSION);
