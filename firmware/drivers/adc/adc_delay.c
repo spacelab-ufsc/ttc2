@@ -1,5 +1,5 @@
 /*
- * isis_antenna_delay.c
+ * adc_delay.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -12,43 +12,36 @@
  * 
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
  */
 
 /**
- * \brief ISIS antenna delay functions implementation.
+ * \brief ADC delay implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
  * \version 0.0.5
  * 
- * \date 2016/09/23
+ * \date 2020/03/16
  * 
- * \defgroup isis_antenna_delay Delay
- * \ingroup isis_antenna
+ * \defgroup adc_delay Delay
+ * \ingroup adc
  * \{
  */
 
 #include <FreeRTOS.h>
 #include <task.h>
 
-#include <config/config.h>
+#include "adc.h"
 
-#include "isis_antenna.h"
-
-void isis_antenna_delay_s(uint8_t s)
-{
-    vTaskDelay(pdMS_TO_TICKS(1000*s));
-}
-
-void isis_antenna_delay_ms(uint16_t ms)
+void adc_delay_ms(uint16_t ms)
 {
     vTaskDelay(pdMS_TO_TICKS(ms));
 }
 
-/** \} End of isis_antenna_delay group */
+/** \} End of adc_delay group */
