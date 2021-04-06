@@ -1,3 +1,4 @@
+
 <h1 align="center">
     <br>
     TTC 2.0 FIRMWARE
@@ -38,7 +39,7 @@
     <a href="#dependencies">Dependencies</a> •
     <a href="#development">Development</a> •
     <a href="#version">Version</a> •
-    <a href="#license">License</a> •
+    <a href="#license">License</a>
 </p>
 
 <br>
@@ -49,28 +50,28 @@ The TTC 2.0 board has two MSP430 low-power microcontrollers that runs the firmwa
 
 ## Dependencies
 
-	- MSP430 DriverLib v2.91.11.01
+* MSP430 DriverLib v2.91.11.01
 
 ## Development
 
 #### Toolchain setup
 
-This tutorial is a reference to install and setup the Code Composer Studio (CCS), a suggested tool for the development and deployment of the TTC 2.0 firmware. The CCSv9.0 (or later) can be downloaded [here](http://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html). After downloaded, start the install process. For the TTC 2.0, only the `MSP430 Ultra Low Power MCUs` package is required. More instructions for Linux environment, click [here](https://software-dl.ti.com/ccs/esd/documents/ccs_linux_host_support.html). 
+The Code Composer Studio (CCS) v9.0, or later, can be downloaded [here](http://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html). After downloaded, start the install process. For the TTC 2.0, only the *MSP430 Ultra Low Power MCUs* package is required. More instructions for Linux environment, click [here](https://software-dl.ti.com/ccs/esd/documents/ccs_linux_host_support.html).
 
 #### Compiling and building
 	
 Clone [this repository](https://github.com/spacelab-ufsc/ttc2.git). After this, import the source project into CCS:
 `File -> Import -> Code Composer Studio -> CCS Projects -> Select the source folder: ttc/firmware -> Leave 'Copy projects into workspace' unchecked / Finish`. Then, click in the Build button or press "Ctrl+B" to compile and build the sources. 
 
-> Alternatively, it is possible to use the available makefile to import, compile and build the firmware in the linux environment. It is necessary to update the directories to correspond to those in the running machine, hit "make import" in the linux terminal and hit "make".  
+> Alternatively, it is possible to use the available makefile to import, compile and build the firmware in the linux environment. It is necessary to update the directories to correspond to those in the running machine, hit "make import" in the linux terminal and hit "make".
 
 #### Debugging
 
-Before deploying the program into the microcontroller via the JTAG interface, follow the [power-on procedures](https://github.com/spacelab-ufsc/ttc2/tree/dev_hardware/hardware#power-on-procedure). Using the [MSP-FET](http://www.ti.com/tool/MSP-FET) is possible to program the microcontroller and start a debug session, which allows full control of the firmware in execution. For that, with the project opened in the CCS, click in the "Debug" button or press "F11" to upload the code into the TTC 2.0 board.
+Before deploying the program into the microcontroller using the JTAG interface, follow the [power-on procedures](https://github.com/spacelab-ufsc/ttc2/tree/dev_hardware/hardware#power-on-procedure). Using the [MSP-FET](http://www.ti.com/tool/MSP-FET) is possible to program the microcontroller and start a debug session, which allows full control of the firmware in execution. For that, with the project opened in the CCS, click in the "Debug" button or press "F11" to upload the code into the TTC 2.0 board.
 
 Besides the JTAG, there is the debugging performed through a serial UART port, using as default a baud rate of 115200, 1 stop bit, and no parity bit. The interface uses a log system standard to improve readability. Refer to the [documentation](https://github.com/spacelab-ufsc/ttc2/tree/master/doc) in the "Instructions" chapter.
 
-> Alternatively, it is possible to use the available makefile to perform the deployment of the firmware image into the microcontroller in the linux environment using the MSP-FET. It is necessary to follow the power-on procedures, connect the programmer and hit "make flash" in the terminal.  
+> Alternatively, it is possible to use the available makefile to perform the deployment of the firmware image into the microcontroller in the linux environment using the MSP-FET. It is necessary to follow the power-on procedures, connect the programmer and hit "make flash" in the terminal.
 
 ## Version
 
@@ -78,4 +79,4 @@ Refer to the [releases](https://github.com/spacelab-ufsc/ttc2/releases) page and
 
 ## License
 
-This repository containing firmware files is licensed under GPLv3 license.
+The firmware of this project is licensed under GPLv3 license.
