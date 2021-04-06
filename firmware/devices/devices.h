@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.6
+ * \version 0.0.7
  * 
  * \date 2019/10/26
  * 
@@ -43,6 +43,7 @@
 #include "current_sensor/current_sensor.h"
 #include "voltage_sensor/voltage_sensor.h"
 #include "media/media.h"
+#include "watchdog/watchdog.h"
 
 #endif /* DEVICES_H_ */
 
