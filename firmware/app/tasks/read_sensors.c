@@ -1,22 +1,22 @@
 /*
  * read_sensors.h
  * 
- * Copyright (C) 2020, SpaceLab.
+ * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.6
+ * \version 0.0.9
  * 
  * \date 2020/07/12
  * 
@@ -55,19 +55,19 @@ void vTaskReadSensors(void *pvParameters)
 
         uint16_t buf = 0;
 
-        /* OBDH current */
+        /* TTC current */
         if (current_sensor_read_raw(&buf) == 0)
         {
             sat_data_buf.obdh.current = buf;
         }
 
-        /* OBDH voltage */
+        /* TTC voltage */
         if (voltage_sensor_read_raw(&buf) == 0)
         {
             sat_data_buf.obdh.voltage = buf;
         }
 
-        /* OBDH temperature */
+        /* TTC temperature */
         if (temp_sensor_read_raw(&buf) == 0)
         {
             sat_data_buf.obdh.temperature = buf;

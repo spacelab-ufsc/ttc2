@@ -1,22 +1,22 @@
 /*
  * tasks.c
  * 
- * Copyright (C) 2020, SpaceLab.
+ * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.16
+ * \version 0.0.9
  * 
- * \date 02/11/2019
+ * \date 2019/11/02
  * 
  * \addtogroup tasks
  * \{
@@ -49,9 +49,8 @@
 #include "uplink.h"
 #include "time_control.h"
 #include "csp_server.h"
-#include "read_edc.h"
 
-void create_tasks()
+void create_tasks(void)
 {
     /* Startup task */
 #if CONFIG_TASK_STARTUP_ENABLED == 1
@@ -146,19 +145,10 @@ void create_tasks()
     }
 #endif /* CONFIG_TASK_CSP_SERVER_ENABLED */
 
-#if CONFIG_TASK_READ_EDC_ENABLED == 1
-    xTaskCreate(vTaskReadEDC, TASK_READ_EDC_NAME, TASK_READ_EDC_STACK_SIZE, NULL, TASK_READ_EDC_PRIORITY, &xTaskReadEDCHandle);
-
-    if (xTaskReadEDCHandle == NULL)
-    {
-        /* Error creating the read EDC task */
-    }
-#endif /* CONFIG_TASK_READ_EDC_ENABLED */
-
     create_event_groups();
 }
 
-void create_event_groups()
+void create_event_groups(void)
 {
     task_startup_status = xEventGroupCreate();
 
