@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.0.12
  * 
  * \date 2020/01/20
  * 
@@ -44,6 +44,8 @@
 /* LEDs types */
 #define LED_SYSTEM              0       /**< System LED. */
 #define LED_FAULT               1       /**< Fault LED. */
+#define LED_DOWNLINK            2       /**< Downlink LED. */
+#define LED_UPLINK              3       /**< Uplink LED. */
 
 /**
  * \brief LED type.
