@@ -1,22 +1,22 @@
 /*
  * config.h
  * 
- * Copyright (C) 2020, SpaceLab.
+ * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.16
+ * \version 0.0.10
  * 
- * \date 26/10/2019
+ * \date 2019/10/26
  * 
  * \defgroup config Configuration
  * \{
@@ -47,7 +47,6 @@
 #define CONFIG_TASK_UPLINK_ENABLED                      1
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
 #define CONFIG_TASK_CSP_SERVER_ENABLED                  0
-#define CONFIG_TASK_READ_EDC_ENABLED                    1
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
@@ -59,8 +58,8 @@
 
 /* CSP */
 #define CONFIG_CSP_ENABLED                              0
-#define CONFIG_CSP_MY_ADDRESS                           0
-#define CONFIG_CSP_TTC_ADDRESS                          1
+#define CONFIG_CSP_MY_ADDRESS                           1
+#define CONFIG_CSP_OBDH_ADDRESS                         0
 #define CONFIG_CSP_EPS_ADDRESS                          2
 #define CONFIG_CSP_BUFFER_MAX_PKTS                      5
 #define CONFIG_CSP_BUFFER_MAX_SIZE                      300
