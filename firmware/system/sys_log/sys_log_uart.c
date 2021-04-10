@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.3
+ * \version 0.0.11
  * 
  * \date 2019/11/03
  * 
@@ -47,12 +47,12 @@ bool sys_log_uart_init(void)
     config.parity       = UART_NO_PARITY;
     config.stop_bits    = UART_ONE_STOP_BIT;
 
-    return uart_init(UART_PORT_2, config) == 0 ? true : false;
+    return uart_init(UART_PORT_1, config) == 0 ? true : false;
 }
 
 void sys_log_uart_write_byte(uint8_t byte)
 {
-    uart_write(UART_PORT_2, &byte, 1);
+    uart_write(UART_PORT_1, &byte, 1);
 }
 
 /** \} End of sys_log_uart group */
