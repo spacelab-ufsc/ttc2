@@ -25,13 +25,16 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.14
+ * \version 0.0.15
  * 
  * \date 2020/01/15
  * 
  * \addtogroup tps382x
  * \{
  */
+
+#include <config/config.h>
+#include <system/sys_log/sys_log.h>
 
 #include "tps382x.h"
 
@@ -41,12 +44,26 @@ int tps382x_init(tps382x_config_t config)
 
     gpio_conf.mode = GPIO_MODE_OUTPUT;
 
-    return gpio_init(config.wdi_pin, gpio_conf);
+    if ((gpio_init(config.wdi_pin, gpio_conf) != 0) || (gpio_init(config.mr_pin, gpio_conf) != 0))
+    {
+    #if CONFIG_DRIVERS_DEBUG_ENABLED == 1
+        sys_log_print_event_from_module(SYS_LOG_ERROR, TPS382X_MODULE_NAME, "Error initializing the driver!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        return -1;
+    }
+
+    return gpio_set_state(config.wdi_pin, true);
 }
 
-void tps382x_trigger(tps382x_config_t config)
+int tps382x_trigger(tps382x_config_t config)
 {
-    gpio_toggle(config.wdi_pin);
+    return gpio_toggle(config.wdi_pin);
+}
+
+int tps382x_manual_reset(tps382x_config_t config)
+{
+    return gpio_set_state(config.wdi_pin, false);
 }
 
 /** \} End of tps382x group */

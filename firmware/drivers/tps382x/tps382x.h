@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.14
+ * \version 0.0.15
  * 
  * \date 2020/01/15
  * 
@@ -39,12 +39,15 @@
 
 #include <drivers/gpio/gpio.h>
 
+#define TPS382X_MODULE_NAME     "TPS382x"
+
 /**
  * \brief TPS382x configuration.
  */
 typedef struct
 {
     gpio_pin_t wdi_pin;     /**< WDI pin. */
+    gpio_pin_t mr_pin;      /**< MR pin. */
 } tps382x_config_t;
 
 /**
@@ -68,9 +71,23 @@ int tps382x_init(tps382x_config_t config);
  *
  * \param[in] config is the configuration parameters of the TPS382x driver.
  *
- * \return None.
+ * \return The status/error code.
  */
-void tps382x_trigger(tps382x_config_t config);
+int tps382x_trigger(tps382x_config_t config);
+
+/**
+ * \brief Sets the MR pin low to force a manual reset.
+ *
+ * Manual-reset input. Pull low to force a reset. RESET remains low as long as MR is low
+ * and for the time-out period after MR goes high. Leave unconnected or connect to VDD when unused.
+ *
+ * \see SLVS165L - TPS382x Voltage Monitor With Watchdog Timer.
+ *
+ * \param[in] config is the configuration parameters of the TPS382x driver.
+ *
+ * \return The status/error code.
+ */
+int tps382x_manual_reset(tps382x_config_t config);
 
 #endif /* TPS382X_H_ */
 
