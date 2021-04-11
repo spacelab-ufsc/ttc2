@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.0.16
  * 
  * \date 2019/11/01
  * 
@@ -33,33 +33,46 @@
  * \{
  */
 
+#include <drivers/gpio/gpio.h>
 #include <drivers/wdt/wdt.h>
 #include <drivers/tps382x/tps382x.h>
 
 #include "watchdog.h"
 
+#define WATCHDOG_MODULE_NAME        "Watchdog"
+
+/* Internal watchdog parameters */
+#define WATCHDOG_INT_CLK_SRC        WDT_CLK_SRC_ACLK
+#define WATCHDOG_INT_CLK_DIV        WDT_CLK_DIV_32K
+
+/* External watchdog parameters */
+#define WATCHDOG_EXT_WDT_WDI_PIN    GPIO_PIN_41
+#define WATCHDOG_EXT_WDT_MR_PIN     GPIO_PIN_40
+
+tps382x_config_t ext_wdt = {0};
+
 int watchdog_init(void)
 {
+    /* Internal watchdog configuration */
     wdt_config_t int_wdt;
 
-    int_wdt.clk_src = WDT_CLK_SRC_ACLK;
-    int_wdt.clk_div = WDT_CLK_DIV_32K;
+    int_wdt.clk_src = WATCHDOG_INT_CLK_SRC;
+    int_wdt.clk_div = WATCHDOG_INT_CLK_DIV;
 
-    tps382x_config_t ext_wdt;
+    /* External watchdog configuration */
+    ext_wdt.wdi_pin = WATCHDOG_EXT_WDT_WDI_PIN;
+    ext_wdt.mr_pin  = WATCHDOG_EXT_WDT_MR_PIN;
 
-    ext_wdt.wdi_pin = GPIO_PIN_66;
-
+    /* Watchdogs initialization */
     return wdt_init(int_wdt) | tps382x_init(ext_wdt);
 }
 
 void watchdog_reset(void)
 {
+    /* Internal watchdog reset */
     wdt_reset();
 
-    tps382x_config_t ext_wdt;
-
-    ext_wdt.wdi_pin = GPIO_PIN_66;
-
+    /* External watchdog reset */
     tps382x_trigger(ext_wdt);
 }
 
