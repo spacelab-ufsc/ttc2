@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.0.18
  * 
  * \date 2020/05/14
  * 
@@ -38,26 +38,29 @@
 
 #include "si446x.h"
 
+#define SI446X_GPIO_SDN_PIN     GPIO_PIN_16
+#define SI446X_GPIO_NIRQ_PIN    GPIO_PIN_17
+
 int si446x_gpio_init(void)
 {
     /* SDN pin */
-    if (gpio_init(GPIO_PIN_4, (gpio_config_t){.mode=GPIO_MODE_OUTPUT}) != 0)
+    if (gpio_init(SI446X_GPIO_SDN_PIN, (gpio_config_t){.mode=GPIO_MODE_OUTPUT}) != 0)
     {
         return -1;
     }
 
     /* nIRQ pin */
-    return gpio_init(GPIO_PIN_3, (gpio_config_t){.mode=GPIO_MODE_INPUT});
+    return gpio_init(SI446X_GPIO_NIRQ_PIN, (gpio_config_t){.mode=GPIO_MODE_INPUT});
 }
 
 int si446x_gpio_write_sdn(bool state)
 {
-    return gpio_set_state(GPIO_PIN_4, state);
+    return gpio_set_state(SI446X_GPIO_SDN_PIN, state);
 }
 
 int si446x_gpio_read_nirq(void)
 {
-    return gpio_get_state(GPIO_PIN_3);
+    return gpio_get_state(SI446X_GPIO_NIRQ_PIN);
 }
 
 /** \} End of si446x_gpio group */
