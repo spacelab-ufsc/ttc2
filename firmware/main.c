@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.0.13
  * 
  * \date 2021/04/04
  * 
@@ -36,8 +36,21 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+#include "devices/watchdog/watchdog.h"
+#include "system/clocks.h"
+#include "app/tasks/tasks.h"
+
 void main(void)
 {
+    /* Watchdog device initialization */
+    watchdog_init();
+
+    /* System clocks configuration */
+    clocks_setup((clocks_config_t){.mclk_hz = 32000000UL, .smclk_hz=32000000UL, .aclk_hz=32768});
+
+    /* Create all the tasks */
+    create_tasks();
+
     /* Start the scheduler */
     vTaskStartScheduler();
 
