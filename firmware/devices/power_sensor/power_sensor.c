@@ -1,5 +1,5 @@
 /*
- * version.h
+ * power_sensor.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,29 +21,48 @@
  */
 
 /**
- * \brief Version control file.
+ * \brief Power sensor device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
  * \version 0.0.17
  * 
- * \date 2021/04/04
+ * \date 2021/04/11
  * 
- * \defgroup version Version control
+ * \addtogroup power_sensor
  * \{
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <system/sys_log/sys_log.h>
 
-#define FIRMWARE_VERSION            "0.0.17"
+#include "power_sensor.h"
 
-#define FIRMWARE_STATUS             "Development"
+int power_sensor_init(void)
+{
+    sys_log_print_event_from_module(SYS_LOG_INFO, POWER_SENSOR_MODULE_NAME, "Initializing the power sensor...");
+    sys_log_new_line();
 
-#define FIRMWARE_AUTHOR             "SpaceLab"
+    return -1;
+}
 
-#define FIRMWARE_AUTHOR_EMAIL       "spacelab.ufsc@gmail.com"
+int power_sensor_read(power_sensor_data_t *data)
+{
+    return -1;
+}
 
-#endif /* VERSION_H_ */
+int power_sensor_read_voltage_mv(voltage_t *volt)
+{
+    return -1;
+}
 
-/** \} End of version group */
+int power_sensor_read_current_ma(current_t *curr)
+{
+    return -1;
+}
+
+int power_sensor_read_power_mw(power_t *pwr)
+{
+    return -1;
+}
+
+/** \} End of power_sensor group */

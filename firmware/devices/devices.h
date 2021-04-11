@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.0.17
  * 
  * \date 2019/10/26
  * 
@@ -40,8 +40,7 @@
 #include "leds/leds.h"
 #include "antenna/antenna.h"
 #include "temp_sensor/temp_sensor.h"
-#include "current_sensor/current_sensor.h"
-#include "voltage_sensor/voltage_sensor.h"
+#include "power_sensor/power_sensor.h"
 #include "media/media.h"
 #include "watchdog/watchdog.h"
 
