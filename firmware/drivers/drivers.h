@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.0.19
  * 
  * \date 2019/10/26
  * 
@@ -45,6 +45,7 @@
 #include "wdt/wdt.h"
 #include "adc/adc.h"
 #include "flash/flash.h"
+#include "ina22x/ina22x.h"
 
 #endif /* DRIVERS_H_ */
 

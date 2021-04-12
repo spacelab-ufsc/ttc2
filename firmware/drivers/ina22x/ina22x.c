@@ -1,5 +1,5 @@
 /*
- * version.h
+ * ina22x.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,29 +21,48 @@
  */
 
 /**
- * \brief Version control file.
+ * \brief INA22x driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.19
+ * \version 0.0.18=9
  * 
- * \date 2021/04/04
+ * \date 2021/04/11
  * 
- * \defgroup version Version control
+ * \addtogroup ina22x
  * \{
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "ina22x.h"
 
-#define FIRMWARE_VERSION            "0.0.19"
+int ina22x_init(ina22x_config_t config)
+{
+    return -1;
+}
 
-#define FIRMWARE_STATUS             "Development"
+int ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val)
+{
+    return -1;
+}
 
-#define FIRMWARE_AUTHOR             "SpaceLab"
+int ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val)
+{
+    return -1;
+}
 
-#define FIRMWARE_AUTHOR_EMAIL       "spacelab.ufsc@gmail.com"
+int ina22x_get_current(ina22x_config_t config, ina22x_current_t *cur)
+{
+    return -1;
+}
 
-#endif /* VERSION_H_ */
+int ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id)
+{
+    return -1;
+}
 
-/** \} End of version group */
+int ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id)
+{
+    return -1;
+}
+
+/** \} End of ina22x group */
