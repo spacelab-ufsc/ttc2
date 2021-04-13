@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.0.20
  * 
  * \date 2019/12/07
  * 
@@ -47,23 +47,20 @@
 
 int spi_setup_gpio(spi_port_t port)
 {
+    gpio_config_t conf = {0};
+
+    conf.mode = GPIO_MODE_OUTPUT;
+
     switch(port)
     {
         case SPI_PORT_0:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN0 + GPIO_PIN3 + GPIO_PIN4);
 
-            gpio_init(GPIO_PIN_5, (gpio_config_t){.mode=GPIO_MODE_OUTPUT});
-            gpio_init(GPIO_PIN_6, (gpio_config_t){.mode=GPIO_MODE_OUTPUT});
-            gpio_init(GPIO_PIN_28, (gpio_config_t){.mode=GPIO_MODE_OUTPUT});
-            gpio_init(GPIO_PIN_45, (gpio_config_t){.mode=GPIO_MODE_OUTPUT});
-            gpio_init(GPIO_PIN_46, (gpio_config_t){.mode=GPIO_MODE_OUTPUT});
+            /* Init CS pins as GPIOs */
+            gpio_init(GPIO_PIN_8, conf);
 
             /* Set all CS pins to high */
-            gpio_set_state(GPIO_PIN_5, true);
-            gpio_set_state(GPIO_PIN_6, true);
-            gpio_set_state(GPIO_PIN_28, true);
-            gpio_set_state(GPIO_PIN_45, true);
-            gpio_set_state(GPIO_PIN_46, true);
+            gpio_set_state(GPIO_PIN_8, true);
 
             break;
         case SPI_PORT_1:
@@ -99,11 +96,7 @@ int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active)
         case SPI_PORT_0:
             switch(cs)
             {
-                case SPI_CS_0:      gpio_set_state(GPIO_PIN_5, !active);      break;
-                case SPI_CS_1:      gpio_set_state(GPIO_PIN_6, !active);      break;
-                case SPI_CS_2:      gpio_set_state(GPIO_PIN_28, !active);     break;
-                case SPI_CS_3:      gpio_set_state(GPIO_PIN_45, !active);     break;
-                case SPI_CS_4:      gpio_set_state(GPIO_PIN_46, !active);     break;
+                case SPI_CS_0:      gpio_set_state(GPIO_PIN_8, !active);      break;
                 default:
                 #if CONFIG_DRIVERS_DEBUG_ENABLED == 1
                     sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error selecting a slave from port 0: Invalid CS pin!");
