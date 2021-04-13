@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.18
+ * \version 0.0.21
  * 
  * \date 2017/06/01
  * 
@@ -683,6 +683,15 @@ int si446x_gpio_init(void);
 int si446x_gpio_write_sdn(bool state);
 
 /**
+ * \brief Writes the state of the the GPIO0 pin.
+ *
+ * \param[in] state is new state of the GPIO0 pin.
+ *
+ * \return The status/error code.
+ */
+int si446x_gpio_write_gpio0(bool state);
+
+/**
  * \brief Reads the state of the nIRQ pin.
  *
  * \return The state of the nIRQ pin. It can be:
@@ -693,6 +702,18 @@ int si446x_gpio_write_sdn(bool state);
  * \endparblock
  */
 int si446x_gpio_read_nirq(void);
+
+/**
+ * \brief Reads the state of the GPIO1 pin.
+ *
+ * \return The state of the GPIO1 pin. It can be:
+ * \parblock
+ *      -\b GPIO_STATE_HIGH
+ *      -\b GPIO_STATE_LOW
+ *      .
+ * \endparblock
+ */
+int si446x_gpio_read_gpio1(bool state);
 
 /**
  * \brief Milliseconds delay.
