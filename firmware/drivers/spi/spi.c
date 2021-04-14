@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.20
+ * \version 0.0.22
  * 
  * \date 2019/12/07
  * 
@@ -55,13 +55,6 @@ int spi_setup_gpio(spi_port_t port)
     {
         case SPI_PORT_0:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN0 + GPIO_PIN3 + GPIO_PIN4);
-
-            /* Init CS pins as GPIOs */
-            gpio_init(GPIO_PIN_8, conf);
-
-            /* Set all CS pins to high */
-            gpio_set_state(GPIO_PIN_8, true);
-
             break;
         case SPI_PORT_1:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
@@ -71,6 +64,13 @@ int spi_setup_gpio(spi_port_t port)
             break;
         case SPI_PORT_3:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
+
+            /* Init CS pins as GPIOs */
+            gpio_init(GPIO_PIN_8, conf);
+
+            /* Set all CS pins to high */
+            gpio_set_state(GPIO_PIN_8, true);
+
             break;
         case SPI_PORT_4:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN1 + GPIO_PIN5 + GPIO_PIN6);
@@ -94,6 +94,15 @@ int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active)
     switch(port)
     {
         case SPI_PORT_0:
+            /* TODO: Define the CS pins pf port 0 */
+            break;
+        case SPI_PORT_1:
+            /* TODO: Define the CS pins pf port 1 */
+            break;
+        case SPI_PORT_2:
+            /* TODO: Define the CS pins pf port 2 */
+            break;
+        case SPI_PORT_3:
             switch(cs)
             {
                 case SPI_CS_0:      gpio_set_state(GPIO_PIN_8, !active);      break;
@@ -105,15 +114,6 @@ int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active)
                     return -1;  /* Invalid CS pin */
             }
 
-            break;
-        case SPI_PORT_1:
-            /* TODO: Define the CS pins pf port 1 */
-            break;
-        case SPI_PORT_2:
-            /* TODO: Define the CS pins pf port 2 */
-            break;
-        case SPI_PORT_3:
-            /* TODO: Define the CS pins pf port 3 */
             break;
         case SPI_PORT_4:
             /* TODO: Define the CS pins pf port 4 */
