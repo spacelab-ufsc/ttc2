@@ -1,5 +1,5 @@
 /*
- * version.h
+ * ttc_data.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,29 +21,20 @@
  */
 
 /**
- * \brief Version control file.
+ * \brief TTC data structure implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
  * \version 0.0.23
  * 
- * \date 2021/04/04
+ * \date 2021/04/14
  * 
- * \defgroup version Version control
+ * \addtogroup ttc_data
  * \{
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "ttc_data.h"
 
-#define FIRMWARE_VERSION            "0.0.23"
+ttc_data_t ttc_data_buf = {0};
 
-#define FIRMWARE_STATUS             "Development"
-
-#define FIRMWARE_AUTHOR             "SpaceLab"
-
-#define FIRMWARE_AUTHOR_EMAIL       "spacelab.ufsc@gmail.com"
-
-#endif /* VERSION_H_ */
-
-/** \} End of version group */
+/** \} End of ttc_data group */
