@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.0.24
  * 
  * \date 2019/10/27
  * 
@@ -84,9 +84,27 @@ int radio_available(void);
 /**
  * \brief Puts the radio in sleep mode.
  *
- * \return Tge status/error code.
+ * \return The status/error code.
  */
 int radio_sleep(void);
+
+/**
+ * \brief Reads the current temperature of the radio.
+ *
+ * \param[in,out] temp is a pointer to store the read temperature.
+ *
+ * \return The status/error code.
+ */
+int radio_get_temperature(uint16_t *temp);
+
+/**
+ * \brief Reads the RSSI of the radio.
+ *
+ * \param[in,out] rssi is a pointer to store the read RSSI value.
+ *
+ * \return The status/error code.
+ */
+int radio_get_rssi(uint16_t *rssi);
 
 #endif /* RADIO_H_ */
 

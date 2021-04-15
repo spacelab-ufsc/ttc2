@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.0.24
  * 
  * \date 2019/10/27
  * 
@@ -49,6 +49,15 @@ int radio_init(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Initializing radio device...");
     sys_log_new_line();
 
+    /* GPIO pins initialization */
+    if (si446x_gpio_init() != SI446X_SUCCESS)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error initializing the GPIO pins!");
+        sys_log_new_line();
+
+        return -1;
+    }
+
     /* SPI interface initialization */
     if (si446x_spi_init() != SI446X_SUCCESS)
     {
@@ -62,6 +71,15 @@ int radio_init(void)
     if (si446x_reset() != SI446X_SUCCESS)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error during the reset!");
+        sys_log_new_line();
+
+        return -1;
+    }
+
+    /* Power-up */
+    if (si446x_power_up(0x01, 0x00, 30000000) != SI446X_SUCCESS)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error during the power-up command!");
         sys_log_new_line();
 
         return -1;
@@ -315,6 +333,40 @@ int radio_sleep(void)
 
         return -1;
     }
+
+    return 0;
+}
+
+int radio_get_temperature(uint16_t *temp)
+{
+    si446x_adc_reading_t adc_reading = {0};
+
+    if (si446x_get_adc_reading(1, false, false, 0, &adc_reading) != 0)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error reading the temperature!");
+        sys_log_new_line();
+
+        return -1;
+    }
+
+    *temp = adc_reading.temp_adc;
+
+    return 0;
+}
+
+int radio_get_rssi(uint16_t *rssi)
+{
+    si446x_modem_status_t modem_status = {0};
+
+    if (si446x_get_modem_status(0, &modem_status) != 0)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error reading the temperature!");
+        sys_log_new_line();
+
+        return -1;
+    }
+
+    *rssi = modem_status.curr_rssi;
 
     return 0;
 }
