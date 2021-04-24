@@ -327,6 +327,10 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=TXPDTTJX
 
+[GeneratedDocument1]
+DocumentPath=Project Outputs for ttc2_project\Design Rule Check - board_layout.html
+DItemRevisionGUID=
+
 [Parameter1]
 Name=DesignedBy
 Value=André M. P. Mattos
