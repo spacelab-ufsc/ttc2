@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.23
+ * \version 0.0.25
  * 
  * \date 2020/07/12
  * 
@@ -76,6 +76,18 @@ void vTaskReadSensors(void *pvParameters)
         if (power_sensor_read_power_mw(&buf) == 0)
         {
             ttc_data_buf.current = buf;
+        }
+
+        /* Radio temperature */
+        if (radio_get_temperature(&buf) == 0)
+        {
+            ttc_data_buf.radio.temperature = buf;
+        }
+
+        /* Radio RSSI */
+        if (radio_get_rssi(&buf) == 0)
+        {
+            ttc_data_buf.radio.rssi = buf;
         }
 
         /* Data timestamp */
