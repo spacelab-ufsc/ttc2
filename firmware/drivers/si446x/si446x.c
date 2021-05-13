@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.0.26
  * 
  * \date 2017/06/01
  * 
@@ -51,6 +51,8 @@ int si446x_reset(void)
         return -1;
     }
 
+    si446x_delay_ms(20);
+
     return SI446X_SUCCESS;
 }
 
@@ -66,7 +68,11 @@ int si446x_power_up(uint8_t boot_options, uint8_t xtal_options, uint32_t xo_freq
     cmd[5] = (uint8_t)((xo_freq >> 8) & 0xFF);
     cmd[6] = (uint8_t)(xo_freq & 0xFF);
 
-    return si446x_set_cmd(cmd, 7);
+    si446x_spi_write(cmd, 7);
+
+    si446x_delay_ms(200);
+
+    return SI446X_SUCCESS;
 }
 
 int si446x_configuration_init(uint8_t *p_set_prop_cmd, uint16_t p_set_prop_cmd_len)
@@ -597,7 +603,7 @@ int si446x_power_on(void)
 bool si446x_check_cts(uint32_t timeout_ms)
 {
     uint8_t cmd[] = {SI446X_CMD_READ_CMD_BUF, SI446X_CMD_NOP};
-    uint8_t result[] = {0, 0};
+    uint8_t result[3] = {SI446X_CMD_NOP};
 
     while(timeout_ms--)
     {
