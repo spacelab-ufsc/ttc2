@@ -26,7 +26,26 @@
 
 .
 
-\section{Variables and Parameters}
+\section{Commands}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{cll}
+        \toprule[1.5pt]
+        \textbf{ID} & \textbf{Name/Description} & \textbf{Content}\\
+        \midrule
+        0   & NOP                       & None \\
+        1   & Read parameter/variable   & Parameter ID (1B) + Value (4B) + Checksum (2B) \\
+        2   & Write parameter/variable  & Parameter ID (1B) + Value (4B) + Checksum (2B) \\
+        3   & Transmit packet           & Packet data (1-220B) + Checksum (2B) \\
+        4   & Receive packet            & Packet data (1-220B) + Checksum (2B) \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+    \caption{List of commands.}
+    \label{tab:commands}
+\end{table}
+
+\subsection{Variables and Parameters}
 
 A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals is seen in the \autoref{tab:ttc2-variables}.
 
@@ -85,8 +104,11 @@ A list of all the variables of TTC with their identification number (ID) and var
         & - Bit 0: The antenna system is armed (1) or not (0)               &        &   \\
     16  & Antenna deployment status (0=never executed, 1=executed)          & uint8  & R \\
     17  & Antenna deployment hibernation (0=never executed, 1=executed)     & uint8  & R \\
-    18  & TX packet counter                                                 & uint32 & R \\
-    19  & RX packet counter (valid packets)                                 & uint32 & R \\
+    18  & TX enable (0=off, 1=on)                                           & uint8  & R/W \\
+    19  & TX packet counter                                                 & uint32 & R \\
+    20  & RX packet counter (valid packets)                                 & uint32 & R \\
+    21  & TX packets available in the FIFO buffer                           & uint8  & R \\
+    22  & RX packets available in the FIFO buffer                           & uint8  & R \\
     \bottomrule[1.5pt]
     \caption{Variables and parameters of the TTC 2.0.}
     \label{tab:ttc2-variables}
