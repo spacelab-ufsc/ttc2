@@ -28,6 +28,8 @@
 
 \section{Commands}
 
+The SPI\nomenclature{\textbf{SPI}}{\textit{Serial Peripheral Interface.}} commands of the TTC module are available in \autoref{tab:commands}. All commands are composed by an ID field (1 byte), the content of the command and a checksum at the end of the command (2 bytes). The used checksum algorithm is the CRC16-CCITT\nomenclature{\textbf{CRC}}{\textit{Cyclic Redundancy Check.}} \nomenclature{\textbf{CCITT}}{\textit{Comité Consultatif International Téléphonique et Télégraphique.}} (initial value = 0x0000, polynomial = 0x1021) the value is calculated with the entire packet (ID field + command content).
+
 \begin{table}[!h]
     \centering
     \begin{tabular}{cll}
@@ -109,6 +111,7 @@ A list of all the variables of TTC with their identification number (ID) and var
     20  & RX packet counter (valid packets)                                 & uint32 & R \\
     21  & TX packets available in the FIFO buffer                           & uint8  & R \\
     22  & RX packets available in the FIFO buffer                           & uint8  & R \\
+    23  & Number of bytes of the first available packet in the RX buffer    & uint16 & R \\
     \bottomrule[1.5pt]
     \caption{Variables and parameters of the TTC 2.0.}
     \label{tab:ttc2-variables}
