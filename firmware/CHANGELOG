@@ -1,5 +1,15 @@
 ===========================================
 
+v0.1 - 2021/06/06
+
+- First release
+- Useful source code imported from the OBDH 2.0 firmware
+- si446x driver updated
+- General improvements
+
+
+===========================================
+
 v0.0 - 2021/04/04
 
 - Project creation

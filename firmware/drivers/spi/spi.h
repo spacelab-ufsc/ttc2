@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.0.27
  * 
  * \date 2019/12/07
  * 
@@ -38,6 +38,7 @@
 #define SPI_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SPI_MODULE_NAME         "SPI"
 
@@ -68,7 +69,8 @@ typedef enum
     SPI_CS_6,           /**< SPI chip select 6. */
     SPI_CS_7,           /**< SPI chip select 7. */
     SPI_CS_8,           /**< SPI chip select 8. */
-    SPI_CS_9            /**< SPI chip select 9. */
+    SPI_CS_9,           /**< SPI chip select 9. */
+    SPI_CS_NONE         /**< No SPI chip select. */
 } spi_cs_e;
 
 /**
@@ -124,6 +126,39 @@ typedef uint8_t spi_cs_t;
 int spi_init(spi_port_t port, spi_config_t config);
 
 /**
+ * \brief Selects or unselects an SPI device.
+ *
+ * \param[in] port is the SPI port of the device to select. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \param[in] cs is the chip select pin of the device to select. It can be:
+ * \parblock
+ *      -\b SPI_CS_0
+ *      -\b SPI_CS_1
+ *      -\b SPI_CS_2
+ *      -\b SPI_CS_3
+ *      -\b SPI_CS_4
+ *      -\b SPI_CS_5
+ *      -\b SPI_CS_6
+ *      -\b SPI_CS_7
+ *      -\b SPI_CS_8
+ *      -\b SPI_CS_9
+ *      -\b SPI_CS_NONE
+ *      .
+ * \endparblock
+ *
+ * \param[in] active is TRUE/FALSE to select/unselect the SPI device.
+ *
+ * \return The status/error code.
+ */
+int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active);
+
+/**
  * \brief Writes data to a given SPI port.
  *
  * \param[in] port is the SPI port to write data. It can be:
@@ -146,6 +181,7 @@ int spi_init(spi_port_t port, spi_config_t config);
  *      -\b SPI_CS_7
  *      -\b SPI_CS_8
  *      -\b SPI_CS_9
+ *      -\b SPI_CS_NONE
  *      .
  * \endparblock
  *
@@ -180,6 +216,7 @@ int spi_write(spi_port_t port, spi_cs_t cs, uint8_t *data, uint16_t len);
  *      -\b SPI_CS_7
  *      -\b SPI_CS_8
  *      -\b SPI_CS_9
+ *      -\b SPI_CS_NONE
  *      .
  * \endparblock
  *
@@ -214,6 +251,7 @@ int spi_read(spi_port_t port, spi_cs_t cs, uint8_t *data, uint16_t len);
  *      -\b SPI_CS_7
  *      -\b SPI_CS_8
  *      -\b SPI_CS_9
+ *      -\b SPI_CS_NONE
  *      .
  * \endparblock
  *
