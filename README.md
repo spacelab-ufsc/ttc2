@@ -6,30 +6,24 @@
 <h4 align="center">Telemetry, Tracking and Command module (version 2) designed and developed by SpaceLab.</h4>
 
 <p align="center">
-	<a href="https://github.com/spacelab-ufsc/spacelab#versioning">
-		<img src="https://img.shields.io/badge/status-in--orbit%20validated-blue?style=for-the-badge">
-	</a>
-	<a href="https://github.com/spacelab-ufsc/ttc2/releases">
-		<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/spacelab-ufsc/ttc2?style=for-the-badge">
-	</a>
-	<a href="https://github.com/spacelab-ufsc/ttc2/releases">
-		<img alt="GitHub commits since latest release (by date)" src="https://img.shields.io/github/commits-since/spacelab-ufsc/ttc2/latest?style=for-the-badge">
-	</a>
-	<a href="https://github.com/spacelab-ufsc/ttc2/commits/master">
-		<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/spacelab-ufsc/ttc2?style=for-the-badge">
-	</a>
-	<a href="https://github.com/spacelab-ufsc/ttc2/issues">
-		<img alt="GitHub issues" src="https://img.shields.io/github/issues/spacelab-ufsc/ttc?style=for-the-badge">
-	</a>
-	<a href="https://github.com/spacelab-ufsc/ttc2/graphs/contributors">
-		<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/spacelab-ufsc/ttc2?color=yellow&style=for-the-badge">
-	</a>
-	<a href="#license">
-		<img src="https://img.shields.io/badge/open--source-project-lightgray?style=for-the-badge">
-	</a>
-	<a href="https://github.com/floripasat/ttc">
-		<img src="https://img.shields.io/badge/flight-heritage-lightgray?style=for-the-badge">
-	</a>
+    <a href="https://github.com/spacelab-ufsc/spacelab#versioning">
+        <img src="https://img.shields.io/badge/status-in%20development-red?style=for-the-badge">
+    </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/releases">
+        <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/spacelab-ufsc/ttc2?style=for-the-badge">
+    </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/releases">
+        <img alt="GitHub commits since latest release (by date)" src="https://img.shields.io/github/commits-since/spacelab-ufsc/ttc2/latest?style=for-the-badge">
+    </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/commits/master">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/spacelab-ufsc/ttc2?style=for-the-badge">
+    </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/issues">
+        <img alt="GitHub issues" src="https://img.shields.io/github/issues/spacelab-ufsc/ttc?style=for-the-badge">
+    </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/graphs/contributors">
+        <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/spacelab-ufsc/ttc2?color=yellow&style=for-the-badge">
+    </a>
 </p>
 
 <p align="center">
@@ -39,7 +33,7 @@
 </p>
 
 <p align="center">
-    <img width="70%" src="https://github.com/spacelab-ufsc/ttc/blob/master/doc/figures/ttc_board.png">
+    <img width="70%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/figures/ttc2_pcb_3d.png">
 </p>
 
 ## Overview
