@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.18
+ * \version 0.0.26
  * 
  * \date 2017/07/29
  * 
@@ -39,8 +39,8 @@
 
 #include "si446x.h"
 
-#define SI446X_SPI_PORT         SPI_PORT_0
-#define SI446X_SPI_CS_PIN       GPIO_PIN_8
+#define SI446X_SPI_PORT         SPI_PORT_3
+#define SI446X_SPI_CS_PIN       SPI_CS_0
 #define SI446X_SPI_CLK_HZ       100000
 #define SI446X_SPI_MODE         SPI_MODE_1
 
