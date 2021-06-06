@@ -1,5 +1,5 @@
 SRC=main
-TARGET=slb-ttc2-doc-v0.0
+TARGET=slb-ttc2-doc-v0.1
 
 ifndef BUILD_DIR
 	BUILD_DIR=build
