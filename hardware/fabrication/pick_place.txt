@@ -5,8 +5,8 @@ C:\Users\Yan Azeredo\Desktop\SpaceLab\ttc2\hardware\.\fabrication\Pick Place for
 File Design Information:
 
 Date:       15/06/21
-Time:       17:02
-Revision:   3e175abf4e19f2a7e612b2b78c5dc72f459c249b
+Time:       17:35
+Revision:   fe8b33206bc66e939854684f0f9ac21341012b53
 Variant:    No variations
 Units used: mil
 
@@ -85,10 +85,10 @@ J_P14      0R                     BottomLayer 0805                           301
 J_P13      0R                     TopLayer    0805                           3016.732      2360.236      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 J_P12      0R                     TopLayer    0805                           3016.732      2453.740      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 J_P11      0R                     TopLayer    0805                           3016.732      2547.244      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
-J_P10      0R                     BottomLayer 0805                           3015.748      2524.606      0        "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
-J_P9       0R                     BottomLayer 0805                           3015.748      2337.598      0        "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P10      0R                     BottomLayer 0805                           3015.748      2524.606      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P9       0R                     BottomLayer 0805                           3015.748      2337.598      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 J_P8       0R                     BottomLayer 0805                           3015.748      2431.102      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
-J_P7       0R                     BottomLayer 0805                           3015.748      2639.764      0        "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P7       0R                     BottomLayer 0805                           3015.748      2639.764      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 J_P5       0R                     TopLayer    0805                           3050.197      2139.764      180      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 J_P4       0R                     TopLayer    0805                           3050.197      2238.189      180      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 FB1        "30R@100Mhz, 4A"       TopLayer    IND0805                        3126.968      147.638       180      "Ferrite Bead 30 OHM 4A 100MHz"                                                                                  
@@ -111,7 +111,7 @@ CN5        0532610671             TopLayer    PICOBLADE_6PIN_RIGHT_ANGLE     137
 CN4        M20-9980745            TopLayer    CONN_HEADER_VERT_14POS_2.54MM  2654.921      3365.945      360      "Connector Header Through Hole 14 position 0.100" (2.54mm)"                                                      
 CN3        M20-9980745            TopLayer    CONN_HEADER_VERT_14POS_2.54MM  668.307       3365.945      360      "Connector Header Through Hole 14 position 0.100" (2.54mm)"                                                      
 C50        0.01uF/25V             TopLayer    CC0805                         385.827       2410.433      360      "CAP CER 0.01uF 25V 10% X7R 0805"                                                                                
-C49        0.1uF/25V              BottomLayer CC0805                         2908.837      1948.819      0        "CAP CER 0.1UF 25V 10% X7R 0805"                                                                                 
+C49        0.1uF/25V              BottomLayer CC0805                         2908.837      1948.819      360      "CAP CER 0.1UF 25V 10% X7R 0805"                                                                                 
 C48        0.1uF/25V              BottomLayer CC0805                         1873.032      2996.063      180      "CAP CER 0.1UF 25V 10% X7R 0805"                                                                                 
 C47        10uF/10V               BottomLayer CC0805_TANTALUM                1995.079      2566.929      270      "CAP Tantalum 10uF 10V 20% 0805"                                                                                 
 C46        0.1uF/25V              BottomLayer CC0805                         2053.150      2567.913      270      "CAP CER 0.1UF 25V 10% X7R 0805"                                                                                 
