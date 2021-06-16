@@ -1,12 +1,12 @@
 Altium Designer Pick and Place Locations
-C:\Users\Sidney&Viviane\Documents\Andre\GitHub\ttc2\hardware\.\fabrication\Pick Place for board_layout.txt
+C:\Users\Yan Azeredo\Desktop\SpaceLab\ttc2\hardware\.\fabrication\Pick Place for board_layout.txt
 
 ========================================================================================================================
 File Design Information:
 
-Date:       02/05/21
-Time:       19:32
-Revision:   69ae0f94a9836512206dfd4cd7925b69b63e4fce
+Date:       15/06/21
+Time:       17:35
+Revision:   fe8b33206bc66e939854684f0f9ac21341012b53
 Variant:    No variations
 Units used: mil
 
@@ -15,7 +15,7 @@ R28        10k                    BottomLayer 0805                           257
 R11        10k                    BottomLayer 0805                           1032.323      2316.929      180      "RES 10K OHM 1/8W 1%  0805"                                                                                      
 CN1        0532610671             TopLayer    PICOBLADE_6PIN_RIGHT_ANGLE     161.417       2747.146      270      "PicoBlade 6 Position Right Angle Connector Header Surface Mount  0.049" (1.25mm)"                               
 CN2        0532610671             TopLayer    PICOBLADE_6PIN_RIGHT_ANGLE     161.417       2152.559      270      "PicoBlade 6 Position Right Angle Connector Header Surface Mount  0.049" (1.25mm)"                               
-J_V3       0R                     BottomLayer 0805                           2812.381      1853.347      135      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
+J_V3       0R                     BottomLayer 0805                           2812.381      1853.347      135      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
 U2         MSP430F6659IPZR        TopLayer    LQFP-100                       1051.571      2465.106      45       "CPUXV2 series Microcontroller IC 16-Bit 20MHz 512KB (512K x 8) FLASH 100-LQFP (14x14)"                          
 C15        10uF/10V               BottomLayer CC0805_TANTALUM                1282.480      2652.559      225      "CAP Tantalum 10uF 10V 20% 0805"                                                                                 
 C2         10pF/100V              TopLayer    CC0805                         774.052       2940.945      180      "CAP CER 10pF 100V 0805"                                                                                         
@@ -30,10 +30,10 @@ Y5         ECS-.327-12.5-34S-TR   TopLayer    ABS06_0805                     216
 Y4         ABM8X-102-32.000MHZ-T  TopLayer    XTAL_ABM8X                     2233.815      2835.630      180      "32MHz ±10ppm Crystal 10pF 60 Ohm -40°C ~ 125°C"                                                                 
 Y3         ECS-.327-12.5-34S-TR   TopLayer    ABS06_0805                     764.210       2152.559      315      "32.768kHz ±20ppm Crystal 12.5pF 70 kOhm -40°C ~ 125°C"                                                          
 Y2         ABM8X-102-32.000MHZ-T  TopLayer    XTAL_ABM8X                     775.036       2835.630      180      "32MHz ±10ppm Crystal 10pF 60 Ohm -40°C ~ 125°C"                                                                 
-V4         47k                    TopLayer    0805                           1753.937      2174.213      270      "RES 47k OHM 1/10W 1% 0805"                                                                                      
-V3         47k                    TopLayer    0805                           1619.094      2140.591      180      "RES 47k OHM 1/10W 1% 0805"                                                                                      
-V2         47k                    TopLayer    0805                           1863.189      2174.213      270      "RES 47k OHM 1/10W 1% 0805"                                                                                      
-V1         47k                    TopLayer    0805                           1909.567      2040.354      360      "RES 47k OHM 1/10W 1% 0805"                                                                                      
+V4         47k                    TopLayer    0805                           1753.937      2174.213      270      "RES 47k OHM 1/8W 1% 0805"                                                                                       
+V3         47k                    TopLayer    0805                           1619.094      2140.591      180      "RES 47k OHM 1/8W 1% 0805"                                                                                       
+V2         47k                    TopLayer    0805                           1863.189      2174.213      270      "RES 47k OHM 1/8W 1% 0805"                                                                                       
+V1         47k                    TopLayer    0805                           1909.567      2040.354      360      "RES 47k OHM 1/8W 1% 0805"                                                                                       
 U13        RF4463F30              TopLayer    RF4463F30                      2496.844      968.898       0        "RF4463F30 High Power Wireless Transceiver Module"                                                               
 U12        RF4463F30              TopLayer    RF4463F30                      1035.039      968.898       0        "RF4463F30 High Power Wireless Transceiver Module"                                                               
 U11        TCA4311ADR             TopLayer    SOIC8                          417.913       2176.940      90       "IC SIGNAL BUFFER I2C 8SOIC HOTSWAP"                                                                             
@@ -44,10 +44,10 @@ U7         MSP430F6659IPZR        TopLayer    LQFP-100                       251
 U6         TCA4311ADR             TopLayer    SOIC8                          417.913       2720.472      90       "IC SIGNAL BUFFER I2C 8SOIC HOTSWAP"                                                                             
 U5         INA226AQDGSRQ1         BottomLayer DGS10                          1241.142      2061.024      180      "High-Side Measurement, Bi-Directional Current/Power Monitor w/I2C Interface"                                    
 U4         INA226AQDGSRQ1         BottomLayer DGS10                          1428.149      2924.213      90       "High-Side Measurement, Bi-Directional Current/Power Monitor w/I2C Interface"                                    
-RS4        0.1R                   BottomLayer 0805                           2050.197      3100.393      360      "RES 0.1R OHM 1/8W 1% 0805"                                                                                      
-RS3        0.1R                   BottomLayer 0805                           2729.331      2089.567      90       "RES 0.1R OHM 1/8W 1% 0805"                                                                                      
-RS2        0.1R                   BottomLayer 0805                           1459.645      3112.205      360      "RES 0.1R OHM 1/8W 1% 0805"                                                                                      
-RS1        0.1R                   BottomLayer 0805                           1065.945      2089.567      90       "RES 0.1R OHM 1/8W 1% 0805"                                                                                      
+RS4        0.1R                   BottomLayer 0805                           2050.197      3100.393      360      "RES 0.1R OHM 1/3W 1% 0805"                                                                                      
+RS3        0.1R                   BottomLayer 0805                           2729.331      2089.567      90       "RES 0.1R OHM 1/3W 1% 0805"                                                                                      
+RS2        0.1R                   BottomLayer 0805                           1459.645      3112.205      360      "RES 0.1R OHM 1/3W 1% 0805"                                                                                      
+RS1        0.1R                   BottomLayer 0805                           1065.945      2089.567      90       "RES 0.1R OHM 1/3W 1% 0805"                                                                                      
 R34        10k                    BottomLayer 0805                           241.142       2237.180      360      "RES 10K OHM 1/8W 1%  0805"                                                                                      
 R33        10k                    BottomLayer 0805                           414.016       2237.180      180      "RES 10K OHM 1/8W 1%  0805"                                                                                      
 R32        10k                    BottomLayer 0805                           241.142       2141.732      360      "RES 10K OHM 1/8W 1%  0805"                                                                                      
@@ -62,7 +62,7 @@ R22        1K                     TopLayer    0805                           184
 R21        1K                     TopLayer    0805                           1736.220      3087.598      90       "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
 R20        1K                     BottomLayer 0805                           1822.835      2715.551      45       "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
 R19        1K                     BottomLayer 0805                           1887.795      2652.559      45       "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
-R18        47k                    TopLayer    0805                           2355.394      3147.441      270      "RES 47k OHM 1/10W 1% 0805"                                                                                      
+R18        47k                    TopLayer    0805                           2355.394      3147.441      270      "RES 47k OHM 1/8W 1% 0805"                                                                                       
 R17        10k                    BottomLayer 0805                           241.142       2766.732      360      "RES 10K OHM 1/8W 1%  0805"                                                                                      
 R16        10k                    BottomLayer 0805                           413.386       2905.512      180      "RES 10K OHM 1/8W 1%  0805"                                                                                      
 R15        10k                    BottomLayer 0805                           241.142       2671.260      360      "RES 10K OHM 1/8W 1%  0805"                                                                                      
@@ -77,21 +77,21 @@ R5         1K                     BottomLayer 0805                           161
 R4         1K                     BottomLayer 0805                           1615.158      2776.575      180      "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
 R3         1K                     BottomLayer 0805                           1581.535      2601.378      270      "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
 R2         1K                     BottomLayer 0805                           1674.213      2601.378      270      "RES 1.0K OHM 1/8W 1% 0805"                                                                                      
-R1         47k                    TopLayer    0805                           1483.268      3053.976      360      "RES 47k OHM 1/10W 1% 0805"                                                                                      
-J_V2       0R                     BottomLayer 0805                           1241.142      1798.228      135      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_V1       0R                     BottomLayer 0805                           1866.496      3100.393      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_V0       0R                     BottomLayer 0805                           1278.897      3112.205      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P14      0R                     BottomLayer 0805                           3015.748      2244.094      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P13      0R                     TopLayer    0805                           3016.732      2360.236      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P12      0R                     TopLayer    0805                           3016.732      2453.740      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P11      0R                     TopLayer    0805                           3016.732      2547.244      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P10      0R                     BottomLayer 0805                           3015.748      2524.606      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P9       0R                     BottomLayer 0805                           3015.748      2337.598      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P8       0R                     BottomLayer 0805                           3015.748      2431.102      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P7       0R                     BottomLayer 0805                           3015.748      2639.764      360      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P5       0R                     TopLayer    0805                           3050.197      2139.764      180      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-J_P4       0R                     TopLayer    0805                           3050.197      2238.189      180      "RES 0R OHM 1/16W JUMPER 0805"                                                                                   
-FB1        "30R@100Mhz, 3A"       TopLayer    IND0805                        3126.968      147.638       180      "Ferrite Bead 30 OHM 3A 100MHz"                                                                                  
+R1         47k                    TopLayer    0805                           1483.268      3053.976      360      "RES 47k OHM 1/8W 1% 0805"                                                                                       
+J_V2       0R                     BottomLayer 0805                           1241.142      1798.228      135      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_V1       0R                     BottomLayer 0805                           1866.496      3100.393      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_V0       0R                     BottomLayer 0805                           1278.897      3112.205      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P14      0R                     BottomLayer 0805                           3015.748      2244.094      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P13      0R                     TopLayer    0805                           3016.732      2360.236      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P12      0R                     TopLayer    0805                           3016.732      2453.740      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P11      0R                     TopLayer    0805                           3016.732      2547.244      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P10      0R                     BottomLayer 0805                           3015.748      2524.606      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P9       0R                     BottomLayer 0805                           3015.748      2337.598      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P8       0R                     BottomLayer 0805                           3015.748      2431.102      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P7       0R                     BottomLayer 0805                           3015.748      2639.764      360      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P5       0R                     TopLayer    0805                           3050.197      2139.764      180      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+J_P4       0R                     TopLayer    0805                           3050.197      2238.189      180      "RES 0R OHM 1/8W JUMPER 0805"                                                                                    
+FB1        "30R@100Mhz, 4A"       TopLayer    IND0805                        3126.968      147.638       180      "Ferrite Bead 30 OHM 4A 100MHz"                                                                                  
 ESD        1M                     TopLayer    0805                           3257.874      3181.102      360      "RES 1000K OHM 1/8W 1% 0805"                                                                                     
 D10        LTST-C171GKT           TopLayer    0805-GREEN-LED                 2481.299      3148.976      270      "LED Green SMD - Green 569nm LED Indication - Discrete 2.1V 0805 (2012 Metric)"                                  
 D9         LTST-C170KRKT          TopLayer    0805-RED-LED                   1935.669      2928.150      360      "LED Red SMD - Red 631nm LED Indication, Discrete 2V 0805 (2012 Metric)"                                         
