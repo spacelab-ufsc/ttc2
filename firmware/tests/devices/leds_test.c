@@ -3,20 +3,20 @@
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.5.10
+ * \version 0.1.3
  * 
  * \date 2021/02/16
  * 
@@ -44,22 +44,35 @@
 
 #include <devices/leds/leds.h>
 #include <drivers/gpio/gpio.h>
-#include <tests/mockups/gpio_wrap.h>
 
 #define LED_SYSTEM_NUM              0
 #define LED_FAULT_NUM               1
+#define LED_DOWNLINK_NUM            2
+#define LED_UPLINK_NUM              3
 
-#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_35
-#define LED_FAULT_GPIO_PIN          GPIO_PIN_34
+/* GPIO configuration */
+#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_36
+#define LED_FAULT_GPIO_PIN          GPIO_PIN_28
+#define LED_DOWNLINK_GPIO_PIN       GPIO_PIN_30
+#define LED_UPLINK_GPIO_PIN         GPIO_PIN_29
 
 static void leds_init_test(void **state)
 {
     expect_value(__wrap_gpio_init, pin, LED_SYSTEM_GPIO_PIN);
+    expect_value(__wrap_gpio_init, config.mode, GPIO_MODE_OUTPUT);
     expect_value(__wrap_gpio_init, pin, LED_FAULT_GPIO_PIN);
+    expect_value(__wrap_gpio_init, config.mode, GPIO_MODE_OUTPUT);
+    expect_value(__wrap_gpio_init, pin, LED_DOWNLINK_GPIO_PIN);
+    expect_value(__wrap_gpio_init, config.mode, GPIO_MODE_OUTPUT);
+    expect_value(__wrap_gpio_init, pin, LED_UPLINK_GPIO_PIN);
+    expect_value(__wrap_gpio_init, config.mode, GPIO_MODE_OUTPUT);
 
-    int result = leds_init();
+    will_return(__wrap_gpio_init, 0);
+    will_return(__wrap_gpio_init, 0);
+    will_return(__wrap_gpio_init, 0);
+    will_return(__wrap_gpio_init, 0);
 
-    assert_return_code(result, 0);
+    assert_return_code(leds_init(), 0);
 }
 
 static void led_set_test(void **state)
@@ -70,26 +83,42 @@ static void led_set_test(void **state)
         if (i == LED_SYSTEM_NUM)
         {
             expect_value(__wrap_gpio_set_state, pin, LED_SYSTEM_GPIO_PIN);
-            expect_value(__wrap_gpio_set_state, level, true);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_HIGH);
 
-            int result = led_set(i);
+            will_return(__wrap_gpio_set_state, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_set(i), 0);
         }
         else if (i == LED_FAULT_NUM)
         {
             expect_value(__wrap_gpio_set_state, pin, LED_FAULT_GPIO_PIN);
-            expect_value(__wrap_gpio_set_state, level, true);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_HIGH);
 
-            int result = led_set(i);
+            will_return(__wrap_gpio_set_state, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_set(i), 0);
+        }
+        else if (i == LED_DOWNLINK_NUM)
+        {
+            expect_value(__wrap_gpio_set_state, pin, LED_DOWNLINK_GPIO_PIN);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_HIGH);
+
+            will_return(__wrap_gpio_set_state, 0);
+
+            assert_return_code(led_set(i), 0);
+        }
+        else if (i == LED_UPLINK_NUM)
+        {
+            expect_value(__wrap_gpio_set_state, pin, LED_UPLINK_GPIO_PIN);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_HIGH);
+
+            will_return(__wrap_gpio_set_state, 0);
+
+            assert_return_code(led_set(i), 0);
         }
         else
         {
-            int result = led_set(i);
-
-            assert_true(result != 0);
+            assert_true(led_set(i) != 0);
         }
     }
 }
@@ -102,26 +131,42 @@ static void led_clear_test(void **state)
         if (i == LED_SYSTEM_NUM)
         {
             expect_value(__wrap_gpio_set_state, pin, LED_SYSTEM_GPIO_PIN);
-            expect_value(__wrap_gpio_set_state, level, false);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_LOW);
 
-            int result = led_clear(i);
+            will_return(__wrap_gpio_set_state, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_clear(i), 0);
         }
         else if (i == LED_FAULT_NUM)
         {
             expect_value(__wrap_gpio_set_state, pin, LED_FAULT_GPIO_PIN);
-            expect_value(__wrap_gpio_set_state, level, false);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_LOW);
 
-            int result = led_clear(i);
+            will_return(__wrap_gpio_set_state, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_clear(i), 0);
+        }
+        else if (i == LED_DOWNLINK_NUM)
+        {
+            expect_value(__wrap_gpio_set_state, pin, LED_DOWNLINK_GPIO_PIN);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_LOW);
+
+            will_return(__wrap_gpio_set_state, 0);
+
+            assert_return_code(led_clear(i), 0);
+        }
+        else if (i == LED_UPLINK_NUM)
+        {
+            expect_value(__wrap_gpio_set_state, pin, LED_UPLINK_GPIO_PIN);
+            expect_value(__wrap_gpio_set_state, level, GPIO_STATE_LOW);
+
+            will_return(__wrap_gpio_set_state, 0);
+
+            assert_return_code(led_clear(i), 0);
         }
         else
         {
-            int result = led_clear(i);
-
-            assert_true(result != 0);
+            assert_true(led_clear(i) != 0);
         }
     }
 }
@@ -135,23 +180,37 @@ static void led_toggle_test(void **state)
         {
             expect_value(__wrap_gpio_toggle, pin, LED_SYSTEM_GPIO_PIN);
 
-            int result = led_toggle(i);
+            will_return(__wrap_gpio_toggle, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_toggle(i), 0);
         }
         else if (i == LED_FAULT_NUM)
         {
             expect_value(__wrap_gpio_toggle, pin, LED_FAULT_GPIO_PIN);
 
-            int result = led_toggle(i);
+            will_return(__wrap_gpio_toggle, 0);
 
-            assert_return_code(result, 0);
+            assert_return_code(led_toggle(i), 0);
+        }
+        else if (i == LED_DOWNLINK_NUM)
+        {
+            expect_value(__wrap_gpio_toggle, pin, LED_DOWNLINK_GPIO_PIN);
+
+            will_return(__wrap_gpio_toggle, 0);
+
+            assert_return_code(led_toggle(i), 0);
+        }
+        else if (i == LED_UPLINK_NUM)
+        {
+            expect_value(__wrap_gpio_toggle, pin, LED_UPLINK_GPIO_PIN);
+
+            will_return(__wrap_gpio_toggle, 0);
+
+            assert_return_code(led_toggle(i), 0);
         }
         else
         {
-            int result = led_toggle(i);
-
-            assert_true(result != 0);
+            assert_true(led_toggle(i) != 0);
         }
     }
 }

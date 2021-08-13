@@ -113,7 +113,7 @@ $(BUILD_DIR)/ina22x_wrap.o: ../mockups/ina22x_wrap.c
 	$(CC) $(POWER_SENSOR_TEST_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/gpio_wrap.o: ../mockups/gpio_wrap.c
-	$(CC) $(LEDS_TEST_FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/task.o: ../freertos_sim/task.c
 	$(CC) $(RADIO_TEST_FLAGS) -c $< -o $@
