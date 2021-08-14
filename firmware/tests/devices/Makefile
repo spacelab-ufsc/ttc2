@@ -57,7 +57,7 @@ leds_test: $(BUILD_DIR)/leds.o $(BUILD_DIR)/leds_test.o $(BUILD_DIR)/sys_log_wra
 
 .PHONY: media_test
 media_test: $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o
-	$(CC) $(MEDIA_TEST_FLAGS) $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/media_wrap.o -o $(BUILD_DIR)/$(TARGET_MEDIA) -lcmocka
+	$(CC) $(MEDIA_TEST_FLAGS) $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o -o $(BUILD_DIR)/$(TARGET_MEDIA) -lcmocka
 
 # Devices
 $(BUILD_DIR)/watchdog.o: ../../devices/watchdog/watchdog.c
