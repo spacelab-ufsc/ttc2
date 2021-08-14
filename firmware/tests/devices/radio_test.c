@@ -52,6 +52,7 @@ static void radio_init_test(void **state)
     will_return(__wrap_si446x_spi_init,             SI446X_SUCCESS);
     will_return(__wrap_si446x_reset,                SI446X_SUCCESS);
     will_return(__wrap_si446x_power_up,             SI446X_SUCCESS);
+    will_return(__wrap_si446x_part_info,            RADIO_ID);
     will_return(__wrap_si446x_part_info,            SI446X_SUCCESS);
     will_return(__wrap_si446x_configuration_init,   SI446X_SUCCESS);
     will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
