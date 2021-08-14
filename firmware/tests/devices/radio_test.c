@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.1
+ * \version 0.1.3
  * 
  * \date 2021/02/21
  * 
@@ -48,18 +48,17 @@
 
 static void radio_init_test(void **state)
 {
+    will_return(__wrap_si446x_gpio_init,            SI446X_SUCCESS);
     will_return(__wrap_si446x_spi_init,             SI446X_SUCCESS);
     will_return(__wrap_si446x_reset,                SI446X_SUCCESS);
+    will_return(__wrap_si446x_power_up,             SI446X_SUCCESS);
     will_return(__wrap_si446x_part_info,            SI446X_SUCCESS);
-    will_return(__wrap_si446x_part_info,            RADIO_ID);
     will_return(__wrap_si446x_configuration_init,   SI446X_SUCCESS);
     will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
     will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
     will_return(__wrap_si446x_fifo_info,            SI446X_SUCCESS);
 
-    int result = radio_init();
-
-    assert_return_code(result, 0);
+    assert_return_code(radio_init(), 0);
 }
 
 static void radio_send_test(void **state)
@@ -83,9 +82,7 @@ static void radio_send_test(void **state)
 
     uint8_t data[50] = {0};
 
-    int result = radio_send(data, 50, 100);
-
-    assert_return_code(result, 0);
+    assert_return_code(radio_send(data, 50, 100), 0);
 }
 
 static void radio_recv_test(void **state)
@@ -98,9 +95,7 @@ static void radio_recv_test(void **state)
 
     uint8_t data[50] = {0};
 
-    int result = radio_recv(data, 10, 1000);
-
-    assert_return_code(result, 0);
+    assert_return_code(radio_recv(data, 10, 1000), 0);
 }
 
 static void radio_available_test(void **state)
@@ -108,18 +103,14 @@ static void radio_available_test(void **state)
     will_return(__wrap_si446x_get_int_status,       SI446X_SUCCESS);
     will_return(__wrap_si446x_fifo_info,            SI446X_SUCCESS);
 
-    int result = radio_available();
-
-    assert_return_code(result, 0);
+    assert_return_code(radio_available(), 0);
 }
 
 static void radio_sleep_test(void **state)
 {
     will_return(__wrap_si446x_change_state, SI446X_SUCCESS);
 
-    int result = radio_sleep();
-
-    assert_return_code(result, 0);
+    assert_return_code(radio_sleep(), 0);
 }
 
 int main(void)
