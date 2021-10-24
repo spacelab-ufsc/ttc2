@@ -1,5 +1,5 @@
 /*
- * tps382x_wrap.c
+ * ina22x_wrap.h
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,40 +21,36 @@
  */
 
 /**
- * \brief TPS382x driver wrap implementation.
+ * \brief INA22x driver wrap definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.1
+ * \version 0.1.5
  * 
- * \date 2021/02/17
+ * \date 2021/08/12
  * 
- * \addtogroup tps382x_wrap
+ * \defgroup ina22x_wrap INA22x Wrap
+ * \ingroup tests
  * \{
  */
 
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <setjmp.h>
-#include <float.h>
-#include <cmocka.h>
+#ifndef INA22X_WRAP_H_
+#define INA22X_WRAP_H_
 
-#include "tps382x_wrap.h"
+#include <drivers/ina22x/ina22x.h>
 
-int __wrap_tps382x_init(tps382x_config_t config)
-{
-    check_expected(config.wdi_pin);
+int __wrap_ina22x_init(ina22x_config_t config);
 
-    return 0;
-}
+int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val);
 
-void __wrap_tps382x_trigger(tps382x_config_t config)
-{
-    check_expected(config.wdi_pin);
+int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val);
 
-    return;
-}
+int __wrap_ina22x_get_current(ina22x_config_t config, ina22x_current_t *cur);
 
-/** \} End of tps382x_wrap group */
+int __wrap_ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id);
+
+int __wrap_ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id);
+
+#endif /* INA22X_WRAP_H_ */
+
+/** \} End of ina22x_wrap group */

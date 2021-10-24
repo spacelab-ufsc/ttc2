@@ -3,20 +3,20 @@
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.6.4
+ * \version 0.1.5
  * 
  * \date 2021/02/13
  * 
@@ -42,41 +42,31 @@
 
 #include "adc_wrap.h"
 
-int __wrap_adc_init(adc_port_t port, adc_config_t config)
+int __wrap_adc_init(void)
 {
-    check_expected(port);
-
-    return 0;
+    return mock_type(int);
 }
 
 int __wrap_adc_read(adc_port_t port, uint16_t *val)
 {
-    uint16_t adc_val;
-
     check_expected(port);
-
-    adc_val = mock_type(uint16_t);
 
     if (val != NULL)
     {
-        *val = adc_val;
+        *val = mock_type(uint16_t);
     }
 
-    return 0;
+    return mock_type(int);
 }
 
 float __wrap_adc_temp_get_mref(void)
 {
-    float mref = mock_type(float);
-
-    return mref;
+    return mock_type(float);
 }
 
 float __wrap_adc_temp_get_nref(void)
 {
-    float nref = mock_type(float);
-
-    return nref;
+    return mock_type(float);
 }
 
 /** \} End of adc_wrap group */

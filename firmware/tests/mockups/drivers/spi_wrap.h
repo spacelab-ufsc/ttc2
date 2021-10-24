@@ -1,5 +1,5 @@
 /*
- * flash_wrap.h
+ * spi_wrap.h
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,40 +21,36 @@
  */
 
 /**
- * \brief Flash driver wrap definition.
+ * \brief SPI driver wrap definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
- * \date 2021/08/07
+ * \date 2021/08/25
  * 
- * \defgroup flash_wrap Flash Wrap
+ * \defgroup spi_wrap SPI Wrap
  * \ingroup tests
  * \{
  */
 
-#ifndef FLASH_WRAP_H_
-#define FLASH_WRAP_H_
+#ifndef SPI_WRAP_H_
+#define SPI_WRAP_H_
 
 #include <stdint.h>
 
-#include <drivers/flash/flash.h>
+#include <drivers/spi/spi.h>
 
-int __wrap_flash_init(void);
+int __wrap_spi_init(spi_port_t port, spi_config_t config);
 
-void __wrap_flash_write(uint8_t *data, uint16_t len);
+int __wrap_spi_select_slave(spi_port_t port, spi_cs_t cs, bool active);
 
-void __wrap_flash_write_single(uint8_t data, uint8_t *addr);
+int __wrap_spi_write(spi_port_t port, spi_cs_t cs, uint8_t *data, uint16_t len);
 
-uint8_t __wrap_flash_read_single(uint8_t *addr);
+int __wrap_spi_read(spi_port_t port, spi_cs_t cs, uint8_t *data, uint16_t len);
 
-void __wrap_flash_write_long(uint32_t data, uint32_t *addr);
+int __wrap_spi_transfer(spi_port_t port, spi_cs_t cs, uint8_t *wd, uint8_t *rd, uint16_t len);
 
-uint32_t __wrap_flash_read_long(uint32_t *addr);
+#endif /* SPI_WRAP_H_ */
 
-void __wrap_flash_erase(uint32_t *region);
-
-#endif /* FLASH_WRAP_H_ */
-
-/** \} End of flash_wrap group */
+/** \} End of spi_wrap group */

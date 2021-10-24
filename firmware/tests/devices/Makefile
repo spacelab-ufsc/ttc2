@@ -104,31 +104,31 @@ $(BUILD_DIR)/media_test.o: media_test.c
 	$(CC) $(MEDIA_TEST_FLAGS) -c $< -o $@
 
 # Mockups
-$(BUILD_DIR)/sys_log_wrap.o: ../mockups/sys_log_wrap.c
+$(BUILD_DIR)/sys_log_wrap.o: ../mockups/system/sys_log_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/wdt_wrap.o: ../mockups/wdt_wrap.c
+$(BUILD_DIR)/wdt_wrap.o: ../mockups/drivers/wdt_wrap.c
 	$(CC) $(WATCHDOG_TEST_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/tps382x_wrap.o: ../mockups/tps382x_wrap.c
+$(BUILD_DIR)/tps382x_wrap.o: ../mockups/drivers/tps382x_wrap.c
 	$(CC) $(WATCHDOG_TEST_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/adc_wrap.o: ../mockups/adc_wrap.c
+$(BUILD_DIR)/adc_wrap.o: ../mockups/drivers/adc_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/isis_antenna_wrap.o: ../mockups/isis_antenna_wrap.c
+$(BUILD_DIR)/isis_antenna_wrap.o: ../mockups/drivers/isis_antenna_wrap.c
 	$(CC) $(ANTENNA_TEST_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/si446x_wrap.o: ../mockups/si446x_wrap.c
+$(BUILD_DIR)/si446x_wrap.o: ../mockups/drivers/si446x_wrap.c
 	$(CC) $(RADIO_TEST_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/ina22x_wrap.o: ../mockups/ina22x_wrap.c
+$(BUILD_DIR)/ina22x_wrap.o: ../mockups/drivers/ina22x_wrap.c
 	$(CC) $(POWER_SENSOR_TEST_FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/gpio_wrap.o: ../mockups/gpio_wrap.c
+$(BUILD_DIR)/gpio_wrap.o: ../mockups/drivers/gpio_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
-$(BUILD_DIR)/flash_wrap.o: ../mockups/flash_wrap.c
+$(BUILD_DIR)/flash_wrap.o: ../mockups/drivers/flash_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/task.o: ../freertos_sim/task.c

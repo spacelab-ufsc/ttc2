@@ -5,9 +5,12 @@
 * ADC
 * Flash
 * GPIO
-* INA22x
+* I2C
 * ISIS Antenna
 * Si446x
-* System Log
+* SPI
 * TPS382x
+* UART
 * Watchdog
+
+## Devices

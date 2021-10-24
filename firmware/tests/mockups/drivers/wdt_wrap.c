@@ -1,5 +1,5 @@
 /*
- * tps382x_wrap.h
+ * wdt_wrap.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,42 +21,41 @@
  */
 
 /**
- * \brief TPS382x driver wrap definition.
+ * \brief WDT driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.1
+ * \version 0.1.5
  * 
- * \date 2021/02/17
+ * \date 2021/02/16
  * 
- * \defgroup tps382x_wrap TPS382x Wrap
- * \ingroup tests
+ * \addtogroup wdt_wrap
  * \{
  */
 
-#ifndef TPS382X_WRAP_H_
-#define TPS382X_WRAP_H_
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <setjmp.h>
+#include <float.h>
+#include <cmocka.h>
 
-#include <drivers/tps382x/tps382x.h>
+#include "wdt_wrap.h"
 
-/**
- * \brief Mockup of the TPS382x initialization function implemented as an wrap function.
- *
- * \param[in] config is the configuration parameters of the TPS382x driver.
- *
- * \return The status/error code.
- */
-int __wrap_tps382x_init(tps382x_config_t config);
+int __wrap_wdt_init(wdt_config_t config)
+{
+    check_expected(config.clk_src);
+    check_expected(config.clk_div);
 
-/**
- * \brief Mockup of the TPS382x trigger function implemented as an wrap function.
- *
- * \param[in] config is the configuration parameters of the TPS382x driver.
- *
- * \return None.
- */
-void __wrap_tps382x_trigger(tps382x_config_t config);
+    return mock_type(int);
+}
 
-#endif /* TPS382X_WRAP_H_ */
+void __wrap_wdt_reset(void)
+{
+    function_called();
 
-/** \} End of tps382x_wrap group */
+    return;
+}
+
+/** \} End of wdt_wrap group */

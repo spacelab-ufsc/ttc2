@@ -1,5 +1,5 @@
 /*
- * gpio_wrap.c
+ * uart_wrap.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,15 +21,15 @@
  */
 
 /**
- * \brief GPIO driver wrap implementation.
+ * \brief UART driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
- * \date 2021/02/13
+ * \date 2021/08/25
  * 
- * \addtogroup gpio_wrap
+ * \addtogroup uart_wrap
  * \{
  */
 
@@ -41,45 +41,57 @@
 #include <float.h>
 #include <cmocka.h>
 
-#include "gpio_wrap.h"
+#include "uart_wrap.h"
 
-int __wrap_gpio_init(gpio_pin_t pin, gpio_config_t config)
+int __wrap_uart_init(uart_port_t port, uart_config_t config)
 {
-    check_expected(pin);
-    check_expected(config.mode);
+    check_expected(port);
+    check_expected(config.clock);
+    check_expected(config.baudrate);
+    check_expected(config.data_bits);
+    check_expected(config.parity);
+    check_expected(config.stop_bits);
 
     return mock_type(int);
 }
 
-int __wrap_gpio_set_state(gpio_pin_t pin, bool level)
+int __wrap_uart_available(uart_port_t port)
 {
-    check_expected(pin);
-    check_expected(level);
+    check_expected(port);
 
     return mock_type(int);
 }
 
-int __wrap_gpio_get_state(gpio_pin_t pin)
+int __wrap_uart_flush(uart_port_t port)
 {
-    check_expected(pin);
+    check_expected(port);
 
-    int pin_val = mock_type(int);
+    return mock_type(int);
+}
 
-    if ((pin_val == 0) || (pin_val == 1))
+int __wrap_uart_write(uart_port_t port, uint8_t *data, uint16_t len)
+{
+    check_expected(port);
+    check_expected_ptr(data);
+    check_expected(len);
+
+    return mock_type(int);
+}
+
+int __wrap_uart_read(uart_port_t port, uint8_t *data, uint16_t len)
+{
+    check_expected(port);
+
+    if (data != NULL)
     {
-        return pin_val;
+        uint16_t i = 0;
+        for(i=0; i<len; i++)
+        {
+            data[i] = mock_type(uint8_t);
+        }
     }
-    else
-    {
-        return -1;
-    }
-}
-
-int __wrap_gpio_toggle(gpio_pin_t pin)
-{
-    check_expected(pin);
 
     return mock_type(int);
 }
 
-/** \} End of gpio_wrap group */
+/** \} End of uart_wrap group */

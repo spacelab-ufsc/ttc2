@@ -1,5 +1,5 @@
 /*
- * ina22x_wrap.h
+ * i2c_wrap.h
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,36 +21,32 @@
  */
 
 /**
- * \brief INA22x driver wrap definition.
+ * \brief I2C driver wrap definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
- * \date 2021/08/12
+ * \date 2021/08/24
  * 
- * \defgroup ina22x_wrap INA22x Wrap
+ * \defgroup i2c_wrap I2C Wrap
  * \ingroup tests
  * \{
  */
 
-#ifndef INA22X_WRAP_H_
-#define INA22X_WRAP_H_
+#ifndef I2C_WRAP_H_
+#define I2C_WRAP_H_
 
-#include <drivers/ina22x/ina22x.h>
+#include <stdint.h>
 
-int __wrap_ina22x_init(ina22x_config_t config);
+#include <drivers/i2c/i2c.h>
 
-int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val);
+int __wrap_i2c_init(i2c_port_t port, i2c_config_t config);
 
-int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val);
+int __wrap_i2c_write(i2c_port_t port, i2c_slave_adr_t adr, uint8_t *data, uint16_t len);
 
-int __wrap_ina22x_get_current(ina22x_config_t config, ina22x_current_t *cur);
+int __wrap_i2c_read(i2c_port_t port, i2c_slave_adr_t adr, uint8_t *data, uint16_t len);
 
-int __wrap_ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id);
+#endif /* I2C_WRAP_H_ */
 
-int __wrap_ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id);
-
-#endif /* INA22X_WRAP_H_ */
-
-/** \} End of ina22x_wrap group */
+/** \} End of i2c_wrap group */

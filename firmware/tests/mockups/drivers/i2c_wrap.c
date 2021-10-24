@@ -1,5 +1,5 @@
 /*
- * flash_wrap.c
+ * i2c_wrap.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,15 +21,15 @@
  */
 
 /**
- * \brief Flash driver wrap implementation.
+ * \brief I2C driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
- * \date 2021/08/07
+ * \date 2021/08/24
  * 
- * \addtogroup flash_wrap
+ * \addtogroup i2c_wrap
  * \{
  */
 
@@ -41,49 +41,42 @@
 #include <float.h>
 #include <cmocka.h>
 
-#include "flash_wrap.h"
+#include "i2c_wrap.h"
 
-int __wrap_flash_init(void)
+int __wrap_i2c_init(i2c_port_t port, i2c_config_t config)
 {
+    check_expected(port);
+    check_expected(config.speed_hz);
+
     return mock_type(int);
 }
 
-void __wrap_flash_write(uint8_t *data, uint16_t len)
+int __wrap_i2c_write(i2c_port_t port, i2c_slave_adr_t adr, uint8_t *data, uint16_t len)
 {
+    check_expected(port);
+    check_expected(adr);
+    check_expected_ptr(data);
     check_expected(len);
 
-    return;
+    return mock_type(int);
 }
 
-void __wrap_flash_write_single(uint8_t data, uint8_t *addr)
+int __wrap_i2c_read(i2c_port_t port, i2c_slave_adr_t adr, uint8_t *data, uint16_t len)
 {
-    check_expected(data);
+    check_expected(port);
+    check_expected(adr);
+    check_expected(len);
 
-    return;
+    if (data != NULL)
+    {
+        uint16_t i = 0;
+        for(i=0; i<len; i++)
+        {
+            data[i] = mock_type(uint8_t);
+        }
+    }
+
+    return mock_type(int);
 }
 
-uint8_t __wrap_flash_read_single(uint8_t *addr)
-{
-    return mock_type(uint8_t);
-}
-
-void __wrap_flash_write_long(uint32_t data, uint32_t *addr)
-{
-    check_expected(data);
-
-    return;
-}
-
-uint32_t __wrap_flash_read_long(uint32_t *addr)
-{
-    return mock_type(uint8_t);
-}
-
-void __wrap_flash_erase(uint32_t *region)
-{
-    function_called();
-
-    return;
-}
-
-/** \} End of flash_wrap group */
+/** \} End of i2c_wrap group */

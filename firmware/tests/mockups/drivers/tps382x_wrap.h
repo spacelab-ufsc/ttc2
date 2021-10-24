@@ -1,5 +1,5 @@
 /*
- * wdt_wrap.h
+ * tps382x_wrap.h
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,40 +21,42 @@
  */
 
 /**
- * \brief WDT driver wrap definition.
+ * \brief TPS382x driver wrap definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.1
+ * \version 0.1.5
  * 
- * \date 2021/02/16
+ * \date 2021/02/17
  * 
- * \defgroup wdt_wrap WDT Wrap
+ * \defgroup tps382x_wrap TPS382x Wrap
  * \ingroup tests
  * \{
  */
 
-#ifndef WDT_WRAP_H_
-#define WDT_WRAP_H_
+#ifndef TPS382X_WRAP_H_
+#define TPS382X_WRAP_H_
 
-#include <drivers/wdt/wdt.h>
+#include <drivers/tps382x/tps382x.h>
 
 /**
- * \brief Mockup of the WDT initialization function implemented as an wrap function.
+ * \brief Mockup of the TPS382x initialization function implemented as an wrap function.
  *
- * \param[in] config is the configuration to initialize the WDT.
+ * \param[in] config is the configuration parameters of the TPS382x driver.
  *
  * \return The status/error code.
  */
-int __wrap_wdt_init(wdt_config_t config);
+int __wrap_tps382x_init(tps382x_config_t config);
 
 /**
- * \brief Mockup of the WDT reset function implemented as an wrap function.
+ * \brief Mockup of the TPS382x trigger function implemented as an wrap function.
+ *
+ * \param[in] config is the configuration parameters of the TPS382x driver.
  *
  * \return None.
  */
-void __wrap_wdt_reset(void);
+void __wrap_tps382x_trigger(tps382x_config_t config);
 
-#endif /* WDT_WRAP_H_ */
+#endif /* TPS382X_WRAP_H_ */
 
-/** \} End of wdt_wrap group */
+/** \} End of tps382x_wrap group */

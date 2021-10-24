@@ -1,5 +1,5 @@
 /*
- * ina22x_wrap.c
+ * gpio_wrap.c
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
@@ -21,15 +21,15 @@
  */
 
 /**
- * \brief INA22x driver wrap implementation.
+ * \brief GPIO driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
- * \date 2021/08/12
+ * \date 2021/02/13
  * 
- * \addtogroup ina22x_wrap
+ * \addtogroup gpio_wrap
  * \{
  */
 
@@ -41,36 +41,45 @@
 #include <float.h>
 #include <cmocka.h>
 
-#include "ina22x_wrap.h"
+#include "gpio_wrap.h"
 
-int __wrap_ina22x_init(ina22x_config_t config)
+int __wrap_gpio_init(gpio_pin_t pin, gpio_config_t config)
 {
-    return -1;
+    check_expected(pin);
+    check_expected(config.mode);
+
+    return mock_type(int);
 }
 
-int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val)
+int __wrap_gpio_set_state(gpio_pin_t pin, bool level)
 {
-    return -1;
+    check_expected(pin);
+    check_expected(level);
+
+    return mock_type(int);
 }
 
-int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val)
+int __wrap_gpio_get_state(gpio_pin_t pin)
 {
-    return -1;
+    check_expected(pin);
+
+    int pin_val = mock_type(int);
+
+    if ((pin_val == 0) || (pin_val == 1))
+    {
+        return pin_val;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
-int __wrap_ina22x_get_current(ina22x_config_t config, ina22x_current_t *cur)
+int __wrap_gpio_toggle(gpio_pin_t pin)
 {
-    return -1;
+    check_expected(pin);
+
+    return mock_type(int);
 }
 
-int __wrap_ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id)
-{
-    return -1;
-}
-
-int __wrap_ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id)
-{
-    return -1;
-}
-
-/** \} End of ina22x_wrap group */
+/** \} End of gpio_wrap group */
