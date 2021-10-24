@@ -3,20 +3,20 @@
  * 
  * Copyright (C) 2021, SpaceLab.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.5
  * 
  * \date 2021/02/13
  * 
@@ -42,8 +42,7 @@
 #include <cmocka.h>
 
 #include <devices/temp_sensor/temp_sensor.h>
-#include <tests/mockups/sys_log_wrap.h>
-#include <tests/mockups/adc_wrap.h>
+#include <drivers/adc/adc.h>
 
 #define TEMP_SENSOR_ADC_PORT            ADC_PORT_5
 #define TEMP_SENSOR_ADC_MIN_VAL         0
@@ -57,16 +56,15 @@
 
 static void temp_sensor_init_test(void **state)
 {
-    expect_value(__wrap_adc_init, port, TEMP_SENSOR_ADC_PORT);
     expect_value(__wrap_adc_read, port, TEMP_SENSOR_ADC_PORT);
 
+    will_return(__wrap_adc_init, 0);
     will_return(__wrap_adc_read, 1024);
+    will_return(__wrap_adc_read, 0);
     will_return(__wrap_adc_temp_get_mref, TEMP_SENSOR_ADC_MREF_VAL);
     will_return(__wrap_adc_temp_get_nref, TEMP_SENSOR_ADC_NREF_VAL);
 
-    int result = temp_sensor_init();
-
-    assert_return_code(result, 0);
+    assert_return_code(temp_sensor_init(), 0);
 }
 
 static void temp_sensor_read_raw_test(void **state)
@@ -78,6 +76,7 @@ static void temp_sensor_read_raw_test(void **state)
         expect_value(__wrap_adc_read, port, TEMP_SENSOR_ADC_PORT);
 
         will_return(__wrap_adc_read, i);
+        will_return(__wrap_adc_read, 0);
 
         uint16_t raw_temp = UINT16_MAX;
 
@@ -112,9 +111,7 @@ static void temp_sensor_raw_to_k_test(void **state)
         will_return(__wrap_adc_temp_get_mref, TEMP_SENSOR_ADC_MREF_VAL);
         will_return(__wrap_adc_temp_get_nref, TEMP_SENSOR_ADC_NREF_VAL);
 
-        uint16_t temp_k = temp_sensor_raw_to_k(i);
-
-        assert_in_range(temp_k, TEMP_SENSOR_MIN_VAL_K, TEMP_SENSOR_MAX_VAL_K);
+        assert_in_range(temp_sensor_raw_to_k(i), TEMP_SENSOR_MIN_VAL_K, TEMP_SENSOR_MAX_VAL_K);
     }
 }
 
@@ -127,6 +124,7 @@ static void temp_sensor_read_c_test(void **state)
         expect_value(__wrap_adc_read, port, TEMP_SENSOR_ADC_PORT);
 
         will_return(__wrap_adc_read, i);
+        will_return(__wrap_adc_read, 0);
         will_return(__wrap_adc_temp_get_mref, TEMP_SENSOR_ADC_MREF_VAL);
         will_return(__wrap_adc_temp_get_nref, TEMP_SENSOR_ADC_NREF_VAL);
 
@@ -148,6 +146,7 @@ static void temp_sensor_read_k_test(void **state)
         expect_value(__wrap_adc_read, port, TEMP_SENSOR_ADC_PORT);
 
         will_return(__wrap_adc_read, i);
+        will_return(__wrap_adc_read, 0);
         will_return(__wrap_adc_temp_get_mref, TEMP_SENSOR_ADC_MREF_VAL);
         will_return(__wrap_adc_temp_get_nref, TEMP_SENSOR_ADC_NREF_VAL);
 
