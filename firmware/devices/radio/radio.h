@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.24
+ * \version 0.1.7
  * 
  * \date 2019/10/27
  * 
@@ -66,13 +66,11 @@ int radio_send(uint8_t *data, uint16_t len, uint32_t timeout_ms);
  *
  * \param[in] data is a pointer to store the read data.
  *
- * \param[in] len is the number of bytes to read.
- *
  * \param[in] timeout_ms is the timeout to received a packet in milliseconds.
  *
  * \return The number of read bytes (-1 on error).
  */
-int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms);
+int radio_recv(uint8_t *data, uint32_t timeout_ms);
 
 /**
  * \brief Verifies the number of availables bytes to receive.
@@ -84,27 +82,9 @@ int radio_available(void);
 /**
  * \brief Puts the radio in sleep mode.
  *
- * \return The status/error code.
+ * \return Tge status/error code.
  */
 int radio_sleep(void);
-
-/**
- * \brief Reads the current temperature of the radio.
- *
- * \param[in,out] temp is a pointer to store the read temperature.
- *
- * \return The status/error code.
- */
-int radio_get_temperature(uint16_t *temp);
-
-/**
- * \brief Reads the RSSI of the radio.
- *
- * \param[in,out] rssi is a pointer to store the read RSSI value.
- *
- * \return The status/error code.
- */
-int radio_get_rssi(uint16_t *rssi);
 
 #endif /* RADIO_H_ */
 

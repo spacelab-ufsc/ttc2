@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.1.7
  * 
  * \date 2020/07/21
  * 
@@ -33,6 +33,7 @@
  * \{
  */
 
+#include <config/config.h>
 #include <system/sys_log/sys_log.h>
 
 #include <drivers/flash/flash.h>
@@ -41,102 +42,139 @@
 
 int media_init(media_t med)
 {
+    int err = -1;
+
     switch(med)
     {
         case MEDIA_INT_FLASH:
-            return flash_init();
-        case MEDIA_NOR:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Initialization not implemented for the NOR memory!");
-            sys_log_new_line();
+            err = flash_init();
 
-            return -1;
+            break;
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to initialize!");
             sys_log_new_line();
 
-            return -1;
+            break;
     }
+
+    return err;
 }
 
-int media_write(media_t med, uint32_t adr, uint32_t *data, uint16_t len)
+int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
 {
+    int err = -1;
+
     switch(med)
     {
         case MEDIA_INT_FLASH:
         {
             /* Address index */
-            adr += FLASH_SEG_A_ADR;
+            uint32_t adr_idx = adr + FLASH_SEG_A_ADR;
 
             uint16_t i = 0;
-            for(i=0; i<len; i+=4)
+            for(i=0; i<len; i+=4U)
             {
-                flash_write_long(data[i], (uint32_t*)(adr + i));
+                uint32_t adr_counter = adr_idx + i;
+
+                flash_write_long((uint32_t)data[i], &adr_counter);
             }
 
-            return 0;
-        }
-        case MEDIA_NOR:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Write operation not implemented for the NOR memory!");
-            sys_log_new_line();
+            err = 0;
 
-            return -1;
+            break;
+        }
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to write!");
             sys_log_new_line();
 
-            return -1;
+            break;
     }
+
+    return err;
 }
 
-int media_read(media_t med, uint32_t adr, uint32_t *data, uint16_t len)
+int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
 {
+    int err = -1;
+
     switch(med)
     {
         case MEDIA_INT_FLASH:
         {
             /* Address index */
-            adr += FLASH_SEG_A_ADR;
+            uint32_t adr_idx = adr + FLASH_SEG_A_ADR;
 
             uint16_t i = 0;
-            for(i=0; i<len; i+=4)
+            for(i=0; i<len; i+=4U)
             {
-                data[i] = flash_read_long((uint32_t*)(adr + i));
+                uint32_t adr_counter = adr_idx + i;
+
+                data[i] = (uint8_t)flash_read_long(&adr_counter);
             }
 
-            return 0;
-        }
-        case MEDIA_NOR:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Read operation not implemented for the NOR memory!");
-            sys_log_new_line();
+            err = 0;
 
-            return -1;
+            break;
+        }
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to read!");
             sys_log_new_line();
 
-            return -1;
+            break;
     }
+
+    return err;
 }
 
-int media_erase(media_t med, uint32_t adr)
+int media_erase(media_t med, media_erase_t type, uint32_t sector)
 {
+    int err = -1;
+
     switch(med)
     {
         case MEDIA_INT_FLASH:
-            flash_write_single(0xFF, (uint8_t*)adr);
+        {
+            uint8_t sector_conv = UINT8_MAX;
+            if (sector > UINT8_MAX)
+            {
+                sector_conv = UINT8_MAX;
+            }
+            else
+            {
+                sector_conv = (uint8_t)sector;
+            }
 
-            return 0;
-        case MEDIA_NOR:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Erase operation not implemented for the NOR memory!");
-            sys_log_new_line();
+            flash_write_single(0xFF, &sector_conv);
 
-            return -1;
+            err = 0;
+
+            break;
+        }
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to erase!");
             sys_log_new_line();
 
-            return -1;
+            break;
     }
+
+    return err;
+}
+
+media_info_t media_get_info(media_t med)
+{
+    media_info_t info = {0};
+
+    switch(med)
+    {
+        case MEDIA_INT_FLASH:                                           break;
+        default:
+            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to get the information!");
+            sys_log_new_line();
+
+            break;
+    }
+
+    return info;
 }
 
 /** \} End of media group */
