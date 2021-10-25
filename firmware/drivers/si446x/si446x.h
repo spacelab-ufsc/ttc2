@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.21
+ * \version 0.1.8
  * 
  * \date 2017/06/01
  * 
@@ -52,15 +52,11 @@
 #define SI4467_PART_INFO        0x4467      /**< Si4467 part info value. */
 #define SI4468_PART_INFO        0x4468      /**< Si4468 part info value. */
 
-/**
- * \brief Error codes.
- */
-typedef enum
-{
-    SI446X_SPI_ERROR=-2,                    /**< Command error. */
-    SI446X_CTS_TIMEOUT,                     /**< CTS timeout. */
-    SI446X_SUCCESS                          /**< No errors. */
-} si446x_errors_e;
+/* Error codes */
+#define SI446X_INVAL_PAR_ERROR  (-3)        /**< Invalid parameter error. */
+#define SI446X_SPI_ERROR        (-2)        /**< Command error. */
+#define SI446X_CTS_TIMEOUT      (-1)        /**< CTS timeout. */
+#define SI446X_SUCCESS          0           /**< No errors. */
 
 /**
  * \brief Si446x states.
@@ -683,15 +679,6 @@ int si446x_gpio_init(void);
 int si446x_gpio_write_sdn(bool state);
 
 /**
- * \brief Writes the state of the the GPIO0 pin.
- *
- * \param[in] state is new state of the GPIO0 pin.
- *
- * \return The status/error code.
- */
-int si446x_gpio_write_gpio0(bool state);
-
-/**
  * \brief Reads the state of the nIRQ pin.
  *
  * \return The state of the nIRQ pin. It can be:
@@ -702,18 +689,6 @@ int si446x_gpio_write_gpio0(bool state);
  * \endparblock
  */
 int si446x_gpio_read_nirq(void);
-
-/**
- * \brief Reads the state of the GPIO1 pin.
- *
- * \return The state of the GPIO1 pin. It can be:
- * \parblock
- *      -\b GPIO_STATE_HIGH
- *      -\b GPIO_STATE_LOW
- *      .
- * \endparblock
- */
-int si446x_gpio_read_gpio1(bool state);
 
 /**
  * \brief Milliseconds delay.

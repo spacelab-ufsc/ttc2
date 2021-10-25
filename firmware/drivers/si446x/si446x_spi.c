@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.26
+ * \version 0.1.8
  * 
  * \date 2017/07/29
  * 
@@ -34,44 +34,42 @@
  * \{
  */
 
+#include <stdint.h>
+
+#include <config/config.h>
 #include <drivers/spi/spi.h>
 #include <drivers/gpio/gpio.h>
 
 #include "si446x.h"
 
-#define SI446X_SPI_PORT         SPI_PORT_3
-#define SI446X_SPI_CS_PIN       SPI_CS_0
-#define SI446X_SPI_CLK_HZ       100000
-#define SI446X_SPI_MODE         SPI_MODE_1
-
 int si446x_spi_init(void)
 {
-    spi_config_t spi_conf = {0};
+    spi_config_t conf = {0};
 
-    spi_conf.speed_hz   = SI446X_SPI_CLK_HZ;
-    spi_conf.mode       = SI446X_SPI_MODE;
+    conf.speed_hz   = CONFIG_SPI_PORT_0_SPEED_BPS;
+    conf.mode       = SPI_MODE_1;
 
-    return spi_init(SI446X_SPI_PORT, spi_conf);
+    return spi_init(SPI_PORT_3, conf);
 }
 
 int si446x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len)
 {
-    return spi_transfer(SI446X_SPI_PORT, SI446X_SPI_CS_PIN, wd, rd, len);
+    return spi_transfer(SPI_PORT_3, SPI_CS_0, wd, rd, len);
 }
 
 int si446x_spi_write_byte(uint8_t byte)
 {
-    return spi_write(SI446X_SPI_PORT, SI446X_SPI_CS_PIN, &byte, 1);
+    return spi_write(SPI_PORT_3, SPI_CS_0, &byte, 1);
 }
 
 int si446x_spi_write(uint8_t *data, uint16_t len)
 {
-    return spi_write(SI446X_SPI_PORT, SI446X_SPI_CS_PIN, data, len);
+    return spi_write(SPI_PORT_3, SPI_CS_0, data, len);
 }
 
 int si446x_spi_read(uint8_t *data, uint16_t len)
 {
-    return spi_read(SI446X_SPI_PORT, SI446X_SPI_CS_PIN, data, len);
+    return spi_read(SPI_PORT_3, SPI_CS_0, data, len);
 }
 
 /** \} End of si446x group */

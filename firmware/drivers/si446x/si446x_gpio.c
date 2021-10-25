@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.21
+ * \version 0.1.8
  * 
  * \date 2020/05/14
  * 
@@ -38,64 +38,34 @@
 
 #include "si446x.h"
 
-#define SI446X_GPIO_SDN_PIN     GPIO_PIN_16
-#define SI446X_GPIO_NIRQ_PIN    GPIO_PIN_17
-#define SI446X_GPIO_0_PIN       GPIO_PIN_18
-#define SI446X_GPIO_1_PIN       GPIO_PIN_19
-
 int si446x_gpio_init(void)
 {
+    int err = -1;
+
     gpio_config_t conf = {0};
 
-    /* SDN pin */
     conf.mode = GPIO_MODE_OUTPUT;
 
-    if (gpio_init(SI446X_GPIO_SDN_PIN, conf) != 0)
+    /* SDN pin */
+    if (gpio_init(GPIO_PIN_16, conf) == 0)
     {
-        return -1;
+        conf.mode = GPIO_MODE_INPUT;
+
+        /* nIRQ pin */
+        err = gpio_init(GPIO_PIN_17, conf);
     }
 
-    /* GPIO0 pin */
-    if (gpio_init(SI446X_GPIO_0_PIN, conf) != 0)
-    {
-        return -1;
-    }
-
-    /* nIRQ pin */
-    conf.mode = GPIO_MODE_INPUT;
-
-    if (gpio_init(SI446X_GPIO_NIRQ_PIN, conf) != 0)
-    {
-        return -1;
-    }
-
-    /* GPIO1 pin */
-    if (gpio_init(SI446X_GPIO_1_PIN, conf) != 0)
-    {
-        return -1;
-    }
-
-    return gpio_set_state(SI446X_GPIO_SDN_PIN, true);
+    return err;
 }
 
 int si446x_gpio_write_sdn(bool state)
 {
-    return gpio_set_state(SI446X_GPIO_SDN_PIN, state);
-}
-
-int si446x_gpio_write_gpio0(bool state)
-{
-    return gpio_set_state(SI446X_GPIO_0_PIN, state);
+    return gpio_set_state(GPIO_PIN_16, state);
 }
 
 int si446x_gpio_read_nirq(void)
 {
-    return gpio_get_state(SI446X_GPIO_NIRQ_PIN);
-}
-
-int si446x_gpio_read_gpio1(bool state)
-{
-    return gpio_get_state(SI446X_GPIO_1_PIN);
+    return gpio_get_state(GPIO_PIN_17);
 }
 
 /** \} End of si446x_gpio group */
