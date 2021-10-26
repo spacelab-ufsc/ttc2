@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2020/04/04
  * 
@@ -42,7 +42,7 @@
 
 xTaskHandle xTaskCSPServerHandle;
 
-void vTaskCSPServer(void *pvParameters)
+void vTaskCSPServer(void)
 {
     /* Wait startup task to finish */
     xEventGroupWaitBits(task_startup_status, TASK_STARTUP_DONE, pdFALSE, pdTRUE, pdMS_TO_TICKS(TASK_CSP_SERVER_INIT_TIMEOUT_MS));
@@ -63,18 +63,24 @@ void vTaskCSPServer(void *pvParameters)
     while(1)
     {
         /* Wait for connection until reach timeout */
-        if ((conn = csp_accept(sock, CONFIG_CSP_WAIT_CONN_TIMEOUT_MS)) == NULL)
+        conn = csp_accept(sock, CONFIG_CSP_WAIT_CONN_TIMEOUT_MS);
+        if (conn == NULL)
         {
             continue;
         }
 
         /* Read packets until reach timeout */
-        while((packet = csp_read(conn, CONFIG_CSP_READ_PKT_TIMEOUT_MS)) != NULL)
+        packet = csp_read(conn, CONFIG_CSP_READ_PKT_TIMEOUT_MS);
+        while(packet != NULL)
         {
             switch(csp_conn_dport(conn))
             {
-                case CONFIG_CSP_PORT:
+                case CONFIG_CSP_PRIMARY_PORT:
                     /* TODO: Process packet here */
+                    break;
+                case CONFIG_CSP_SECONDARY_PORT:
+                    /* TODO: Process packet here */
+                    break;
                 default:
                     /* Let the service handler reply pings, buffer use, etc. */
                     csp_service_handler(conn, packet);

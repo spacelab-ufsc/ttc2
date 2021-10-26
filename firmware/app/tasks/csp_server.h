@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2020/04/04
  * 
@@ -54,11 +54,9 @@ extern xTaskHandle xTaskCSPServerHandle;
 /**
  * \brief CSP server task.
  *
- * \param[in] pvParameters is a value that will passed as the task's parameter.
- *
  * \return None.
  */
-void vTaskCSPServer(void *pvParameters);
+void vTaskCSPServer(void);
 
 #endif /* CSP_SERVER_H_ */
 
