@@ -333,6 +333,224 @@ int sx127x_set_rx_timeout(uint16_t symb_timeout);
  */
 int sx127x_read_rssi(uint8_t mode);
 
+/**
+ * \brief Power on the module.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_power_on_reset(void);
+
+/**
+ * \brief Sets the initial parameters.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_config(void);
+
+/**
+ * \brief Sets the antenna switch.
+ *
+ * \param[in] mode .
+ *
+ * \return The status/error code.
+ */
+static int sx127x_set_ant_switch(uint8_t mode);
+
+/**
+ * \brief .
+ *
+ * \param[in] adr .
+ *
+ * \return The status/error code.
+ */
+static int sx127x_set_fifo_addr_ptr(uint8_t adr);
+
+/**
+ * \brief Enters in RX mode.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_enter_rx_mode(void);
+
+/**
+ * \brief Enters in TX mode.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_enter_tx_mode(void);
+
+/**
+ * \brief Writes data to the FIFO.
+ *
+ * \param[in] data is an array with the bytes to be written in the FIFO.
+ *
+ * \param[in] len is the number of bytes to be written.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_write_fifo(uint8_t *data, uint8_t len);
+
+/**
+ * \brief Reads data from the FIFO.
+ *
+ * \param[in,out] data is a pointer to store the read data.
+ *
+ * \param[in,out] len is the number of read bytes.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_read_fifo(uint8_t *data, uint8_t *len);
+
+/**
+ * \brief Enables TX done interrupt.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_set_tx_interrupt(void);
+
+/**
+ * \brief Enables RX done interrupt.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_set_rx_interrupt(void);
+
+/**
+ * \brief Reads the value of a given register.
+ *
+ * \param[in] adr is the address of the register.
+ *
+ * \param[in,out] val is a pointer to store the read value.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_read_reg(uint8_t adr, uint8_t *val);
+
+/**
+ * \brief Writes a value to a register.
+ *
+ * \param[in] adr is the address of the register to write.
+ *
+ * \param[in] val is the value to write.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_write_reg(uint8_t adr, uint8_t val);
+
+/**
+ * \brief Reads the buffer trough SPI.
+ *
+ * \param[in] adr is the address to start reading.
+ *
+ * \param[in] ptr is a pointer to store the read data.
+ *
+ * \param[in] len is the number of bytes to read.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_burst_read(uint8_t adr, uint8_t *ptr, uint8_t len);
+
+/**
+ * \brief Writes buffer trough SPI.
+ *
+ * \param[in] adr is the address to start writing.
+ *
+ * \param[in] ptr is a pointer with the data to write.
+ *
+ * \param[in] len is the number of bytes to write.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_burst_write(uint8_t adr, uint8_t *ptr, uint8_t len);
+
+/**
+ * \brief SPI interface initialization.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_spi_init(void);
+
+/**
+ * \brief SPI transfer routine (write and read at the same time).
+ *
+ * \param[in] wd is an array ot bytes to write during the transfer.
+ *
+ * \param[in,out] rd is an array to store the read bytes during the transfer.
+ *
+ * \param[in] len is the number of bytes to transfer.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
+
+/**
+ * \brief Writes a byte over the SPI interface.
+ *
+ * \param[in] byte is the byte to be written to the SPI interface.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_spi_write_byte(uint8_t byte);
+
+/**
+ * \brief Write an array of bytes over the SPI interface.
+ *
+ * \param[in] data is the array of bytes to write to the SPI interface.
+ *
+ * \param[in] len is the number of bytes to be written.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_spi_write(uint8_t *data, uint16_t len);
+
+/**
+ * \brief Reads N bytes from the SPI interface.
+ *
+ * \param[in] data is an array to store the read bytes.
+ *
+ * \param[in] len is the number of bytes to read.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_spi_read(uint8_t *data, uint16_t len);
+
+/**
+ * \brief GPIO pins initialization.
+ *
+ * \return The status/error code.
+ */
+static int sx127x_gpio_init(void);
+
+/**
+ * \brief Write the state of the SDN pin.
+ *
+ * \param[in] state is new state of the SDN pin.
+ *
+ * \return The status/error code.
+ */
+static int sx127X_gpio_write_sdn(bool state);
+
+/**
+ * \brief Reads the state of the nIRQ pin.
+ *
+ * \return The state of the nIRQ pin. It can be:
+ * \parblock
+ *      -\b GPIO_STATE_HIGH
+ *      -\b GPIO_STATE_LOW
+ *      .
+ * \endparblock
+ */
+static int sx127x_gpio_read_nirq(void);
+
+/**
+ * \brief Milliseconds delay.
+ *
+ * \param[in] ms is the time to delay in milliseconds.
+ *
+ * \return None.
+ */
+void sx127x_delay_ms(uint32_t ms);
+
 #endif /* SX127X_H_ */
 
 /** \} End of sx127x group */

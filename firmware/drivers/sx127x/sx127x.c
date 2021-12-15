@@ -118,4 +118,74 @@ int sx127x_read_rssi(uint8_t mode)
     return -1;
 }
 
+int sx127x_power_on_reset(void)
+{
+    return -1;
+}
+
+int sx127x_config(void)
+{
+    return -1;
+}
+
+int sx127x_set_ant_switch(uint8_t mode)
+{
+    return -1;
+}
+
+int sx127x_set_fifo_addr_ptr(uint8_t adr)
+{
+    return -1;
+}
+
+int sx127x_enter_rx_mode(void)
+{
+    return -1;
+}
+
+int sx127x_enter_tx_mode(void)
+{
+    return -1;
+}
+
+int sx127x_write_fifo(uint8_t *data, uint8_t len)
+{
+    return -1;
+}
+
+int sx127x_read_fifo(uint8_t *data, uint8_t *len)
+{
+    return -1;
+}
+
+int sx127x_set_tx_interrupt(void)
+{
+    return -1;
+}
+
+int sx127x_set_rx_interrupt(void)
+{
+    return -1;
+}
+
+int sx127x_read_reg(uint8_t adr, uint8_t *val)
+{
+    return -1;
+}
+
+int sx127x_write_reg(uint8_t adr, uint8_t val)
+{
+    return -1;
+}
+
+int sx127x_burst_read(uint8_t adr, uint8_t *ptr, uint8_t len)
+{
+    return -1;
+}
+
+int sx127x_burst_write(uint8_t adr, uint8_t *ptr, uint8_t len)
+{
+    return -1;
+}
+
 /** \} End of sx127x group */
