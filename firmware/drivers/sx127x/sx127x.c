@@ -40,7 +40,41 @@
 
 int sx127x_init(void)
 {
-    return -1;
+    int err = 0;
+
+    if (sx127x_gpio_init() != 0)
+    {
+        err = -1;
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, SX127X_MODULE_NAME, "Error initializing the GPIO pins!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    }
+
+    if (sx127x_spi_init() != 0)
+    {
+        err = -1;
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, SX127X_MODULE_NAME, "Error initializing the SPI port!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    }
+
+    if (sx127x_power_on_reset() != 0)
+    {
+        err = -1;
+    }
+
+    if (sx127x_config() != 0)
+    {
+        err = -1;
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, SX127X_MODULE_NAME, "Error loading the configuration parameters!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    }
+
+    return err;
 }
 
 int sx127x_rx_init(void)
@@ -120,7 +154,15 @@ int sx127x_read_rssi(uint8_t mode)
 
 int sx127x_power_on_reset(void)
 {
-    return -1;
+    int err = sx127X_gpio_write_reset(false);
+
+    sx127x_delay_ms(10);
+
+    err = sx127X_gpio_write_reset(true);
+
+    sx127x_delay_ms(20);
+
+    return err;
 }
 
 int sx127x_config(void)
