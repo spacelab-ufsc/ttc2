@@ -38,19 +38,43 @@
 
 #include "sx127x.h"
 
+/* GPIO configuration */
+#define SX127X_GPIO_RESET_PIN           GPIO_PIN_16
+#define SX127X_GPIO_NIRQ_PIN            GPIO_PIN_17
+
 int sx127x_gpio_init(void)
 {
-    return -1;
+    int err = 0;
+
+    gpio_config_t conf = {0};
+
+    conf.mode = GPIO_MODE_OUTPUT;
+
+    /* RESET pin */
+    if (gpio_init(SX127X_GPIO_RESET_PIN, conf) != 0)
+    {
+        err = -1;
+    }
+
+    conf.mode = GPIO_MODE_INPUT;
+
+    /* nIRQ pin */
+    if (gpio_init(SX127X_GPIO_NIRQ_PIN, conf) != 0)
+    {
+        err = -1;
+    }
+
+    return err;
 }
 
-int sx127X_gpio_write_sdn(bool state)
+int sx127X_gpio_write_reset(bool state)
 {
-    return -1;
+    return gpio_set_state(SX127X_GPIO_RESET_PIN, state);
 }
 
 int sx127x_gpio_read_nirq(void)
 {
-    return -1;
+    return gpio_get_state(SX127X_GPIO_NIRQ_PIN);
 }
 
 /** \} End of sx127x group */

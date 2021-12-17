@@ -522,13 +522,13 @@ static int sx127x_spi_read(uint8_t *data, uint16_t len);
 static int sx127x_gpio_init(void);
 
 /**
- * \brief Write the state of the SDN pin.
+ * \brief Write the state of the RESET pin.
  *
- * \param[in] state is new state of the SDN pin.
+ * \param[in] state is new state of the RESET pin.
  *
  * \return The status/error code.
  */
-static int sx127X_gpio_write_sdn(bool state);
+static int sx127X_gpio_write_reset(bool state);
 
 /**
  * \brief Reads the state of the nIRQ pin.

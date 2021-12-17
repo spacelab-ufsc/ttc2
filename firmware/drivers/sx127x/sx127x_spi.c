@@ -38,29 +38,40 @@
 
 #include "sx127x.h"
 
+/* SPI configuration */
+#define SX127X_SPI_PORT         SPI_PORT_3
+#define SX127X_SPI_CS_PIN       SPI_CS_0
+#define SX127X_SPI_MODE         SPI_MODE_1
+#define SX127X_SPI_SPEED        CONFIG_SPI_PORT_0_SPEED_BPS
+
 int sx127x_spi_init(void)
 {
-    return -1;
+    spi_config_t conf = {0};
+
+    conf.speed_hz   = SX127X_SPI_SPEED;
+    conf.mode       = SX127X_SPI_MODE;
+
+    return spi_init(SX127X_SPI_PORT, conf);
 }
 
 int sx127x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len)
 {
-    return -1;
+    return spi_transfer(SX127X_SPI_PORT, SX127X_SPI_CS_PIN, wd, rd, len);
 }
 
 int sx127x_spi_write_byte(uint8_t byte)
 {
-    return -1;
+    return spi_write(SX127X_SPI_PORT, SX127X_SPI_CS_PIN, &byte, 1);
 }
 
 int sx127x_spi_write(uint8_t *data, uint16_t len)
 {
-    return -1;
+    return spi_write(SX127X_SPI_PORT, SX127X_SPI_CS_PIN, data, len);
 }
 
 int sx127x_spi_read(uint8_t *data, uint16_t len)
 {
-    return -1;
+    return spi_read(SX127X_SPI_PORT, SX127X_SPI_CS_PIN, data, len);
 }
 
 /** \} End of sx127x group */
