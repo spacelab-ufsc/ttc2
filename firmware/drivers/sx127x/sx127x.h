@@ -41,6 +41,11 @@
 
 #define SX127X_MODULE_NAME                  "SX127x"
 
+#define SX127X_XOSC_HZ                      32000000UL  /**< Clock frequency. */
+
+/* RF frequency band (low frequency band is up to 525M, lora1278 only support low frequency band */
+#define SX127X_FREQUENCY_BAND               SX127X_LOW_FREQ_MODE_ON_433M
+
 /* Registers addresses (common) */
 #define SX127X_REG_FIFO                     0x00U       /**< FIFO read/write access. */
 #define SX127X_REG_OP_MODE                  0x01U       /**< Operating mode & LoRa/FSK selection. */
@@ -159,6 +164,67 @@
 #define SX127X_REG_SYNC_WORD                0x39U       /**< LoRa Sync Word. */
 #define SX127X_REG_HIGH_BW_OPTIMIZE_2       0x3AU       /**< Sensitivity optimisation for 500 kHz bandwidth. */
 #define SX127X_REG_INVERT_IQ_2              0x3BU       /**< Optimize for inverted IQ. */
+
+/* Register Op Mode */
+#define SX127X_LONG_RANGE_MODE_FSK          0x00U
+#define SX127X_LONG_RANGE_MODE_LORA         0x80U
+#define SX127X_MODULATION_TYPE_FSK          0x00U
+#define SX127X_MODULATION_TYPE_OOK          0x20U
+#define SX127X_LOW_FREQ_MODE_ON_868M        0x00U
+#define SX127X_LOW_FREQ_MODE_ON_433M        0x08U
+#define SX127X_OP_MODE_SLEEP                0x00U
+#define SX127X_OP_MODE_STBY                 0x01U
+#define SX127X_OP_MODE_FS_TX                0x02U
+#define SX127X_OP_MODE_TX                   0x03U
+#define SX127X_OP_MODE_FS_RX                0x04U
+#define SX127X_OP_MODE_RX_CONTINUOUS        0x05U
+#define SX127X_OP_MODE_RX_SINGLE            0x06U
+#define SX127X_OP_MODE_CAD                  0x07U
+
+/* Register Modem Config 1 */
+#define SX127X_BW_7P8K                      0x00U
+#define SX127X_BW_10p4K                     0x10U
+#define SX127X_BW_15P6K                     0x20U
+#define SX127X_BW_20P8K                     0x30U
+#define SX127X_BW_31P25K                    0x40U
+#define SX127X_BW_41P7K                     0x50U
+#define SX127X_BW_62P5K                     0x60U
+#define SX127X_BW_125K                      0x70U
+#define SX127X_BW_250K                      0x80U
+#define SX127X_BW_500K                      0x90U
+#define SX127X_CODING_RATE_1P25             0x02U       /* 4/5 */
+#define SX127X_CODING_RATE_1P5              0x04U       /* 4/6 */
+#define SX127X_CODING_RATE_1P75             0x06U       /* 4/7 */
+#define SX127X_CODINGRATE_2                 0x08U       /* 4/8 */
+#define SX127X_IMPLICIT_HEADER_MODE         0x01U
+#define SX127X_EXPLICIT_HEADER_MODE         0x00U
+
+/* Register Modem Config 2 */
+#define SX127X_SPREADING_FACTOR_6           0x60U
+#define SX127X_SPREADING_FACTOR_7           0x70U
+#define SX127X_SPREADING_FACTOR_8           0x80U
+#define SX127X_SPREADING_FACTOR_9           0x90U
+#define SX127X_SPREADING_FACTOR_10          0xA0U
+#define SX127X_SPREADING_FACTOR_11          0xB0U
+#define SX127X_SPREADING_FACTOR_12          0xC0U
+#define SX127X_TX_CONTINUOUS_MODE           0x08U
+#define SX127X_TX_NORMAL_MODE               0x00U
+#define SX127X_PAYLOAD_CRC_ON               0x04U
+#define SX127X_PAYLOAD_CRC_OFF              0x00U
+
+/* Regisgter PA Config values */
+#define SX127X_PA_SELECT_RFO                0x00U
+#define SX127X_PA_SELECT_PA_BOOST           0x80U
+
+/**
+ * \brief Operation modes.
+ */
+typedef enum
+{
+    SX127X_MODE_STANDBY=0,                              /**< Standby mode. */
+    SX127X_MODE_RX,                                     /**< RX mode. */
+    SX127X_MODE_TX                                      /**< TX mode. */
+} sx127x_mode_t;
 
 /**
  * \brief Module initialization.
@@ -329,9 +395,13 @@ int sx127x_set_rx_timeout(uint16_t symb_timeout);
  *      .
  * \endparblock
  *
+ * \param[in] rssi_val is the read RSSI value.
+ *
+ * \note RSSI [dBm] = -137 + rssi_val
+ *
  * \return The status/error code.
  */
-int sx127x_read_rssi(uint8_t mode);
+int sx127x_read_rssi(uint8_t mode, uint8_t rssi_val);
 
 /**
  * \brief Power on the module.
@@ -350,11 +420,17 @@ static int sx127x_config(void);
 /**
  * \brief Sets the antenna switch.
  *
- * \param[in] mode .
+ * \param[in] mode is the operation mode. It can be:
+ * \parblock
+ *      -\b SX127X_MODE_STANDBY
+ *      -\b SX127X_MODE_RX
+ *      -\b SX127X_MODE_TX
+ *      .
+ * \endparblock
  *
  * \return The status/error code.
  */
-static int sx127x_set_ant_switch(uint8_t mode);
+static int sx127x_set_ant_switch(sx127x_mode_t mode);
 
 /**
  * \brief .
