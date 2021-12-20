@@ -38,6 +38,7 @@
 #define SX127X_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SX127X_MODULE_NAME                  "SX127x"
 
@@ -215,6 +216,9 @@
 /* Regisgter PA Config values */
 #define SX127X_PA_SELECT_RFO                0x00U
 #define SX127X_PA_SELECT_PA_BOOST           0x80U
+
+/* The first bit in SPI address byte is a wnr bit, 1 for write access , 0 for read access */
+#define SX127X_SPI_WNR                      0x80U
 
 /**
  * \brief Operation modes.
@@ -544,7 +548,7 @@ static int sx127x_burst_write(uint8_t adr, uint8_t *ptr, uint8_t len);
  *
  * \return The status/error code.
  */
-static int sx127x_spi_init(void);
+int sx127x_spi_init(void);
 
 /**
  * \brief SPI transfer routine (write and read at the same time).
@@ -557,7 +561,7 @@ static int sx127x_spi_init(void);
  *
  * \return The status/error code.
  */
-static int sx127x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
+int sx127x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
 
 /**
  * \brief Writes a byte over the SPI interface.
@@ -566,7 +570,7 @@ static int sx127x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
  *
  * \return The status/error code.
  */
-static int sx127x_spi_write_byte(uint8_t byte);
+int sx127x_spi_write_byte(uint8_t byte);
 
 /**
  * \brief Write an array of bytes over the SPI interface.
@@ -577,7 +581,7 @@ static int sx127x_spi_write_byte(uint8_t byte);
  *
  * \return The status/error code.
  */
-static int sx127x_spi_write(uint8_t *data, uint16_t len);
+int sx127x_spi_write(uint8_t *data, uint16_t len);
 
 /**
  * \brief Reads N bytes from the SPI interface.
@@ -588,14 +592,14 @@ static int sx127x_spi_write(uint8_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-static int sx127x_spi_read(uint8_t *data, uint16_t len);
+int sx127x_spi_read(uint8_t *data, uint16_t len);
 
 /**
  * \brief GPIO pins initialization.
  *
  * \return The status/error code.
  */
-static int sx127x_gpio_init(void);
+int sx127x_gpio_init(void);
 
 /**
  * \brief Write the state of the RESET pin.
@@ -604,7 +608,7 @@ static int sx127x_gpio_init(void);
  *
  * \return The status/error code.
  */
-static int sx127X_gpio_write_reset(bool state);
+int sx127X_gpio_write_reset(bool state);
 
 /**
  * \brief Reads the state of the nIRQ pin.
@@ -616,7 +620,7 @@ static int sx127X_gpio_write_reset(bool state);
  *      .
  * \endparblock
  */
-static int sx127x_gpio_read_nirq(void);
+int sx127x_gpio_read_nirq(void);
 
 /**
  * \brief Milliseconds delay.

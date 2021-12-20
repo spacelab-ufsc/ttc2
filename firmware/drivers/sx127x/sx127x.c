@@ -619,22 +619,75 @@ int sx127x_set_rx_interrupt(void)
 
 int sx127x_read_reg(uint8_t adr, uint8_t *val)
 {
-    return -1;
+    int err = -1;
+
+    uint8_t wbuf[2] = {0};
+    uint8_t rbuf[2] = {0};
+
+    if (sx127x_spi_transfer(wbuf, rbuf, 2) == 0)
+    {
+        *val = rbuf[1];
+
+        err = 0;
+    }
+
+    return err;
 }
 
 int sx127x_write_reg(uint8_t adr, uint8_t val)
 {
-    return -1;
+    uint8_t wbuf[2] = {0};
+
+    wbuf[0] = adr | SX127X_SPI_WNR;
+    wbuf[1] = val;
+
+    return sx127x_spi_write(wbuf, 2);
 }
 
 int sx127x_burst_read(uint8_t adr, uint8_t *ptr, uint8_t len)
 {
-    return -1;
+    int err = -1;
+
+    if (len <= 1)
+    {
+        err = sx127x_read_reg(adr, ptr);
+    }
+    else
+    {
+        uint8_t wbuf[32] = {0};
+
+        err = sx127x_spi_write(adr, 1);
+
+        uint8_t i = 0;
+        for(i = 0; i < len; i++)
+        {
+            err = sx127x_spi_transfer(wbuf, ptr, len);
+        }
+    }
+
+    return err;
 }
 
 int sx127x_burst_write(uint8_t adr, uint8_t *ptr, uint8_t len)
 {
-    return -1;
+    int err = -1;
+
+    if (len <= 1)
+    {
+        err = sx127x_write_reg(adr, ptr[0]);
+    }
+    else
+    {
+        uint8_t wbuf[32] = {0};
+
+        wbuf[0] = adr | SX127X_SPI_WNR;
+
+        memcpy(&wbuf[1], ptr, len);
+
+        err = sx127x_spi_write(wbuf, 1U + len)
+    }
+
+    return err;
 }
 
 /** \} End of sx127x group */
