@@ -1,7 +1,7 @@
 /*
  * version.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.1.11
  * 
  * \date 2021/04/04
  * 
@@ -36,7 +36,7 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define FIRMWARE_VERSION            "0.1.10"
+#define FIRMWARE_VERSION            "0.1.11"
 
 #define FIRMWARE_STATUS             "Development"
 

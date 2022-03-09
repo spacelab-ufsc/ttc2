@@ -1,7 +1,7 @@
 /*
  * ina22x.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.18=9
+ * \version 0.1.11
  * 
  * \date 2021/04/11
  * 
@@ -33,11 +33,15 @@
  * \{
  */
 
+#include <system/sys_log/sys_log.h>
+
+#include <drivers/i2c/i2c.h>
+
 #include "ina22x.h"
 
 int ina22x_init(ina22x_config_t config)
 {
-    return -1;
+    return i2c_init(INA22X_I2C_PORT, config.i2c_conf);
 }
 
 int ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val)

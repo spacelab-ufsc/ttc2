@@ -1,7 +1,7 @@
 /*
  * ina22x.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.19
+ * \version 0.1.11
  * 
  * \date 2021/04/10
  * 
@@ -38,6 +38,11 @@
 #define INA22X_H_
 
 #include <stdint.h>
+
+/* I2C configuration */
+#define INA22X_I2C_PORT                 I2C_PORT_2
+#define INA22X_I2C_CLOCK_HZ             100000
+#define INA22X_I2C_SLAVE_ADDRESS        4
 
 /* Registers */
 #define INA22X_REG_CONFIGURATION        0x00    /**< Configuration register. */
@@ -71,6 +76,8 @@ typedef uint16_t ina22x_id_t;
  */
 typedef struct
 {
+    i2c_port_t i2c_port;
+    i2c_config_t i2c_conf;
 } ina22x_config_t;
 
 /**
