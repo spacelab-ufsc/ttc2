@@ -181,6 +181,23 @@ int uart_write(uart_port_t port, uint8_t *data, uint16_t len);
  */
 int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
 
+/**
+ * \brief Reads the RX ISR buffer.
+ *
+ * \param[in] port is the UART port to read. It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \param[in] data is an array to store the read data.
+ *
+ * \return The status/error code.
+ */
+int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
+
 #endif /* UART_H_ */
 
 /** \} End of uart group */

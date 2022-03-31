@@ -25,6 +25,8 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
  * \version 0.1.4
  * 
  * \date 2019/12/07
@@ -40,6 +42,18 @@
 #include <system/sys_log/sys_log.h>
 
 #include "uart.h"
+
+/* Uart Interruption Buffers */
+extern uint16_t buffer_size;
+
+static uint8_t uart_usci_a0_rx_buffer[buffer_size]; /* USCI_A0 receiver buffer */
+static uint8_t uart_usci_a1_rx_buffer[buffer_size]; /* USCI_A1 receiver buffer */
+static uint8_t uart_usci_a2_rx_buffer[buffer_size]; /* USCI_A2 receiver buffer */
+
+/* Uart buffer positions */
+static uint16_t uart_usci_a0_rx_buffer_pos;
+static uint16_t uart_usci_a1_rx_buffer_pos;
+static uint16_t uart_usci_a2_rx_buffer_pos;
 
 int uart_init(uart_port_t port, uart_config_t config)
 {
@@ -157,6 +171,7 @@ int uart_init(uart_port_t port, uart_config_t config)
     }
 
     USCI_A_UART_enable(base_address);
+    USCI_A_UART_enableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT); //Enables RX interruption
 
     return err;
 }
@@ -285,4 +300,65 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len)
     return err;
 }
 
+
+int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
+{
+    uint16_t i = 0;
+    switch(port)
+    {
+    case UART_PORT_0:
+        for(i=0; i<buffer_size; i++)
+            {
+                data[i] = uart_usci_a0_rx_buffer[i];
+            }
+        break;
+    case UART_PORT_1:
+        for(i=0; i<buffer_size; i++)
+            {
+                data[i] = uart_usci_a1_rx_buffer[i];
+            }
+        break;
+    case UART_PORT_2:
+        for(i=0; i<buffer_size; i++)
+            {
+                data[i] = uart_usci_a2_rx_buffer[i];
+            }
+        break;
+
+            return 0;
+
+    }
+}
+
+/* Interrupt Service Routines */
+
+#pragma vector=USCI_A0_VECTOR
+__interrupt void USCI_A0_ISR(void)
+{
+    if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
+    {
+        uart_usci_a0_rx_buffer[uart_usci_a0_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A0_BASE);
+        if (uart_usci_a0_rx_buffer_pos == buffer_size) uart_usci_a0_rx_buffer_pos = 0; //Returns to the first position
+    }
+}
+
+#pragma vector=USCI_A1_VECTOR
+__interrupt void USCI_A1_ISR(void)
+{
+    if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
+    {
+        uart_usci_a1_rx_buffer[uart_usci_a1_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A1_BASE);
+        if (uart_usci_a1_rx_buffer_pos == buffer_size) uart_usci_a1_rx_buffer_pos = 0; //Returns to the first position
+    }
+}
+
+#pragma vector=USCI_A2_VECTOR
+__interrupt void USCI_A2_ISR(void)
+{
+    if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
+    {
+        uart_usci_a2_rx_buffer[uart_usci_a2_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A2_BASE);
+        if (uart_usci_a2_rx_buffer_pos == buffer_size) uart_usci_a2_rx_buffer_pos = 0; //Returns to the first position
+    }
+}
 /** \} End of uart group */
