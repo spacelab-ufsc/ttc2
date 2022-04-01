@@ -198,6 +198,13 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
  */
 int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
 
+/**
+ * \brief Reads the RX ISR buffer size.
+ *
+ * \return The size of the ISR RX buffer.
+ */
+int uart_return_isr_rx_buffer_size(void);
+
 #endif /* UART_H_ */
 
 /** \} End of uart group */

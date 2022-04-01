@@ -330,6 +330,11 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
     }
 }
 
+int uart_return_isr_rx_buffer_size(void)
+{
+    return buffer_size;
+}
+
 /* Interrupt Service Routines */
 
 #pragma vector=USCI_A0_VECTOR
