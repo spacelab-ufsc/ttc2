@@ -303,6 +303,7 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len)
 
 int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
 {
+    int err = 0;
     uint16_t i = 0;
     switch(port)
     {
@@ -324,10 +325,16 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
                 data[i] = uart_usci_a2_rx_buffer[i];
             }
         break;
-
-            return 0;
-
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error during reading isr rx buffer: Invalid port!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;
     }
+
+    return err;
+
 }
 
 int uart_return_isr_rx_buffer_size(void)
