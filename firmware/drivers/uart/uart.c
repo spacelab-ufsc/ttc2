@@ -43,17 +43,9 @@
 
 #include "uart.h"
 
-/* Uart Interruption Buffers */
-extern uint16_t buffer_size;
-
-static uint8_t uart_usci_a0_rx_buffer[buffer_size]; /* USCI_A0 receiver buffer */
-static uint8_t uart_usci_a1_rx_buffer[buffer_size]; /* USCI_A1 receiver buffer */
-static uint8_t uart_usci_a2_rx_buffer[buffer_size]; /* USCI_A2 receiver buffer */
-
-/* Uart buffer positions */
-static uint16_t uart_usci_a0_rx_buffer_pos;
-static uint16_t uart_usci_a1_rx_buffer_pos;
-static uint16_t uart_usci_a2_rx_buffer_pos;
+static uart_rx_buffer uart_usci_a0_rx_buffer;
+static uart_rx_buffer uart_usci_a1_rx_buffer;
+static uart_rx_buffer uart_usci_a2_rx_buffer;
 
 int uart_init(uart_port_t port, uart_config_t config)
 {
@@ -137,18 +129,21 @@ int uart_init(uart_port_t port, uart_config_t config)
             base_address = USCI_A0_BASE;
 
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN4 + GPIO_PIN5);
+            uart_rx_buffer_init(uart_usci_a0_rx_buffer);
 
             break;
         case UART_PORT_1:
             base_address = USCI_A1_BASE;
 
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN2 + GPIO_PIN3);
+            uart_rx_buffer_init(uart_usci_a1_rx_buffer);
 
             break;
         case UART_PORT_2:
             base_address = USCI_A2_BASE;
 
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN2 + GPIO_PIN3);
+            uart_rx_buffer_init(uart_usci_a2_rx_buffer);
 
             break;
         default:
@@ -300,29 +295,63 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len)
     return err;
 }
 
+int uart_rx_buffer_init(uart_rx_buffer *rx_buffer)
+{
+    rx_buffer->head = 0;
+    rx_buffer->tail = 0;
+    rx_buffer->size = 0;
 
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
+    uint8_t i = 0;
+    for(i=0; i<BUFFER_SIZE; i++)
+    {
+       rx_buffer->data[i] = BUFFER_DEFAULT_BYTE;
+    }
+}
+
+int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, int n_bytes)
 {
     int err = 0;
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+    if (n_bytes > BUFFER_SIZE)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error during reading isr rx buffer: Read size is bigger than buffer size!");
+        sys_log_new_line();
+        err = -1;
+    }
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+
     uint16_t i = 0;
+
     switch(port)
     {
     case UART_PORT_0:
-        for(i=0; i<buffer_size; i++)
+        for(i=0; i<n_bytes; i++)
+        {
+            data[i] = uart_usci_a0_rx_buffer->data[uart_usci_a0_rx_buffer->head++];
+            if (uart_usci_a0_rx_buffer->head == uart_isr_rx_buffer_size())
             {
-                data[i] = uart_usci_a0_rx_buffer[i];
+                uart_usci_a0_rx_buffer->head == 0;
+            }
             }
         break;
     case UART_PORT_1:
-        for(i=0; i<buffer_size; i++)
+        for(i=0; i<n_bytes; i++)
+        {
+            data[i] = uart_usci_a1_rx_buffer->data[uart_usci_a1_rx_buffer->head++];
+            if (uart_usci_a1_rx_buffer->head == uart_isr_rx_buffer_size())
             {
-                data[i] = uart_usci_a1_rx_buffer[i];
+                uart_usci_a1_rx_buffer->head == 0;
+            }
             }
         break;
     case UART_PORT_2:
-        for(i=0; i<buffer_size; i++)
+        for(i=0; i<n_bytes; i++)
+        {
+            data[i] = uart_usci_a2_rx_buffer->data[uart_usci_a2_rx_buffer->head++];
+            if (uart_usci_a2_rx_buffer->head == uart_isr_rx_buffer_size())
             {
-                data[i] = uart_usci_a2_rx_buffer[i];
+                uart_usci_a2_rx_buffer->head == 0;
+            }
             }
         break;
     default:
@@ -337,9 +366,9 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data)
 
 }
 
-int uart_return_isr_rx_buffer_size(void)
+int uart_isr_rx_buffer_size(void)
 {
-    return buffer_size;
+    return BUFFER_SIZE;
 }
 
 /* Interrupt Service Routines */
@@ -349,8 +378,12 @@ __interrupt void USCI_A0_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
     {
-        uart_usci_a0_rx_buffer[uart_usci_a0_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A0_BASE);
-        if (uart_usci_a0_rx_buffer_pos == buffer_size) uart_usci_a0_rx_buffer_pos = 0; //Returns to the first position
+
+        uart_usci_a0_rx_buffer->data[uart_usci_a0_rx_buffer->tail++] = USCI_A_UART_receiveData(USCI_A0_BASE);
+        if (uart_usci_a0_rx_buffer->tail == uart_isr_rx_buffer_size())
+        {
+            uart_usci_a0_rx_buffer->tail = 0;
+        }
     }
 }
 
@@ -359,8 +392,12 @@ __interrupt void USCI_A1_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
     {
-        uart_usci_a1_rx_buffer[uart_usci_a1_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A1_BASE);
-        if (uart_usci_a1_rx_buffer_pos == buffer_size) uart_usci_a1_rx_buffer_pos = 0; //Returns to the first position
+
+        uart_usci_a1_rx_buffer->data[uart_usci_a1_rx_buffer->tail++] = USCI_A_UART_receiveData(USCI_A1_BASE);
+        if (uart_usci_a1_rx_buffer->tail == uart_isr_rx_buffer_size())
+        {
+            uart_usci_a1_rx_buffer->tail = 0;
+        }
     }
 }
 
@@ -369,8 +406,11 @@ __interrupt void USCI_A2_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG))
     {
-        uart_usci_a2_rx_buffer[uart_usci_a2_rx_buffer_pos++] = UART_A_UART_receiveData(USCI_A2_BASE);
-        if (uart_usci_a2_rx_buffer_pos == buffer_size) uart_usci_a2_rx_buffer_pos = 0; //Returns to the first position
+        uart_usci_a2_rx_buffer->data[uart_usci_a2_rx_buffer->tail++] = USCI_A_UART_receiveData(USCI_A2_BASE);
+        if (uart_usci_a2_rx_buffer->tail == uart_isr_rx_buffer_size())
+        {
+            uart_usci_a2_rx_buffer->tail = 0;
+        }
     }
 }
 /** \} End of uart group */

@@ -41,6 +41,10 @@
 
 #define UART_MODULE_NAME    "UART"
 
+#define BUFFER_SIZE        300     /**< Buffer size in bytes. */
+
+#define BUFFER_DEFAULT_BYTE 0xFF /**< Buffer default byte (empty position). */
+
 /**
  * \brief UART ports.
  */
@@ -90,6 +94,17 @@ typedef struct
     uint8_t parity;         /**< Parity bits. */
     uint8_t stop_bits;      /**< Stop bits. */
 } uart_config_t;
+
+/**
+ * \brief Uart RX buffer representation as a struct.
+ */
+typedef struct
+{
+    uint8_t data[BUFFER_SIZE];
+    uint8_t head;
+    uint8_t tail;
+    uint8_t size;
+} uart_rx_buffer;
 
 /**
  * \brief UART port.
