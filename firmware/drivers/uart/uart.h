@@ -41,6 +41,10 @@
 
 #define UART_MODULE_NAME    "UART"
 
+#define BUFFER_SIZE        300U     /**< Buffer size in bytes. */
+
+#define BUFFER_DEFAULT_BYTE 0xFF /**< Buffer default byte (empty position). */
+
 /**
  * \brief UART ports.
  */
@@ -90,6 +94,17 @@ typedef struct
     uint8_t parity;         /**< Parity bits. */
     uint8_t stop_bits;      /**< Stop bits. */
 } uart_config_t;
+
+/**
+ * \brief Uart RX buffer representation as a struct.
+ */
+typedef struct
+{
+    uint8_t data[BUFFER_SIZE];
+    uint16_t head;
+    uint16_t tail;
+    uint16_t size;
+} uart_rx_buffer_t;
 
 /**
  * \brief UART port.
@@ -180,6 +195,68 @@ int uart_write(uart_port_t port, uint8_t *data, uint16_t len);
  * \return The status/error code.
  */
 int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
+
+/**
+ * \brief Enables the UART interrupt.
+ *
+ * \param[in] port is the UART port to enables the interrupt . It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
+int uart_interrupt_enable(uart_port_t port);
+
+/**
+ * \brief Disables the UART interrupt.
+ *
+ * \param[in] port is the UART port to disables the interrupt . It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
+int uart_interrupt_disable(uart_port_t port);
+
+/**
+ * \brief Reads the RX ISR buffer.
+ *
+ * \param[in] port is the UART port to read. It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \param[in] data is an array to store the read data.
+ *
+ * \return The status/error code.
+ */
+int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
+
+/**
+ * \brief Reads the RX ISR buffer size.
+ *
+ * \return The size of the ISR RX buffer.
+ */
+uint16_t uart_read_isr_rx_buffer_size(void);
+
+/**
+ * \brief Initialize RX buffers.
+ *
+ * \param[in] rx_buffer is a pointer to the RX buffer;
+ *
+ */
+void uart_rx_buffer_init(uart_rx_buffer *rx_buffer);
 
 #endif /* UART_H_ */
 
