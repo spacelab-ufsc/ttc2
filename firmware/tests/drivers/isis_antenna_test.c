@@ -1,22 +1,22 @@
 /*
  * isis_antenna_test.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
- * This file is part of OBDH 2.0.
+ * This file is part of TTC 2.0.
  * 
- * OBDH 2.0 is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * OBDH 2.0 is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with OBDH 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.8.2
+ * \version 0.1.11
  * 
  * \date 2021/09/01
  * 
@@ -50,8 +50,8 @@
 #define ISIS_ANTENNA_IIC_PORT       I2C_PORT_2
 #define ISIS_ANTENNA_IIC_CLOCK_HZ   100000UL
 #define ISIS_ANTENNA_IIC_ADR        0x31
-#define ISIS_ANTENNA_IIC_EN_PIN     GPIO_PIN_18
-#define ISIS_ANTENNA_IIC_RDY_PIN    GPIO_PIN_21
+#define ISIS_ANTENNA_IIC_EN_PIN     GPIO_PIN_69
+#define ISIS_ANTENNA_IIC_RDY_PIN    GPIO_PIN_62
 
 unsigned int generate_random(unsigned int l, unsigned int r);
 
