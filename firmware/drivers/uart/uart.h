@@ -197,6 +197,36 @@ int uart_write(uart_port_t port, uint8_t *data, uint16_t len);
 int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
 
 /**
+ * \brief Enables the UART interrupt.
+ *
+ * \param[in] port is the UART port to enables the interrupt . It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
+int uart_interrupt_enable(uart_port_t port);
+
+/**
+ * \brief Disables the UART interrupt.
+ *
+ * \param[in] port is the UART port to disables the interrupt . It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
+int uart_interrupt_disable(uart_port_t port);
+
+/**
  * \brief Reads the RX ISR buffer.
  *
  * \param[in] port is the UART port to read. It can be:

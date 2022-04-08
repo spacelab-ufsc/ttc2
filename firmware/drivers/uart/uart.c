@@ -166,7 +166,6 @@ int uart_init(uart_port_t port, uart_config_t config)
     }
 
     USCI_A_UART_enable(base_address);
-    USCI_A_UART_enableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
 
     return err;
 }
@@ -282,7 +281,6 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len)
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;
-
             break;
     }
 
@@ -292,6 +290,58 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len)
         data[i] = USCI_A_UART_receiveData(base_address);
     }
 
+    return err;
+}
+
+int uart_interrupt_enable(uart_port_t port)
+{
+    int err = 0;
+    uint16_t base_address;
+    switch(port)
+    {
+        case UART_PORT_0:
+            base_address = USCI_A0_BASE;
+            break;
+        case UART_PORT_1:
+            base_address = USCI_A1_BASE;
+            break;
+        case UART_PORT_2:
+            base_address = USCI_A2_BASE;
+            break;
+        default:
+            #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error during enabling uart interruption: Invalid port!");
+                sys_log_new_line();
+            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1; /*Invalid UART port */
+    }
+    USCI_A_UART_enableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
+    return err;
+}
+
+int uart_interrupt_disable(uart_port_t port)
+{
+    int err = 0;
+    uint16_t base_address;
+    switch(port)
+    {
+        case UART_PORT_0:
+            base_address = USCI_A0_BASE;
+            break;
+        case UART_PORT_1:
+            base_address = USCI_A1_BASE;
+            break;
+        case UART_PORT_2:
+            base_address = USCI_A2_BASE;
+            break;
+        default:
+            #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error during disabling uart interruption: Invalid port!");
+                sys_log_new_line();
+            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1; /*Invalid UART port */
+    }
+    USCI_A_UART_disableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
     return err;
 }
 
