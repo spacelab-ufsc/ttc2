@@ -41,7 +41,7 @@
 
 #define UART_MODULE_NAME    "UART"
 
-#define BUFFER_SIZE        300     /**< Buffer size in bytes. */
+#define BUFFER_SIZE        300U     /**< Buffer size in bytes. */
 
 #define BUFFER_DEFAULT_BYTE 0xFF /**< Buffer default byte (empty position). */
 
@@ -101,10 +101,10 @@ typedef struct
 typedef struct
 {
     uint8_t data[BUFFER_SIZE];
-    uint8_t head;
-    uint8_t tail;
-    uint8_t size;
-} uart_rx_buffer;
+    uint16_t head;
+    uint16_t tail;
+    uint16_t size;
+} uart_rx_buffer_t;
 
 /**
  * \brief UART port.
@@ -218,7 +218,15 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
  *
  * \return The size of the ISR RX buffer.
  */
-int uart_return_isr_rx_buffer_size(void);
+uint16_t uart_read_isr_rx_buffer_size(void);
+
+/**
+ * \brief Initialize RX buffers.
+ *
+ * \param[in] rx_buffer is a pointer to the RX buffer;
+ *
+ */
+void uart_rx_buffer_init(uart_rx_buffer *rx_buffer);
 
 #endif /* UART_H_ */
 
