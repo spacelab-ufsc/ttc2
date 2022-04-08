@@ -1,7 +1,7 @@
 /*
  * config.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.28
+ * \version 0.1.12
  * 
  * \date 2019/10/26
  * 
@@ -69,6 +69,9 @@
 #define CONFIG_CSP_WAIT_CONN_TIMEOUT_MS                 (10*1000)
 #define CONFIG_CSP_READ_PKT_TIMEOUT_MS                  1000
 #define CONFIG_CSP_PORT                                 10
+
+/* Ports */
+#define CONFIG_SPI_PORT_0_SPEED_BPS                     1000000UL
 
 /* Radio */
 #define SI446X_XO_TUNE_REG_VALUE                        97
