@@ -1,7 +1,7 @@
 /*
  * uart.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,8 +24,9 @@
  * \brief UART driver definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.1.13
  * 
  * \date 2019/12/07
  * 
