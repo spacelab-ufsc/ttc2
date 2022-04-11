@@ -91,7 +91,7 @@ bool buffer_append(buffer_t *buffer, uint8_t *data, uint16_t len)
 
 void buffer_clear(buffer_t *buffer)
 {
-    uint8_t i = 0U;
+    uint16_t i = 0U;
     for(i = 0U; i < buffer_length(buffer); i++)
     {
         buffer->data[i] = BUFFER_DEFAULT_BYTE;
