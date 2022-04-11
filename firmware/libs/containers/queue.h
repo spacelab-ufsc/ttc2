@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -30,7 +30,7 @@
  * \date 2017/11/08
  * 
  * \defgroup queue Queue
- * \ingroup system
+ * \ingroup containers
  * \{
  */
 
@@ -40,26 +40,26 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define QUEUE_LENGTH        300U    /**< Queue length in bytes. */
+#define QUEUE_LENGTH            300U    /**< Queue length in bytes. */
 
-#define QUEUE_DEFAULT_BYTE  0xFFU   /**< Queue default byte (empty position). */
+#define QUEUE_DEFAULT_BYTE      0xFFU   /**< Queue default byte (empty position). */
 
 /**
  * \brief Queue representation as a struct.
  */
 typedef struct
 {
-    uint8_t data[QUEUE_LENGTH];     /**< Data buffer. */
-    uint16_t head;                  /**< Head position of the data array. */
-    uint16_t tail;                  /**< Tail position of the data array. */
-    uint16_t size;                  /**< Length, in bytes, of the data. */
-    uint16_t mtu;                   /**< Maximum transmission unit. */
+    uint8_t data[QUEUE_LENGTH];         /**< Data buffer. */
+    uint16_t head;                      /**< Head position of the data array. */
+    uint16_t tail;                      /**< Tail position of the data array. */
+    uint16_t size;                      /**< Length, in bytes, of the data. */
+    uint16_t mtu;                       /**< Maximum transmission unit. */
 } queue_t;
 
 /**
  * \brief Queue initialization.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return None.
  */
@@ -68,7 +68,7 @@ void queue_init(queue_t *queue);
 /**
  * \brief Returns the length (capacity) of a queue.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return The length of the queue (or capacity).
  */
@@ -77,7 +77,7 @@ uint16_t queue_length(queue_t *queue);
 /**
  * \brief Puts an element into the back position of an queue.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  *
  * \param[in] byte is the byte to be pushed to the queue.
  * 
@@ -88,7 +88,7 @@ bool queue_push_back(queue_t *queue, uint8_t byte);
 /**
  * \brief Grabs an element from the front position of an queue.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return The byte grabbed from the queue.
  */
@@ -97,7 +97,7 @@ uint8_t queue_pop_front(queue_t *queue);
 /**
  * \brief Verifies if the a queue is empty or not.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return True/False if the queue is empty or not.
  */
@@ -106,7 +106,7 @@ bool queue_empty(queue_t *queue);
 /**
  * \brief Verifies if the a queue is full or not.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return True/False if the queue is full or not.
  */
@@ -115,7 +115,7 @@ bool queue_full(queue_t *queue);
 /**
  * \brief Returns the size of a queue.
  * 
- * \param[in,out] queue is a pointer to a Queue struct.
+ * \param[in,out] queue is a pointer to a queue_t struct.
  * 
  * \return The size of the queue.
  */

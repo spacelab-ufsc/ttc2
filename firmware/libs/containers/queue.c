@@ -42,8 +42,8 @@ void queue_init(queue_t *queue)
     queue->size = 0U;
     queue->mtu = QUEUE_LENGTH;
     
-    uint8_t i = 0U;
-    for(i = 0U; i < QUEUE_LENGTH; i++)
+    uint16_t i = 0U;
+    for(i = 0U; i < queue_length(queue); i++)
     {
         queue->data[i] = QUEUE_DEFAULT_BYTE;
     }
