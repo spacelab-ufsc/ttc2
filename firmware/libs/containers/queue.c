@@ -1,33 +1,33 @@
-/* 
+/*
  * queue.c
  * 
- * Copyright (C) 2017, Universidade Federal de Santa Catarina
+ * Copyright The TTC 2.0 Contributors.
  * 
- * This file is part of FloripaSat-Beacon.
+ * This file is part of TTC 2.0.
  * 
- * FloripaSat-Beacon is free software: you can redistribute it and/or modify
+ * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * FloripaSat-Beacon is distributed in the hope that it will be useful,
+ * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with FloripaSat-Beacon. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
 /**
- * \brief Basic queue manipulation functions implementation.
+ * \brief Queue implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 1.0-dev
+ * \version 0.1.14
  * 
- * \date 08/11/2017
+ * \date 2017/11/08
  * 
  * \addtogroup queue
  * \{
@@ -35,89 +35,96 @@
 
 #include "queue.h"
 
-void queue_init(Queue *queue)
+void queue_init(queue_t *queue)
 {
-    queue->head = 0;
-    queue->tail = 0;
-    queue->size = 0;
+    queue->head = 0U;
+    queue->tail = 0U;
+    queue->size = 0U;
+    queue->mtu = QUEUE_LENGTH;
     
-    uint8_t i = 0;
-    for(i=0; i<QUEUE_LENGTH; i++)
+    uint8_t i = 0U;
+    for(i = 0U; i < QUEUE_LENGTH; i++)
     {
         queue->data[i] = QUEUE_DEFAULT_BYTE;
     }
 }
 
-uint8_t queue_length(Queue *queue)
+uint16_t queue_length(queue_t *queue)
 {
-    return QUEUE_LENGTH;
+    return queue->mtu;
 }
 
-bool queue_push_back(Queue *queue, uint8_t byte)
+bool queue_push_back(queue_t *queue, uint8_t byte)
 {
-    if (queue_full(queue))
+    bool res = false;
+
+    if (!queue_full(queue))
     {
-        return false;
-    }
-    else
-    {
-        queue->data[queue->tail++] = byte;
+        queue->data[queue->tail] = byte;
+        queue->tail++;
         
         if (queue->tail == queue_length(queue))
         {
-            queue->tail = 0;
+            queue->tail = 0U;
         }
         
-        return true;
+        res = true;
     }
+
+    return res;
 }
 
-uint8_t queue_pop_front(Queue *queue)
+uint8_t queue_pop_front(queue_t *queue)
 {
+    uint8_t res = 0U;
+
     if (queue_empty(queue))
     {
-        return QUEUE_DEFAULT_BYTE;
+        res = QUEUE_DEFAULT_BYTE;
     }
     else
     {
-        uint8_t byte = queue->data[queue->head++];
+        uint8_t byte = queue->data[queue->head];
+        queue->head++;
         
         if (queue->head == queue_length(queue))
         {
-            queue->head = 0;
+            queue->head = 0U;
         }
         
-        return byte;
+        res = byte;
     }
+
+    return res;
 }
 
-bool queue_empty(Queue *queue)
+bool queue_empty(queue_t *queue)
 {
+    bool res = false;
+
     if (queue->head == queue->tail)
     {
-        return true;
+        res = true;
     }
-    else
-    {
-        return false;
-    }
+
+    return res;
 }
 
-bool queue_full(Queue *queue)
+bool queue_full(queue_t *queue)
 {
-    if (((queue->tail + 1) == queue->head) || (((queue->tail + 1) == queue_length(queue)) && (queue->head == 0)))
+    bool res = false;
+
+    if (((queue->tail + 1U) == queue->head) || (((queue->tail + 1U) == queue_length(queue)) && (queue->head == 0U)))
     {
-        return true;
+        res = true;
     }
-    else
-    {
-        return false;
-    }
+
+    return res;
 }
 
-uint8_t queue_size(Queue *queue)
+uint16_t queue_size(queue_t *queue)
 {
     return queue->tail - queue->head;
 }
 
-//! \} End of queue group
+/**< \} End of queue group */
