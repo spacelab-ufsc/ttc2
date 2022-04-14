@@ -97,17 +97,6 @@ typedef struct
 } uart_config_t;
 
 /**
- * \brief Uart RX buffer representation as a struct.
- */
-typedef struct
-{
-    uint8_t data[BUFFER_SIZE];
-    uint16_t head;
-    uint16_t tail;
-    uint16_t size;
-} uart_rx_buffer_t;
-
-/**
  * \brief UART port.
  */
 typedef uint8_t uart_port_t;
@@ -249,15 +238,7 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
  *
  * \return The size of the ISR RX buffer.
  */
-uint16_t uart_read_isr_rx_buffer_size(void);
-
-/**
- * \brief Initialize RX buffers.
- *
- * \param[in] rx_buffer is a pointer to the RX buffer;
- *
- */
-void uart_rx_buffer_init(uart_rx_buffer *rx_buffer);
+uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer);
 
 #endif /* UART_H_ */
 
