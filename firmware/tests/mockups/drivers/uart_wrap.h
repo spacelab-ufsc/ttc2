@@ -51,6 +51,14 @@ int __wrap_uart_write(uart_port_t port, uint8_t *data, uint16_t len);
 
 int __wrap_uart_read(uart_port_t port, uint8_t *data, uint16_t len);
 
+int __wrap_uart_interrupt_enable(uart_port_t port);
+
+int __wrap_uart_interrupt_disable(uart_port_t port);
+
+int __uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
+
+uint16_t __uart_read_isr_rx_size(queue_t *uart_rx_buffer);
+
 #endif /* UART_WRAP_H_ */
 
 /** \} End of uart_wrap group */
