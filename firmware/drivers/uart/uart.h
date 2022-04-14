@@ -242,7 +242,7 @@ int uart_interrupt_disable(uart_port_t port);
  *
  * \return The status/error code.
  */
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
+int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
 
 /**
  * \brief Reads the RX ISR buffer size.
