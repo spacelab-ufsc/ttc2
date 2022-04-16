@@ -121,6 +121,16 @@ bool queue_full(queue_t *queue);
  */
 uint16_t queue_size(queue_t *queue);
 
+/**
+ * \brief Resets queue size to zero.
+ *
+ * \param[in,out] queue is a pointer to a queue_t struct.
+ *
+ * \return None.
+ */
+void queue_clear(queue_t *queue);
+
+
 #endif /* QUEUE_H_ */
 
 /**< \} End of queue group */
