@@ -39,7 +39,6 @@
 
 #include <config/config.h>
 #include <system/sys_log/sys_log.h>
-#include <libs/containers/queue.h>
 
 #include "uart.h"
 
@@ -349,7 +348,7 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
 {
     int err = 0;
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-    if (n_bytes > uart_read_isr_rx_buffer_size())
+    if (len > uart_read_isr_rx_buffer_size())
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error during reading isr rx buffer: Read size is bigger than buffer size!");
         sys_log_new_line();
@@ -404,7 +403,7 @@ __interrupt void USCI_A0_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
-        queue_push_back(uart_usci_a0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE);
+        queue_push_back(uart_usci_a0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE));
     }
 }
 
@@ -413,7 +412,7 @@ __interrupt void USCI_A1_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
-        queue_push_back(uart_usci_a1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE);
+        queue_push_back(uart_usci_a1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE));
     }
 }
 
@@ -422,7 +421,7 @@ __interrupt void USCI_A2_ISR(void)
 {
     if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
-        queue_push_back(uart_usci_a2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE);
+        queue_push_back(uart_usci_a2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
     }
 }
 /** \} End of uart group */

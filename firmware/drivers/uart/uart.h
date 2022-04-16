@@ -39,12 +39,9 @@
 #define UART_H_
 
 #include <stdint.h>
+#include "libs/containers/queue.h"
 
 #define UART_MODULE_NAME    "UART"
-
-#define BUFFER_SIZE        300U     /**< Buffer size in bytes. */
-
-#define BUFFER_DEFAULT_BYTE 0xFF /**< Buffer default byte (empty position). */
 
 /**
  * \brief UART ports.
@@ -228,6 +225,8 @@ int uart_interrupt_disable(uart_port_t port);
  * \endparblock
  *
  * \param[in] data is an array to store the read data.
+ *
+ * \param[in] len is the number of bytes to be read from the buffer.
  *
  * \return The status/error code.
  */
