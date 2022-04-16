@@ -57,20 +57,6 @@ int __wrap_uart_init(uart_port_t port, uart_config_t config)
     return mock_type(int);
 }
 
-int __wrap_uart_available(uart_port_t port)
-{
-    check_expected(port);
-
-    return mock_type(int);
-}
-
-int __wrap_uart_flush(uart_port_t port)
-{
-    check_expected(port);
-
-    return mock_type(int);
-}
-
 int __wrap_uart_write(uart_port_t port, uint8_t *data, uint16_t len)
 {
     check_expected(port);
@@ -127,9 +113,16 @@ int __wrap_uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len
     return mock_type(int);
 }
 
-int __wrap_uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
+uint16_t __wrap_uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
 {
     check_expected(uart_rx_buffer);
+
+    return mock_type(uint16_t);
+}
+
+uint16_t __wrap_uart_read_isr_rx_buffer_available_data(uart_port_t port)
+{
+    check_expected(port);
 
     return mock_type(uint16_t);
 }
