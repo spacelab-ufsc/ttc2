@@ -25,6 +25,8 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ * 
  * \version 0.1.5
  * 
  * \date 2021/08/25

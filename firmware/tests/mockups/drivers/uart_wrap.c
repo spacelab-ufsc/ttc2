@@ -25,6 +25,8 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ * 
  * \version 0.1.5
  * 
  * \date 2021/08/25
@@ -81,7 +83,6 @@ int __wrap_uart_write(uart_port_t port, uint8_t *data, uint16_t len)
 int __wrap_uart_read(uart_port_t port, uint8_t *data, uint16_t len)
 {
     check_expected(port);
-    check_expected_ptr(data);
     check_expected(len);
 
     if (data != NULL)
@@ -113,7 +114,6 @@ int __wrap_uart_interrupt_disable(uart_port_t port)
 int __wrap_uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
 {
     check_expected(port);
-    check_expected_ptr(data);
     check_expected(len);
 
     if(data != NULL)
