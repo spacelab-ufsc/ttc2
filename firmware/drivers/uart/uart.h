@@ -116,36 +116,6 @@ typedef uint8_t uart_port_t;
 int uart_init(uart_port_t port, uart_config_t config);
 
 /**
- * \brief Verifies if there is data available to received in the RX buffer.
- *
- * \param[in] port is the UART port to verify. It can be:
- * \parblock
- *      -\b UART_PORT_0
- *      -\b UART_PORT_1
- *      -\b UART_PORT_2
- *      .
- * \endparblock
- *
- * \return The status/error code.
- */
-int uart_available(uart_port_t port);
-
-/**
- * \brief Flushes the RX buffer of a given port.
- *
- * \param[in] port is the UART port to flush. It can be:
- * \parblock
- *      -\b UART_PORT_0
- *      -\b UART_PORT_1
- *      -\b UART_PORT_2
- *      .
- * \endparblock
- *
- * \return The status/error code.
- */
-int uart_flush(uart_port_t port);
-
-/**
  * \brief Writes data to a given UART port.
  *
  * \param[in] port is the UART port to write. It can be:
@@ -238,6 +208,21 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
  * \return The size of the ISR RX buffer.
  */
 uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer);
+
+/**
+ * \brief Reads the number of data bytes available to be read from the buffer.
+ *
+ * \param[in] port is the UART port to read. It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
+ *
+ * \return The number of bytes received in the buffer.
+ */
+uint16_t uart_read_isr_rx_buffer_available_data(uart_port_t port);
 
 #endif /* UART_H_ */
 
