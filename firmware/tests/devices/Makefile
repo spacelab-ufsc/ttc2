@@ -32,8 +32,8 @@ MEDIA_TEST_FLAGS=$(FLAGS),--wrap=flash_init,--wrap=flash_write,--wrap=flash_writ
 all: watchdog_test temp_sensor_test antenna_test radio_test power_sensor_test leds_test media_test
 
 .PHONY: watchdog_test
-watchdog_test: $(BUILD_DIR)/watchdog.o $(BUILD_DIR)/watchdog_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/wdt_wrap.o $(BUILD_DIR)/tps382x_wrap.o
-	$(CC) $(WATCHDOG_TEST_FLAGS) $(BUILD_DIR)/watchdog.o $(BUILD_DIR)/watchdog_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/wdt_wrap.o $(BUILD_DIR)/tps382x_wrap.o -o $(BUILD_DIR)/$(TARGET_WATCHDOG) -lcmocka
+watchdog_test: $(BUILD_DIR)/watchdog.o $(BUILD_DIR)/watchdog_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/wdt_wrap.o
+	$(CC) $(WATCHDOG_TEST_FLAGS) $(BUILD_DIR)/watchdog.o $(BUILD_DIR)/watchdog_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/wdt_wrap.o -o $(BUILD_DIR)/$(TARGET_WATCHDOG) -lcmocka
 
 .PHONY: temp_sensor_test
 temp_sensor_test: $(BUILD_DIR)/temp_sensor.o $(BUILD_DIR)/temp_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/adc_wrap.o
@@ -108,9 +108,6 @@ $(BUILD_DIR)/sys_log_wrap.o: ../mockups/system/sys_log_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/wdt_wrap.o: ../mockups/drivers/wdt_wrap.c
-	$(CC) $(WATCHDOG_TEST_FLAGS) -c $< -o $@
-
-$(BUILD_DIR)/tps382x_wrap.o: ../mockups/drivers/tps382x_wrap.c
 	$(CC) $(WATCHDOG_TEST_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/adc_wrap.o: ../mockups/drivers/adc_wrap.c

@@ -53,9 +53,6 @@ static void watchdog_init_test(void **state)
 {
     expect_value(__wrap_wdt_init, config.clk_src, WATCHDOG_INTERNAL_CLK_SRC);
     expect_value(__wrap_wdt_init, config.clk_div, WATCHDOG_INTERNAL_CLK_DIV);
-
-    expect_value(__wrap_tps382x_init, config.wdi_pin, WATCHDOG_EXTERNAL_PIN);
-
     int result = watchdog_init();
 
     assert_return_code(result, 0);
@@ -64,8 +61,6 @@ static void watchdog_init_test(void **state)
 static void watchdog_reset_test(void **state)
 {
     expect_function_call(__wrap_wdt_reset);
-
-    expect_value(__wrap_tps382x_trigger, config.wdi_pin, WATCHDOG_EXTERNAL_PIN);
 
     watchdog_reset();
 }
