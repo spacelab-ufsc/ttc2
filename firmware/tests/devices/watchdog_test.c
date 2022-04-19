@@ -53,6 +53,9 @@ static void watchdog_init_test(void **state)
 {
     expect_value(__wrap_wdt_init, config.clk_src, WATCHDOG_INTERNAL_CLK_SRC);
     expect_value(__wrap_wdt_init, config.clk_div, WATCHDOG_INTERNAL_CLK_DIV);
+
+    will_return(__wrap_wdt_init, 0);
+
     int result = watchdog_init();
 
     assert_return_code(result, 0);
