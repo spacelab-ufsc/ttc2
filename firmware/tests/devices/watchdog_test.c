@@ -1,7 +1,7 @@
 /*
  * watchdog_test.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.1
+ * \version 0.1.15
  * 
  * \date 2021/02/16
  * 
@@ -47,7 +47,6 @@
 
 #define WATCHDOG_INTERNAL_CLK_SRC       WDT_CLK_SRC_ACLK
 #define WATCHDOG_INTERNAL_CLK_DIV       WDT_CLK_DIV_32K
-#define WATCHDOG_EXTERNAL_PIN           GPIO_PIN_41
 
 static void watchdog_init_test(void **state)
 {
