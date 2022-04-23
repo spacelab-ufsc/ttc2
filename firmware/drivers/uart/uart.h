@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.13
+ * \version 0.1.16
  * 
  * \date 2019/12/07
  * 
@@ -39,7 +39,6 @@
 #define UART_H_
 
 #include <stdint.h>
-#include "libs/containers/queue.h"
 
 #define UART_MODULE_NAME    "UART"
 
@@ -71,15 +70,6 @@ typedef enum
     UART_ONE_STOP_BIT=0,    /**< One stop bit. */
     UART_TWO_STOP_BITS      /**< Two stop bits. */
 } uart_stop_bits_e;
-
-/**
- * \brief RX data availability.
- */
-typedef enum
-{
-    UART_NOT_AVAILABLE=0,   /**< Data is not available in the RX buffer. */
-    UART_AVAILABLE          /**< Data is available in the RX buffer. */
-} uart_data_availability_e;
 
 /**
  * \brief UART port configuration parameters.
@@ -154,9 +144,9 @@ int uart_write(uart_port_t port, uint8_t *data, uint16_t len);
 int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
 
 /**
- * \brief Enables the UART interrupt.
+ * \brief Enables the UART RX port.
  *
- * \param[in] port is the UART port to enables the interrupt . It can be:
+ * \param[in] port is the UART port to enables the interrupt. It can be:
  * \parblock
  *      -\b UART_PORT_0
  *      -\b UART_PORT_1
@@ -166,12 +156,12 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-int uart_interrupt_enable(uart_port_t port);
+int uart_rx_enable(uart_port_t port);
 
 /**
- * \brief Disables the UART interrupt.
+ * \brief Disables the UART RX port.
  *
- * \param[in] port is the UART port to disables the interrupt . It can be:
+ * \param[in] port is the UART port to disables the interrupt. It can be:
  * \parblock
  *      -\b UART_PORT_0
  *      -\b UART_PORT_1
@@ -181,26 +171,7 @@ int uart_interrupt_enable(uart_port_t port);
  *
  * \return The status/error code.
  */
-int uart_interrupt_disable(uart_port_t port);
-
-/**
- * \brief Reads the RX ISR buffer.
- *
- * \param[in] port is the UART port to read. It can be:
- * \parblock
- *      -\b UART_PORT_0
- *      -\b UART_PORT_1
- *      -\b UART_PORT_2
- *      .
- * \endparblock
- *
- * \param[in] data is an array to store the read data.
- *
- * \param[in] len is the number of bytes to be read from the buffer.
- *
- * \return The status/error code.
- */
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
+int uart_rx_disable(uart_port_t port);
 
 /**
  * \brief Reads the number of data bytes available to be read from the buffer.
