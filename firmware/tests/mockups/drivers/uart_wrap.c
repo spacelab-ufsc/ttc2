@@ -1,7 +1,7 @@
 /*
  * uart_wrap.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,10 +24,9 @@
  * \brief UART driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.5
+ * \version 0.1.16
  * 
  * \date 2021/08/25
  * 
@@ -83,47 +82,32 @@ int __wrap_uart_read(uart_port_t port, uint8_t *data, uint16_t len)
     return mock_type(int);
 }
 
-int __wrap_uart_interrupt_enable(uart_port_t port)
+int __wrap_uart_rx_enable(uart_port_t port)
 {
     check_expected(port);
 
     return mock_type(int);
 }
 
-int __wrap_uart_interrupt_disable(uart_port_t port)
+int __wrap_uart_rx_disable(uart_port_t port)
 {
     check_expected(port);
 
     return mock_type(int);
 }
 
-int __wrap_uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
+uint16_t __wrap_uart_read_available(uart_port_t port)
 {
     check_expected(port);
-    check_expected(len);
 
-    if(data != NULL)
-    {
-        uint16_t i = 0;
-        for (i=0; i<len; i++)
-        {
-            data[i] = mock_type(uint8_t);
-        }
-    }
     return mock_type(int);
 }
 
-uint16_t __wrap_uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
-{
-    check_expected(uart_rx_buffer);
-
-    return mock_type(uint16_t);
-}
-
-uint16_t __wrap_uart_read_isr_rx_buffer_available_data(uart_port_t port)
+int __wrap_uart_flush(uart_port_t port)
 {
     check_expected(port);
 
-    return mock_type(uint16_t);
+    return mock_type(int);
 }
+
 /** \} End of uart_wrap group */
