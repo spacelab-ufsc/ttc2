@@ -1,7 +1,7 @@
 /*
  * media.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.7
+ * \version 0.1.19
  * 
  * \date 2020/04/21
  * 
@@ -58,11 +58,6 @@ typedef enum
     MEDIA_ERASE_SECTOR,     /**< Erases a sector. */
     MEDIA_ERASE_SUB_SECTOR  /**< Erases a sub-sector. */
 } media_erase_t;
-
-/**
- * \brief Media info type.
- */
-typedef flash_description_t media_info_t;
 
 /**
  * \brief Media initialization.
@@ -137,19 +132,6 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
  * \return The status/error code.
  */
 int media_erase(media_t med, media_erase_t type, uint32_t sector);
-
-/**
- * \brief Gets the info about the media.
- *
- * \param[in] med is the storage media to erase. It can be:
- * \parblock
- *      -\b MEDIA_INT_FLASH
- *      .
- * \endparblock
- *
- * \return The media info structure.
- */
-media_info_t media_get_info(media_t med);
 
 #endif /* MEDIA_H_ */
 

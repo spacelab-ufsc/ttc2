@@ -1,7 +1,7 @@
 /*
  * media.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.7
+ * \version 0.1.19
  * 
  * \date 2020/07/21
  * 
@@ -158,23 +158,6 @@ int media_erase(media_t med, media_erase_t type, uint32_t sector)
     }
 
     return err;
-}
-
-media_info_t media_get_info(media_t med)
-{
-    media_info_t info = {0};
-
-    switch(med)
-    {
-        case MEDIA_INT_FLASH:                                           break;
-        default:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to get the information!");
-            sys_log_new_line();
-
-            break;
-    }
-
-    return info;
 }
 
 /** \} End of media group */
