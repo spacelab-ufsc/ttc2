@@ -393,6 +393,7 @@ __interrupt void USCI_A0_ISR(void)
     if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
         queue_push_back(uart_usci_a0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE));
+        USCI_A_UART_clearInterrupt(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
     }
 }
 
@@ -402,6 +403,7 @@ __interrupt void USCI_A1_ISR(void)
     if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
         queue_push_back(uart_usci_a1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE));
+        USCI_A_UART_clearInterrupt(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
     }
 }
 
@@ -411,6 +413,7 @@ __interrupt void USCI_A2_ISR(void)
     if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
     {
         queue_push_back(uart_usci_a2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
+        USCI_A_UART_clearInterrupt(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
     }
 }
 /** \} End of uart group */
