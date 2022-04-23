@@ -301,21 +301,18 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
         {
             data[i] = queue_pop_front(uart_usci_a0_rx_buffer);
         }
-        queue_clear(uart_usci_a0_rx_buffer);
         break;
     case UART_PORT_1:
         for(i=0; i<len; i++)
         {
             data[i] = queue_pop_front(uart_usci_a1_rx_buffer);
         }
-        queue_clear(uart_usci_a1_rx_buffer);
         break;
     case UART_PORT_2:
         for(i=0; i<len; i++)
         {
             data[i] = queue_pop_front(uart_usci_a2_rx_buffer);
         }
-        queue_clear(uart_usci_a1_rx_buffer);
         break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
