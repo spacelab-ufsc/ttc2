@@ -357,6 +357,34 @@ uint16_t uart_read_available(uart_port_t port)
     return available_bytes;
 }
 
+int uart_flush(uart_port_t port)
+{
+    int err = -1;
+    while(uart_read_available(port) != (uint16_t)UART_NOT_AVAILABLE)
+    {
+        err = 0;
+        switch(port)
+            {
+                case UART_PORT_0:
+                    queue_clear(uart_usci_a0_rx_buffer);
+                    break;
+                case UART_PORT_1:
+                    queue_clear(uart_usci_a1_rx_buffer);
+                    break;
+                case UART_PORT_2:
+                    queue_clear(uart_usci_a2_rx_buffer);
+                    break;
+                default:
+                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                   sys_log_print_event_from_module(SYS_LOG_ERROR, UART_MODULE_NAME, "Error flushing the RX buffer: Invalid port!");
+                   sys_log_new_line();
+                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+                   break;
+           }
+    }
+    return err;
+}
+
 /* Interrupt Service Routines */
 
 #pragma vector=USCI_A0_VECTOR
