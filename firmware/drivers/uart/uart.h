@@ -203,13 +203,6 @@ int uart_interrupt_disable(uart_port_t port);
 int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len);
 
 /**
- * \brief Reads the RX ISR buffer size.
- *
- * \return The size of the ISR RX buffer.
- */
-uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer);
-
-/**
  * \brief Reads the number of data bytes available to be read from the buffer.
  *
  * \param[in] port is the UART port to read. It can be:

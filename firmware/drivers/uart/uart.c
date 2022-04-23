@@ -46,6 +46,8 @@ static queue_t uart_usci_a0_rx_buffer;
 static queue_t uart_usci_a1_rx_buffer;
 static queue_t uart_usci_a2_rx_buffer;
 
+static uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer);
+
 int uart_init(uart_port_t port, uart_config_t config)
 {
     int err = 0;
@@ -326,7 +328,7 @@ int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
     return err;
 }
 
-uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
+static uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
 {
     return queue_length(uart_rx_buffer);
 }
