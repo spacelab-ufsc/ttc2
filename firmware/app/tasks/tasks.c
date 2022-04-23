@@ -1,7 +1,7 @@
 /*
  * tasks.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.1.20
  * 
  * \date 2019/11/02
  * 
@@ -48,7 +48,6 @@
 #include "beacon.h"
 #include "uplink.h"
 #include "time_control.h"
-#include "csp_server.h"
 
 void create_tasks(void)
 {
@@ -135,15 +134,6 @@ void create_tasks(void)
         /* Error creating the time control task */
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
-
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
-    xTaskCreate(vTaskCSPServer, TASK_CSP_SERVER_NAME, TASK_CSP_SERVER_STACK_SIZE, NULL, TASK_CSP_SERVER_PRIORITY, &xTaskCSPServerHandle);
-
-    if (xTaskCSPServerHandle == NULL)
-    {
-        /* Error creating the CSP server task */
-    }
-#endif /* CONFIG_TASK_CSP_SERVER_ENABLED */
 
     create_event_groups();
 }
