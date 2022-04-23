@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.14
+ * \version 0.1.16
  * 
  * \date 2017/11/08
  * 
@@ -129,7 +129,6 @@ uint16_t queue_size(queue_t *queue);
  * \return None.
  */
 void queue_clear(queue_t *queue);
-
 
 #endif /* QUEUE_H_ */
 
