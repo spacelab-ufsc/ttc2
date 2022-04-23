@@ -1,7 +1,7 @@
 /*
  * startup.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.1.17
  * 
  * \date 2019/12/04
  * 
@@ -41,8 +41,7 @@
 #include <devices/watchdog/watchdog.h>
 #include <devices/leds/leds.h>
 #include <devices/radio/radio.h>
-#include <devices/current_sensor/current_sensor.h>
-#include <devices/voltage_sensor/voltage_sensor.h>
+#include <devices/power_sensor/power_sensor.h>
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
@@ -104,14 +103,8 @@ void vTaskStartup(void)
         error_counter++;
     }
 
-    /* Current sensor device initialization */
-    if (current_sensor_init() != 0)
-    {
-        error_counter++;
-    }
-
-    /* Voltage sensor device initialization */
-    if (voltage_sensor_init() != 0)
+    /* Power sensor device initialization */
+    if (power_sensor_init() != 0)
     {
         error_counter++;
     }
