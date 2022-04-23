@@ -334,7 +334,7 @@ uint16_t uart_read_isr_rx_buffer_size(queue_t *uart_rx_buffer)
     return queue_length(uart_rx_buffer);
 }
 
-uint16_t uart_read_isr_rx_buffer_available_data(uart_port_t port)
+uint16_t uart_read_available(uart_port_t port)
 {
     uint16_t available_bytes = 0U;
     switch(port)
