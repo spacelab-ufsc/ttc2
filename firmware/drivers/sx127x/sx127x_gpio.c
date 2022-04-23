@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.21
  * 
  * \date 2021/12/15
  * 
@@ -35,6 +35,8 @@
 
 #include <config/config.h>
 #include <system/sys_log/sys_log.h>
+
+#include <drivers/gpio/gpio.h>
 
 #include "sx127x.h"
 

@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.21
  * 
  * \date 2021/12/14
  * 
@@ -191,9 +191,9 @@ int sx127x_set_frequency(uint32_t freq)
     /* Checking the register's value */
     uint8_t reg_buf[3] = {0};
 
-    if ((sx127x_read_reg(SX127X_REG_FRF_MSB, &read_reg[0]) != 0) ||
-        (sx127x_read_reg(SX127X_REG_FRF_MID, &read_reg[1]) != 0) ||
-        (sx127x_read_reg(SX127X_REG_FRF_LSB, &read_reg[2]) != 0))
+    if ((sx127x_read_reg(SX127X_REG_FRF_MSB, &reg_buf[0]) != 0) ||
+        (sx127x_read_reg(SX127X_REG_FRF_MID, &reg_buf[1]) != 0) ||
+        (sx127x_read_reg(SX127X_REG_FRF_LSB, &reg_buf[2]) != 0))
     {
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, SX127X_MODULE_NAME, "Error reading the register FRF!");
@@ -684,7 +684,7 @@ int sx127x_burst_write(uint8_t adr, uint8_t *ptr, uint8_t len)
 
         memcpy(&wbuf[1], ptr, len);
 
-        err = sx127x_spi_write(wbuf, 1U + len)
+        err = sx127x_spi_write(wbuf, 1U + len);
     }
 
     return err;
