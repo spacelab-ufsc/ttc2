@@ -96,6 +96,7 @@ uint8_t queue_pop_front(queue_t *queue)
         }
         
         res = byte;
+        queue->size--;
     }
 
     return res;
