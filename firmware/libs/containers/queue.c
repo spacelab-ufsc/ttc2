@@ -133,6 +133,6 @@ uint16_t queue_size(queue_t *queue)
 
 void queue_clear(queue_t *queue)
 {
-    queue->size = 0U;
+    queue_init(&queue);
 }
 /**< \} End of queue group */
