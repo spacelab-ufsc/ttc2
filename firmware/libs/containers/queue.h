@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.14
+ * \version 0.1.16
  * 
  * \date 2017/11/08
  * 
@@ -120,6 +120,15 @@ bool queue_full(queue_t *queue);
  * \return The size of the queue.
  */
 uint16_t queue_size(queue_t *queue);
+
+/**
+ * \brief Resets queue size to zero.
+ *
+ * \param[in,out] queue is a pointer to a queue_t struct.
+ *
+ * \return None.
+ */
+void queue_clear(queue_t *queue);
 
 #endif /* QUEUE_H_ */
 

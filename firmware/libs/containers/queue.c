@@ -24,8 +24,9 @@
  * \brief Queue implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.14
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 0.1.16
  * 
  * \date 2017/11/08
  * 
@@ -62,12 +63,13 @@ bool queue_push_back(queue_t *queue, uint8_t byte)
     {
         queue->data[queue->tail] = byte;
         queue->tail++;
-        
+        queue->size++;
+
         if (queue->tail == queue_length(queue))
         {
             queue->tail = 0U;
         }
-        
+
         res = true;
     }
 
@@ -86,13 +88,14 @@ uint8_t queue_pop_front(queue_t *queue)
     {
         uint8_t byte = queue->data[queue->head];
         queue->head++;
-        
+
         if (queue->head == queue_length(queue))
         {
             queue->head = 0U;
         }
-        
+
         res = byte;
+        queue->size--;
     }
 
     return res;
@@ -124,7 +127,12 @@ bool queue_full(queue_t *queue)
 
 uint16_t queue_size(queue_t *queue)
 {
-    return queue->tail - queue->head;
+    return queue->size;
+}
+
+void queue_clear(queue_t *queue)
+{
+    queue_init(&queue);
 }
 
 /**< \} End of queue group */

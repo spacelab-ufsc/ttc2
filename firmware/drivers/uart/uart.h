@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.13
+ * \version 0.1.16
  * 
  * \date 2019/12/07
  * 
@@ -41,10 +41,6 @@
 #include <stdint.h>
 
 #define UART_MODULE_NAME    "UART"
-
-#define BUFFER_SIZE        300U     /**< Buffer size in bytes. */
-
-#define BUFFER_DEFAULT_BYTE 0xFF /**< Buffer default byte (empty position). */
 
 /**
  * \brief UART ports.
@@ -76,15 +72,6 @@ typedef enum
 } uart_stop_bits_e;
 
 /**
- * \brief RX data availability.
- */
-typedef enum
-{
-    UART_NOT_AVAILABLE=0,   /**< Data is not available in the RX buffer. */
-    UART_AVAILABLE          /**< Data is available in the RX buffer. */
-} uart_data_availability_e;
-
-/**
  * \brief UART port configuration parameters.
  */
 typedef struct
@@ -95,17 +82,6 @@ typedef struct
     uint8_t parity;         /**< Parity bits. */
     uint8_t stop_bits;      /**< Stop bits. */
 } uart_config_t;
-
-/**
- * \brief Uart RX buffer representation as a struct.
- */
-typedef struct
-{
-    uint8_t data[BUFFER_SIZE];
-    uint16_t head;
-    uint16_t tail;
-    uint16_t size;
-} uart_rx_buffer_t;
 
 /**
  * \brief UART port.
@@ -128,36 +104,6 @@ typedef uint8_t uart_port_t;
  * \return The status/error code.
  */
 int uart_init(uart_port_t port, uart_config_t config);
-
-/**
- * \brief Verifies if there is data available to received in the RX buffer.
- *
- * \param[in] port is the UART port to verify. It can be:
- * \parblock
- *      -\b UART_PORT_0
- *      -\b UART_PORT_1
- *      -\b UART_PORT_2
- *      .
- * \endparblock
- *
- * \return The status/error code.
- */
-int uart_available(uart_port_t port);
-
-/**
- * \brief Flushes the RX buffer of a given port.
- *
- * \param[in] port is the UART port to flush. It can be:
- * \parblock
- *      -\b UART_PORT_0
- *      -\b UART_PORT_1
- *      -\b UART_PORT_2
- *      .
- * \endparblock
- *
- * \return The status/error code.
- */
-int uart_flush(uart_port_t port);
 
 /**
  * \brief Writes data to a given UART port.
@@ -198,9 +144,9 @@ int uart_write(uart_port_t port, uint8_t *data, uint16_t len);
 int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
 
 /**
- * \brief Enables the UART interrupt.
+ * \brief Enables the UART RX port.
  *
- * \param[in] port is the UART port to enables the interrupt . It can be:
+ * \param[in] port is the UART port to enables the interrupt. It can be:
  * \parblock
  *      -\b UART_PORT_0
  *      -\b UART_PORT_1
@@ -210,12 +156,12 @@ int uart_read(uart_port_t port, uint8_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-int uart_interrupt_enable(uart_port_t port);
+int uart_rx_enable(uart_port_t port);
 
 /**
- * \brief Disables the UART interrupt.
+ * \brief Disables the UART RX port.
  *
- * \param[in] port is the UART port to disables the interrupt . It can be:
+ * \param[in] port is the UART port to disables the interrupt. It can be:
  * \parblock
  *      -\b UART_PORT_0
  *      -\b UART_PORT_1
@@ -225,10 +171,10 @@ int uart_interrupt_enable(uart_port_t port);
  *
  * \return The status/error code.
  */
-int uart_interrupt_disable(uart_port_t port);
+int uart_rx_disable(uart_port_t port);
 
 /**
- * \brief Reads the RX ISR buffer.
+ * \brief Reads the number of data bytes available to be read from the buffer.
  *
  * \param[in] port is the UART port to read. It can be:
  * \parblock
@@ -238,26 +184,24 @@ int uart_interrupt_disable(uart_port_t port);
  *      .
  * \endparblock
  *
- * \param[in] data is an array to store the read data.
+ * \return The number of bytes received in the buffer.
+ */
+uint16_t uart_read_available(uart_port_t port);
+
+/**
+ * \brief Flushes/Clears the RX buffer of a given port.
+ *
+ * \param[in] port is the UART port to flush. It can be:
+ * \parblock
+ *      -\b UART_PORT_0
+ *      -\b UART_PORT_1
+ *      -\b UART_PORT_2
+ *      .
+ * \endparblock
  *
  * \return The status/error code.
  */
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data);
-
-/**
- * \brief Reads the RX ISR buffer size.
- *
- * \return The size of the ISR RX buffer.
- */
-uint16_t uart_read_isr_rx_buffer_size(void);
-
-/**
- * \brief Initialize RX buffers.
- *
- * \param[in] rx_buffer is a pointer to the RX buffer;
- *
- */
-void uart_rx_buffer_init(uart_rx_buffer *rx_buffer);
+int uart_flush(uart_port_t port);
 
 #endif /* UART_H_ */
 
