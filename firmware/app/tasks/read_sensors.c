@@ -1,7 +1,7 @@
 /*
  * read_sensors.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.1.22
  * 
  * \date 2020/07/12
  * 
@@ -35,6 +35,7 @@
 
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/power_sensor/power_sensor.h>
+#include <devices/radio/radio.h>
 
 #include <structs/ttc_data.h>
 

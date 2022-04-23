@@ -1,7 +1,7 @@
 /*
  * radio.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.7
+ * \version 0.1.22
  * 
  * \date 2019/10/27
  * 
@@ -328,6 +328,18 @@ int radio_sleep(void)
     }
 
     return err;
+}
+
+int radio_get_temperature(radio_temp_t *temp)
+{
+    /* TODO */
+    return -1;
+}
+
+int radio_get_rssi(radio_rssi_t *rssi)
+{
+    /* TODO */
+    return -1;
 }
 
 /** \} End of radio group */

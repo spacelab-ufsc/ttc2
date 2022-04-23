@@ -1,7 +1,7 @@
 /*
  * radio.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.7
+ * \version 0.1.22
  * 
  * \date 2019/10/27
  * 
@@ -40,6 +40,16 @@
 #include <stdint.h>
 
 #define RADIO_MODULE_NAME           "Radio"
+
+/**
+ * \brief Temperature type.
+ */
+typedef uint16_t radio_temp_t;
+
+/**
+ * \brief RSSI type.
+ */
+typedef uint16_t radio_rssi_t;
 
 /**
  * \brief Radio device initialization routine.
@@ -82,9 +92,27 @@ int radio_available(void);
 /**
  * \brief Puts the radio in sleep mode.
  *
- * \return Tge status/error code.
+ * \return The status/error code.
  */
 int radio_sleep(void);
+
+/**
+ * \brief Reads the current temperature of the radio device.
+ *
+ * \param[in,out] temp is a pointer to store the read temperature.
+ *
+ * \return The status/error code.
+ */
+int radio_get_temperature(radio_temp_t *temp);
+
+/**
+ * \brief Reads the last available RSSI value of the radio device.
+ *
+ * \param[in,out] rssi is a pointer to store the read RSSI value.
+ *
+ * \return The status/error code.
+ */
+int radio_get_rssi(radio_rssi_t *rssi);
 
 #endif /* RADIO_H_ */
 
