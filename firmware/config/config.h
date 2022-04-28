@@ -63,6 +63,13 @@
 
 /* Drivers */
 #define ISIS_ANTENNA_ENABLED                            1
+#define CONFIG_DRV_ISIS_ANTENNA_ENABLED                 1
+
+/* Antenna */
+#define CONFIG_ANTENNA_INDEP_DEPLOY_BURN_TIME_SEC       10U
+#define CONFIG_ANTENNA_SEQ_DEPLOY_BURN_TIME_SEC         20U
+#define CONFIG_ANTENNA_DEPLOYMENT_ATTEMPTS              10U
+#define CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN       45
 
 /* Memory addresses */
 #define CONFIG_MEM_ADR_SYS_TIME                         0
