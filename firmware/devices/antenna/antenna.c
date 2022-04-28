@@ -42,7 +42,6 @@
 
 #include "antenna.h"
 
-
 #define ANTENNA_INDEPENDENT_DEPLOY_BURN_TIME_SEC        CONFIG_ANTENNA_INDEP_DEPLOY_BURN_TIME_SEC
 #define ANTENNA_SEQUENTIAL_DEPLOY_BURN_TIME_SEC         CONFIG_ANTENNA_SEQ_DEPLOY_BURN_TIME_SEC
 
@@ -67,7 +66,7 @@ int antenna_init(void)
     }
     else
     {
-    #if defined(ISIS_ANTENNA_ENABLED) && (ISIS_ANTENNA_ENABLED == 1)
+    #if defined(CONFIG_DRV_ISIS_ANTENNA_ENABLED) && (CONFIG_DRV_ISIS_ANTENNA_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_INFO, ANTENNA_MODULE_NAME, "Initializing...");
         sys_log_new_line();
 
