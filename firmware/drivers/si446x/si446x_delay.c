@@ -1,7 +1,7 @@
 /*
  * si446x_delay.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -12,25 +12,24 @@
  * 
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
 /**
- * \brief Si446x driver delay implementation.
+ * \brief Si446x delay functions implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.5
+ * \version 0.1.23
  * 
- * \date 2017/07/29
+ * \date 2016/09/23
  * 
- * \defgroup si446x_delay Delay
- * \ingroup si446x
+ * \addtogroup si446x
  * \{
  */
 
@@ -39,9 +38,19 @@
 
 #include "si446x.h"
 
-void si446x_delay_ms(uint32_t ms)
+void si446x_delay_s(uint8_t s)
+{
+    vTaskDelay(pdMS_TO_TICKS(1000*s));
+}
+
+void si446x_delay_ms(uint16_t ms)
 {
     vTaskDelay(pdMS_TO_TICKS(ms));
 }
 
-/** \} End of si446x_delay group */
+void si446x_delay_us(uint32_t us)
+{
+    vTaskDelay(pdMS_TO_TICKS(1));
+}
+
+/**< \} End of si446x group */

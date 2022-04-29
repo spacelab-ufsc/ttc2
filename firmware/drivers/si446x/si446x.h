@@ -1,7 +1,7 @@
 /*
  * si446x.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,12 +25,11 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.8
+ * \version 0.1.23
  * 
  * \date 2017/06/01
  * 
  * \defgroup si446x Si446x
- * \ingroup drivers
  * \{
  */
 
@@ -40,665 +39,433 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "si446x_cmd.h"
-#include "si446x_prop.h"
-
-#define SI446X_MODULE_NAME      "Si446x"
-
-#define SI4460_PART_INFO        0x4460      /**< Si4460 part info value. */
-#define SI4461_PART_INFO        0x4461      /**< Si4461 part info value. */
-#define SI4463_PART_INFO        0x4463      /**< Si4463 part info value. */
-#define SI4464_PART_INFO        0x4464      /**< Si4464 part info value. */
-#define SI4467_PART_INFO        0x4467      /**< Si4467 part info value. */
-#define SI4468_PART_INFO        0x4468      /**< Si4468 part info value. */
-
-/* Error codes */
-#define SI446X_INVAL_PAR_ERROR  (-3)        /**< Invalid parameter error. */
-#define SI446X_SPI_ERROR        (-2)        /**< Command error. */
-#define SI446X_CTS_TIMEOUT      (-1)        /**< CTS timeout. */
-#define SI446X_SUCCESS          0           /**< No errors. */
-
 /**
- * \brief Si446x states.
+ * \brief Si446x modes.
  */
 typedef enum
 {
-    SI446X_NO_CHANGE_STATE=0,               /**< No change. */
-    SI446X_SLEEP_STATE,                     /**< Sleep state. */
-    SI446X_SPI_ACTIVE_STATE,                /**< SPI Active state. */
-    SI446X_READY_STATE,                     /**< Ready state. */
-    SI446X_ANOTHER_READY_STATE,             /**< Another enumeration for ready state. */
-    SI446X_TUNE_STATE_FOR_TX,               /**< Tune state for TX. */
-    SI446X_TUNE_STATE_FOR_RX,               /**< Tune state for RX. */
-    SI446X_TX_STATE,                        /**< TX state. */
-    SI446X_RX_STATE                         /**< RX state. */
-} si446x_states_e;
+    SI446X_MODE_STANDBY=0,      /**< Standby mode. */
+    SI446X_MODE_TX,             /**< TX mode. */
+    SI446X_MODE_RX              /**< RX mode. */
+} si446x_modes_t;
 
 /**
- * \brief Basic information about the device.
+ * \brief GPIO pins.
  */
-typedef struct
+typedef enum
 {
-    uint8_t chiprev;                        /**< Chip mask revision. */
-    uint16_t part;                          /**< Part number. */
-    uint8_t pbuild;                         /**< Part build. */
-    uint16_t id;                            /**< ID. */
-    uint8_t customer;                       /**< Customer ID. */
-    uint8_t romid;                          /**< ROM ID. */
-} si446x_part_info_t;
+    SI446X_GPIO_SDN=0,          /**< SDN pin. */
+    SI446X_GPIO_NIRQ,           /**< nIRQ pin. */
+    SI446X_GPIO_GPIO_0,         /**< GPIO 0 pin. */
+    SI446X_GPIO_GPIO_1,         /**< GPIO 1 pin. */
+    SI446X_GPIO_GPIO_2,         /**< GPIO 2 pin. */
+    SI446X_GPIO_GPIO_3          /**< GPIO 3 pin. */
+} si446x_gpio_pin_t;
 
 /**
- * \brief FIFO info.
- */
-typedef struct
-{
-    uint8_t rx_fifo_count;                  /**< Amount of space currently occupied in receive FIFO. */
-    uint8_t tx_fifo_space;                  /**< Amount of space currently available in transmit FIFO. */
-} si446x_fifo_info_t;
-
-/**
- * \brief Function revision information of the device.
- */
-typedef struct
-{
-    uint8_t revext;                         /**< External revision number. */
-    uint8_t revbranch;                      /**< Branch revision number. */
-    uint8_t revint;                         /**< Internal revision number. */
-    uint16_t patch;                         /**< ID of applied patch. */
-    uint8_t func;                           /**< Current functional mode. */
-} si446x_func_info_t;
-
-/**
- * \brief ADC conversion result.
- */
-typedef struct
-{
-    uint16_t gpio_adc;                      /**< ADC value of voltage on GPIO. */
-    uint16_t battery_adc;                   /**< ADC value of battery voltage. */
-    uint16_t temp_adc;                      /**< ADC value of temperature sensor voltage of the chip in degrees kelvin. */
-    uint8_t temp_slope;                     /**< Slope in the formula of Vtempadc - Temperature. */
-    uint8_t temp_intercept;                 /**< Intercept in the fromula of Vtempadc - Temperature. */
-} si446x_adc_reading_t;
-
-/**
- * \brief Modem status.
- */
-typedef struct
-{
-    uint8_t modem_pend;                     /**< Modem pending. */
-    uint8_t modem_status;                   /**< Modem status. */
-    uint8_t curr_rssi;                      /**< Current RSSI reading from the modem. */
-    uint8_t latch_rssi;                     /**< Latched RSSI reading from the modem as configured by MODEM_RSSI_CONTROL. */
-    uint8_t ant1_rssi;                      /**< RSSI of ANT1 while antenna diversity. */
-    uint8_t ant2_rssi;                      /**< RSSI of ANT2 while antenna diversity. */
-    uint16_t afc_freq_offset;               /**< The AFC value that is generated by the AFC loop during receive mode. */
-} si446x_modem_status_t;
-
-/**
- * \brief Interrupt status.
- */
-typedef struct
-{
-    uint8_t int_pend;                       /**< Interrupt pending. */
-    uint8_t int_status;                     /**< Interrupt status. */
-    uint8_t ph_pend;                        /**< Packet handler pending. */
-    uint8_t ph_status;                      /**< Packet handler status. */
-    uint8_t modem_pend;                     /**< Modem pending. */
-    uint8_t modem_status;                   /**< Modem status. */
-    uint8_t chip_pend;                      /**< Chip pending. */
-    uint8_t chip_status;                    /**< Chip status. */
-} si446x_int_status_t;
-
-/**
- * \brief Device state.
- */
-typedef struct
-{
-    uint8_t curr_state;                     /**< Current state. */
-    uint8_t current_channel;                /**< Current channel. */
-} si446x_device_state_t;
-
-/**
- * \brief Chip status.
- */
-typedef struct
-{
-    uint8_t chip_pend;                      /**< Chip pending flags. */
-    uint8_t chip_status;                    /**< Chip status flags. */
-    uint8_t chip_err_status;                /**< Last command error cause (Only valid if CMD_ERROR status bit is set). */
-} si446x_chip_status_t;
-
-/**
- * \brief Packet Handler status.
- */
-typedef struct
-{
-    uint8_t ph_pend;                        /**< Packet Handler pendings flags. */
-    uint8_t ph_status;                      /**< Packet Handler status flags. */
-} si446x_ph_status_t;
-
-/**
- * \brief Si446x state.
- */
-typedef uint8_t si446x_state_t;
-
-/**
- * \brief This functions is used to reset the si446x radio by applying shutdown and releasing it.
- *
- * After this function si446x_boot should be called. You can check if POR has completed by waiting 4 ms or by
- * polling GPIO 0, 2, or 3. When these GPIOs are high, it is safe to call si446x_boot.
- *
+ * \brief SI446X initialization.
+ * 
+ * Initializes the SI446X module with the configuration parameters from "si446x_reg_config.h".
+ * 
  * \return The status/error code.
  */
-int si446x_reset(void);
+int si446x_init(void);
 
 /**
- * \brief This function is used to initialize after power-up the radio chip.
- *
- * \param[in] boot_options: Patch mode selector.
- *
- * \param[in] xtal_option: Select if TCXO is in use.
- *
- * \param[in] xo_freq: Frequency of TCXO or external crystal oscillator in Hz.
- *
- * \note Before this function si446x_reset should be called.
- *
- * \return The status/error code.
+ * \brief Configures the registers of the SI446X device.
+ * 
+ * All the configuration parameters are defined in the "si446x_reg_config.h" file.
+ * 
+ * \return None.
  */
-int si446x_power_up(uint8_t boot_options, uint8_t xtal_options, uint32_t xo_freq);
+void si446x_reg_config(void);
 
 /**
- * \brief This function is used to load all properties with a list of NULL terminated set property commands.
- *
- * \param[in] p_set_prop_cmd: First element of the list to be loaded.
- *
- * \param[in] p_set_prop_cmd_len: Length in bytes of the commands list.
- *
- * \note Before this function si446x_reset should be called.
- *
- * \return The status/error code.
+ * \brief Power on reset procedure of the SI446X module.
+ * 
+ * \return None.
  */
-int si446x_configuration_init(uint8_t *p_set_prop_cmd, uint16_t p_set_prop_cmd_len);
+void si446x_power_on_reset(void);
 
 /**
- * \brief This function sends the PART_INFO command to the radio and receives the answer Si446xCmd union.
+ * \brief Transmit a packet through RF.
+ * 
+ * \param[in] data is the data with the packet to send.
  *
- * \param[in] part_info is a pointer to a si446x_part_info_t struct to store the result.
- *
- * \return The status/error code.
+ * \param[in] len is the length of the data to send.
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_part_info(si446x_part_info_t *part_info);
+bool si446x_tx_packet(uint8_t *data, uint8_t len);
 
 /**
- * \brief Sends START_TX command to the radio.
+ * \brief Transmit a long packet (> FIFO buffer, or 64 bytes) through RF.
+ * 
+ * \note AN633, Figure 62.
+ * 
+ * \param[in] packet is the packet to send.
  *
- * \param[in] channel: Channel number.
- *
- * \param[in] condition: Start TX condition.
- *
- * \param[in] tx_len: Payload length (exclude the PH generated CRC).
- *
- * \return The status/error code.
+ * \param[in] len is the length of the packet.
+ * 
+ * \return None.
  */
-int si446x_start_tx(uint8_t channel, uint8_t condition, uint16_t tx_len);
+bool si446x_tx_long_packet(uint8_t *packet, uint16_t len);
 
 /**
- * \brief Sends START_RX command to the radio.
+ * \brief .
+ * 
+ * \param[in] rx_buf .
+ * 
+ * \param[in] read_len .
  *
- * \param[in] channel: Channel number.
- *
- * \param[in] condition: Start RX condition.
- *
- * \param[in] rx_len: Payload length (exclude the PH generated CRC).
- *
- * \param[in] next_state1: Next state when Preamble Timeout occurs.
- *
- * \param[in] next_state2: Next state when a valid packet received.
- *
- * \param[in] next_state3: Next state when invalid packet received (e.g., CRC error).
- *
- * \return The status/error code.
+ * \return .
  */
-int si446x_start_rx(uint8_t channel, uint8_t condition, uint16_t rx_len, si446x_state_t next_state1, si446x_state_t next_state2, si446x_state_t next_state3);
+uint8_t si446x_rx_packet(uint8_t *rx_buf, uint8_t read_len);
 
 /**
- * \brief Get the Interrupt status/pending flags form the radio and clear flags if requested.
- *
- * \param[in] ph_clr_pend: Packet Handler pending flags clear.
- *
- * \param[in] modem_clr_pend: Modem Status pending flags clear.
- *
- * \param[in] chip_clr_pend: Chip State pending flags clear.
- *
- * \param[in,out] int_status: Is a pointer to store the int_status data.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_get_int_status(uint8_t ph_clr_pend, uint8_t modem_clr_pend, uint8_t chip_clr_pend, si446x_int_status_t *int_status);
+bool si446x_rx_init(void);
 
 /**
- * \brief Send GPIO pin config command to the radio and reads the answer into Si446xCmd union.
- *
- * \param[in] gpio0: GPIO0 configuration.
- *
- * \param[in] gpio1: GPIO1 configuration.
- *
- * \param[in] gpio2: GPIO2 configuration.
- *
- * \param[in] gpio3: GPIO3 configuration.
- *
- * \param[in] nirq: NIRQ configuration.
- *
- * \param[in] sdo: SDO configuration.
- *
- * \param[in] gen_config: General pin configuration.
- *
- * \return The status/error code.
+ * \brief Checks if the device is working.
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_gpio_pin_cfg(uint8_t gpio0, uint8_t gpio1, uint8_t gpio2, uint8_t gpio3, uint8_t nirq, uint8_t sdo, uint8_t gen_config);
+bool si446x_check_device(void);
 
 /**
- * \brief Send SET_PROPERTY command to the radio.
- *
- * \param[in] group: Property group.
- *
- * \param[in] num_props: Number of property to be set. The properties must be in ascending order in their sub-property aspect. Max. 12 properties can be set in one command
- *
- * \param[in] start_group: Start sub-property address.
- *
- * \param[in] data: Properties values
- *
- * \param[in] len: Lenght in bytes of the data array.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_set_property(uint8_t group, uint8_t num_props, uint8_t start_prop, uint8_t *data, uint16_t len);
+bool si446x_check_cts(void);
 
 /**
- * \brief Issue a change state command to the radio.
- *
- * \param[in] next_state: Next state. It can be:
- * \parblock
- *      -\b SI446X_NO_CHANGE_STATE
- *      -\b SI446X_SLEEP_STATE
- *      -\b SI446X_SPI_ACTIVE_STATE
- *      -\b SI446X_READY_STATE
- *      -\b SI446X_ANOTHER_READY_STATE
- *      -\b SI446X_TUNE_STATE_FOR_TX
- *      -\b SI446X_TUNE_STATE_FOR_RX
- *      -\b SI446X_TX_STATE
- *      -\b SI446X_RX_STATE
- *      .
- * \endparblock
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \param[in] pwr .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_change_state(si446x_state_t next_state);
+bool si446x_set_tx_power(uint8_t pwr);
 
 /**
- * \brief Sends NOP command to the radio. Can be used to maintain SPI communication.
+ * \brief .
+ * 
+ * \param[in] start_property .
  *
- * \return The status/error code.
+ * \param[in] para_buf .
+ *
+ * \param[in] length .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_nop(void);
+bool si446x_set_properties(uint16_t start_property, uint8_t *para_buf, uint8_t length);
 
 /**
- * \brief Send the FIFO_INFO command to the radio.
- *
- * Optionally resets the TX/RX FIFO. Reads the radio response back Si446xCmd uniom.
- *
- * \param[in] rst_rx: RX FIFO reset flag.
- *
- * \param[in] rst_tx: TX FIFO reset flag.
- *
- * \param[in,out] fifo_info: Is a pointer to store the FIFO info.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_fifo_info(bool rst_rx, bool rst_tx, si446x_fifo_info_t *fifo_info);
+bool si446x_get_properties(uint16_t start_property, uint8_t length, uint8_t *para_buf);
 
 /**
- * \brief The function can be used to load data into TX FIFO.
+ * \brief .
+ * 
+ * \param[in] parameters .
  *
- * \param[in] num_bytes: Data length to be load.
- *
- * \param[in] p_tx_data: Pointer to the data.
- *
- * \return The status/error code.
+ * \param[in] para_len .
+ * 
+ * \return None.
  */
-int si446x_write_tx_fifo(uint8_t num_bytes, uint8_t *p_tx_data);
+void si446x_set_config(const uint8_t *parameters, uint16_t para_len);
 
 /**
- * \brief Reads the RX FIFO content from the radio.
- *
- * \param[in] num_bytes: Data length to be read.
- *
- * \param[in] p_rx_data: Pointer to the buffer location.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \param[in] len .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_read_rx_fifo(uint8_t num_bytes, uint8_t *p_rx_data);
+bool si446x_set_preamble_len(uint8_t len);
 
 /**
- * \brief Get property values from the radio. Reads them into Si446xCmd union.
+ * \brief .
+ * 
+ * \param[in] sync_word .
  *
- * \param[in] group: Property group number.
- *
- * \param[in] num_props: Number of properties to be read.
- *
- * \param[in] start_props: Starting sub-property number.
- *
- * \return The status/error code.
+ * \param[in] len .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_get_property(uint8_t group, uint8_t num_props, uint8_t start_prop, uint8_t *data);
+bool si446x_set_sync_word(uint8_t *sync_word, uint8_t len);
 
 /**
- * \brief Sends the FUNC_INFO command to the radio, then reads the response into Si446xCmd union.
+ * \brief .
+ * 
+ * \param[in] gpio0_mode .
  *
- * \param[in,out] func_info is a pointer to a si446x_func_info_t struct to store the result.
- *
- * \return The status/error code.
+ * \param[in] gpio1_mode .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_func_info(si446x_func_info_t *func_info);
+bool si446x_set_gpio_mode(uint8_t gpio0_mode, uint8_t gpio1_mode);
 
 /**
- * \brief Reads the Fast Response Registers starting with A register into Si446xCmd union.
+ * \brief .
+ * 
+ * \param[in] cmd .
  *
- * \param[in] resp_byte_count: Number of Fast Response Registers to be read.
+ * \param[in] para_buf .
  *
- * \param[in,out] frr_a_val: Is a pointer to store the FRR A value.
- *
- * \return The status/error code.
+ * \param[in] len .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_frr_a_read(uint8_t resp_byte_count, uint8_t *frr_a_val);
+bool si446x_set_cmd(uint8_t cmd, uint8_t *para_buf, uint8_t len);
 
 /**
- * \brief Reads the Fast Response Registers starting with B register into Si446xCmd union.
+ * \brief Reads a command.
+ * 
+ * \param[in] cmd is the command to read.
  *
- * \param[in] resp_byte_count: Number of Fast Response Registers to be read.
+ * \param[in] para_buf is buffer to store the parameters.
  *
- * \param[in,out] frr_a_val: Is a pointer to store the FRR B value.
- *
- * \return The status/error code.
+ * \param[in] length is the length of the parameter to read.
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_frr_b_read(uint8_t resp_byte_count, uint8_t *frr_b_val);
+bool si446x_get_cmd(uint8_t cmd, uint8_t *para_buf, uint8_t length);
 
 /**
- * \brief Reads the Fast Response Registers starting with C register into Si446xCmd union.
- *
- * \param[in] resp_byte_count: Number of Fast Response Registers to be read.
- *
- * \param[in,out] frr_a_val: Is a pointer to store the FRR C value.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_frr_c_read(uint8_t resp_byte_count, uint8_t *frr_c_val);
+bool si446x_set_tx_interrupt(void);
 
 /**
- * \brief Reads the Fast Response Registers starting with D register into Si446xCmd union.
- *
- * \param[in] resp_byte_count: Number of Fast Response Registers to be read.
- *
- * \param[in,out] frr_a_val: Is a pointer to store the FRR D value.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_frr_d_read(uint8_t resp_byte_count, uint8_t *frr_d_val);
+bool si446x_set_rx_interrupt(void);
 
 /**
- * \brief Reads the ADC values from the radio into Si446xCmd union.
- *
- * \param[in] temp_en: Enables the temperature ADC.
- *
- * \param[in] bat_volt_en: Enables the battery voltage ADC.
- *
- * \parma[in] adc_gpio_en: Enables the ADC GPIO pin.
- *
- * \param[in] adc_gpio_pin: Defines the ADC GPIO pin.
- *
- * \param[in,out] adc_reading: A pointer to a si446x_adc_reading_t struct to store the result.
- *
- * \return The status/error code.
+ * \brief .
+ * 
+ * \return TRUE/FALSE if successful or not.
  */
-int si446x_get_adc_reading(uint8_t temp_en, bool bat_volt_en, bool adc_gpio_en, uint8_t adc_gpio_pin, si446x_adc_reading_t *adc_reading);
+bool si446x_clear_interrupts(void);
 
 /**
- * \brief Receives information from the radio of the current packet.
+ * \brief .
+ * 
+ * \param[in] data .
  *
- * Optionally can be used to modify the Packet Handler properties during packet reception.
- *
- * \param[in] field_number_mask: Packet Field number mask value.
- *
- * \param[in] len: Length value.
- *
- * \param[in] diff_len: Difference length.
- *
- * \return The status/error code.
+ * \param[in] len .
+ * 
+ * \return None.
  */
-int si446x_get_packet_info(uint8_t field_number_mask, uint16_t len, int16_t diff_len, uint16_t *last_len);
+void si446x_write_tx_fifo(uint8_t *data, uint8_t len);
 
 /**
- * \brief Gets the Packet Handler status flags. Optionally clears them.
+ * \brief .
+ * 
+ * \param[in] data .
+ * 
+ * \param[in] read_len .
  *
- * \param[in] ph_status: A pointer to store the packet handler status.
- *
- * \return The status/error code.
+ * \return .
  */
-int si446x_get_ph_status(si446x_ph_status_t *ph_status);
+uint8_t si446x_read_rx_fifo(uint8_t *data, uint8_t read_len);
 
 /**
- * \brief Gets the Modem status flags. Optionally clears them.
- *
- * \param[in] modem_clr_pend: Flags to clear.
- *
- * \param[in,out] modem_status is a pointer to store the read modem status.
- *
- * \return The status/error code.
+ * \brief Resets the FIFO.
+ * 
+ * \return None.
  */
-int si446x_get_modem_status(uint8_t modem_clr_pend, si446x_modem_status_t *modem_status);
+void si446x_fifo_reset(void);
 
 /**
- * \brief Gets the Chip status flags. Optionally clears them.
- *
- * \param[in] chip_clr_pend: Flags to clear.
- *
- * \param[in,out] chip_status: Is a pointer to store the chip status values .
- *
- * \return The status/error code.
+ * \brief Changes the radio state to TX.
+ * 
+ * \return None.
  */
-int si446x_get_chip_status(uint8_t chip_clr_pend, si446x_chip_status_t *chip_status);
+void si446x_enter_tx_mode(void);
 
 /**
- * \brief Performs image rejection calibration.
- *
- * Completion can be monitored by polling CTS or waiting for CHIP_READY interrupt source.
- *
- * \param[in] searching_step_size
- *
- * \param[in] searching_rssi_avg
- *
- * \param[in] rx_chain_setting1
- *
- * \param[in] rx_chain_setting2
- *
- * \return The status/error code.
+ * \brief Changes the radio state to RX.
+ * 
+ * \return None.
  */
-int si446x_ircal(uint8_t searching_step_size, uint8_t searching_rssi_avg, uint8_t rx_chain_setting1, uint8_t rx_chain_setting2);
+void si446x_enter_rx_mode(void);
 
 /**
- * \brief Sets the chip up for specified protocol.
- *
- * \param[in] protocol
- *
- * \return The status/error code.
+ * \brief Changes the radio state to standby.
+ * 
+ * return TRUE/FALSE if successful or not.
  */
-int si446x_protocol_cfg(uint8_t protocol);
+bool si446x_enter_standby_mode(void);
 
 /**
- * \brief Requests the current state of the device and lists pending TX and RX requests.
- *
- * \param[in,out] dev_state: Is a pointer to store the device state values.
- *
- * \return The status/error code.
+ * \brief Inquire interrupt.
+ * 
+ * \return TRUE/FALSE if an interrupt occurs.
  */
-int si446x_request_device_state(si446x_device_state_t *dev_state);
+bool si446x_wait_nirq(void);
 
 /**
- * \brief While in RX state this will hop to the frequency specified by the parameters and start searching for a preamble.
+ * \brief .
  *
- * \param[in] inte: New INTE register value.
- *
- * \param[in] frac2: New FRAC2 register value.
- *
- * \param[in] frac1: New FRAC1 register value.
- *
- * \param[in] frac0: New FRAC0 register value.
- *
- * \param[in] vco_cnt1: New VCO_CNT1 register value.
- *
- * \param[in] vco_cnt0: New VCO_CNT0 register value.
- *
- * \return The status/error code.
+ * \return TRUE/FALSE if a packet was sent or not.
  */
-int si446x_rx_hop(uint8_t inte, uint8_t frac2, uint8_t frac1, uint8_t frac0, uint8_t vco_cnt1, uint8_t vco_cnt0);
+bool si446x_wait_packet_sent(void);
 
 /**
- * \brief Shutdown the device.
- *
- * \return The status/error code.
+ * \brief Checks GPIO1 interruption.
+ * 
+ * \return TRUE/FALSE if an interrupt occurs.
  */
-int si446x_shutdown(void);
+bool si446x_wait_gpio1(void);
 
 /**
- * \brief Power-on the device.
- *
- * \return The status/error code.
- */
-int si446x_power_on(void);
-
-/**
- * \brief Verifies if the device is clear to send (CTS).
- *
- * \param[in] timeout_ms: Is the timeout in milliseconds.
- *
- * \return TRUR/FALSE if clear to send or not.
- */
-bool si446x_check_cts(uint32_t timeout_ms);
-
-/**
- * \brief Writes a command with no response.
- *
- * \param[in] cmd: Command array.
- *
- * \param[in] cmd_len: Command array length in bytes.
- *
- * \return The status/error code.
- */
-int si446x_set_cmd(uint8_t *cmd, uint16_t cmd_len);
-
-/**
- * \brief Writes a command with response.
- *
- * \param[in] cmd: Command array.
- *
- * \param[in] cmd_len: Command array length in bytes.
- *
- * \param[in,out] result: A pointer to store the command response.
- *
- * \param[in] result_len: The number of bytes of the response.
- *
- * \return The status/error code.
- */
-int si446x_get_cmd(uint8_t *cmd, uint16_t cmd_len, uint8_t *result, uint16_t result_len);
-
-/**
- * \brief SPI interface initialization.
+ * \brief SPI port initialization.
  *
  * \return The status/error code.
  */
 int si446x_spi_init(void);
 
 /**
- * \brief SPI transfer routine (write and read at the same time).
- *
- * \param[in] wd is an array ot bytes to write during the transfer.
- *
- * \param[in,out] rd is an array to store the read bytes during the transfer.
- *
- * \param[in] len is the number of bytes to transfer.
- *
- * \return The status/error code.
- */
-int si446x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
-
-/**
- * \brief Writes a byte over the SPI interface.
- *
- * \param[in] byte is the byte to be written to the SPI interface.
- *
- * \return The status/error code.
- */
-int si446x_spi_write_byte(uint8_t byte);
-
-/**
- * \brief Write an array of bytes over the SPI interface.
- *
- * \param[in] data is the array of bytes to write to the SPI interface.
- *
- * \param[in] len is the number of bytes to be written.
- *
- * \return The status/error code.
- */
-int si446x_spi_write(uint8_t *data, uint16_t len);
-
-/**
- * \brief Reads N bytes from the SPI interface.
- *
- * \param[in] data is an array to store the read bytes.
- *
- * \param[in] len is the number of bytes to read.
- *
- * \return The status/error code.
- */
-int si446x_spi_read(uint8_t *data, uint16_t len);
-
-/**
- * \brief GPIO pins initialization.
- *
- * \return The status/error code.
- */
-int si446x_gpio_init(void);
-
-/**
- * \brief Write the state of the SDN pin.
- *
- * \param[in] state is new state of the SDN pin.
- *
- * \return The status/error code.
- */
-int si446x_gpio_write_sdn(bool state);
-
-/**
- * \brief Reads the state of the nIRQ pin.
- *
- * \return The state of the nIRQ pin. It can be:
- * \parblock
- *      -\b GPIO_STATE_HIGH
- *      -\b GPIO_STATE_LOW
- *      .
- * \endparblock
- */
-int si446x_gpio_read_nirq(void);
-
-/**
- * \brief Milliseconds delay.
- *
- * \param[in] ms is the time to delay in milliseconds.
+ * \brief Enables the SPI bus.
  *
  * \return None.
  */
-void si446x_delay_ms(uint32_t ms);
+void si446x_spi_enable(void);
+
+/**
+ * \brief Disables the SPI bus.
+ *
+ * \return None.
+ */
+void si446x_spi_disable(void);
+
+/**
+ * \brief Transfers an array through the SPI interface.
+ * 
+ * \param[in] data is an array to be  transfered.
+ *
+ * \param[in] size is the size of the data to be transfered.
+ * 
+ * \return None.
+ */
+void si446x_spi_write(uint8_t *data, uint16_t size);
+
+/**
+ * \brief Reads data from the SPI interface.
+ * 
+ * \param[in] data is a pointer to where the incoming data will be stored.
+ *
+ * \param[in] size is how many bytes will be read from the SPI interface.
+ * 
+ * \return None;
+ */
+void si446x_spi_read(uint8_t *data, uint16_t size);
+
+/**
+ * \brief Makes a byte transfer in the SPI port (Writing and reading).
+ * 
+ * \param[in] byte is the byte to write in the SPI port.
+ * 
+ * \return The read byte during the transfer operation.
+ */
+uint8_t si446x_spi_transfer(uint8_t byte);
+
+/**
+ * \brief Si446x GPIO initialization.
+ * 
+ * \return None.
+ */
+void si446x_gpio_init(void);
+
+/**
+ * \brief Sets a given GPIO pin.
+ *
+ * \param[in] pin is the GPIO pin to set. It can be:
+ * \parblock
+ *      -\b SI446X_GPIO_SDN
+ *      -\b SI446X_GPIO_GPIO_0
+ *      -\b SI446X_GPIO_GPIO_1
+ *      -\b SI446X_GPIO_GPIO_2
+ *      -\b SI446X_GPIO_GPIO_3
+ *      .
+ * \endparblock
+ *
+ * \return None.
+ */
+void si446x_gpio_set_pin(si446x_gpio_pin_t pin);
+
+/**
+ * \brief Clears a given GPIO pin.
+ *
+ * \param[in] pin is the GPIO pin to clear. It can be:
+ * \parblock
+ *      -\b SI446X_GPIO_SDN
+ *      -\b SI446X_GPIO_GPIO_0
+ *      -\b SI446X_GPIO_GPIO_1
+ *      -\b SI446X_GPIO_GPIO_2
+ *      -\b SI446X_GPIO_GPIO_3
+ *      .
+ * \endparblock
+ *
+ * \return None.
+ */
+void si446x_gpio_clear_pin(si446x_gpio_pin_t pin);
+
+/**
+ * \brief Reads the state of a given GPIO pin.
+ *
+ * \param[in] pin is the GPIO pin to read. It can be:
+ * \parblock
+ *      -\b SI446X_GPIO_NIRQ
+ *      -\b SI446X_GPIO_GPIO_1
+ *      .
+ * \endparblock
+ *
+ * \return None.
+ */
+int si446x_gpio_get_pin(si446x_gpio_pin_t pin);
+
+/**
+ * \brief Seconds delay.
+ * 
+ * \param[in] s is the delay in seconds.
+ * 
+ * \return None.
+ */
+void si446x_delay_s(uint8_t s);
+
+/**
+ * \brief Milliseconds delay.
+ * 
+ * \param[in] ms is the delay in milliseconds.
+ * 
+ * \return None.
+ */
+void si446x_delay_ms(uint16_t ms);
+
+/**
+ * \brief Microseconds delay.
+ * 
+ * \param[in] us is the delay in microseconds.
+ * 
+ * \return None.
+ */
+void si446x_delay_us(uint32_t us);
 
 #endif /* SI446X_H_ */
 
-/** \} End of si446x group */
+/**< \} End of si446x group */
