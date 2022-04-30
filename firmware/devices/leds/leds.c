@@ -1,7 +1,7 @@
 /*
  * leds.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.7
+ * \version 0.1.25
  * 
  * \date 2020/01/20
  * 
@@ -39,7 +39,7 @@
 #include "leds.h"
 
 /* GPIO configuration */
-#define LED_SYSTEM_PIN          GPIO_PIN_36
+#define LED_SYSTEM_PIN          GPIO_PIN_27
 #define LED_FAULT_PIN           GPIO_PIN_28
 #define LED_DOWNLINK_PIN        GPIO_PIN_30
 #define LED_UPLINK_PIN          GPIO_PIN_29
