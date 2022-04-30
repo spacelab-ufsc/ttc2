@@ -1,7 +1,7 @@
 /*
  * system.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.9
+ * \version 0.1.24
  * 
  * \date 2020/01/29
  * 
@@ -69,8 +69,8 @@ sys_time_t system_get_time(void)
 
 sys_hw_version_t system_get_hw_version(void)
 {
-    gpio_pin_t bit_0_pin = GPIO_PIN_14;
-    gpio_pin_t bit_1_pin = GPIO_PIN_15;
+    gpio_pin_t bit_0_pin = GPIO_PIN_34;
+    gpio_pin_t bit_1_pin = GPIO_PIN_35;
 
     sys_hw_version_t res = HW_VERSION_UNKNOWN;
 
