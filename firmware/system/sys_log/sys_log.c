@@ -1,7 +1,7 @@
 /*
  * sys_log.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.9
+ * \version 0.1.23
  * 
  * \date 2019/11/03
  * 
@@ -320,7 +320,7 @@ void sys_log_print_system_time(void)
 
 void sys_log_print_license_msg(void)
 {
-    sys_log_print_msg("TTC 2.0 Copyright (C) 2021, SpaceLab;");
+    sys_log_print_msg("Copyright The TTC 2.0 Contributors;");
     sys_log_new_line();
     sys_log_print_msg("This program comes with ABSOLUTELY NO WARRANTY.");
     sys_log_new_line();
