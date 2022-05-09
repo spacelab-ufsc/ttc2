@@ -36,12 +36,12 @@
 #include <string.h>
 
 #include <config/config.h>
+#include <config/radio_config_Si4463.h>
 #include <system/sys_log/sys_log.h>
 
 #include "si446x.h"
 #include "si446x_config.h"
 #include "si446x_registers.h"
-#include "radio_config_Si4463.h"
 
 const uint8_t SI446X_CONFIGURATION_DATA[] = RADIO_CONFIGURATION_DATA_ARRAY;
 
