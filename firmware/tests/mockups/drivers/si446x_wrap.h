@@ -1,7 +1,7 @@
 /*
  * si446x_wrap.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.5
+ * \version 0.1.23
  * 
  * \date 2021/04/27
  * 
@@ -37,114 +37,97 @@
 #ifndef SI446X_WRAP_H_
 #define SI446X_WRAP_H_
 
+#include <stdint.h>
 #include <stdbool.h>
 
 #include <drivers/si446x/si446x.h>
 
-/**
- * \brief Mockup function of the si446x reset routine.
- *
- * \return The status/error code.
- */
-int __wrap_si446x_reset(void);
+int __wrap_si446x_init(void);
 
-/**
- * \brief Mockup function of the si446x power-up routine.
- *
- * \param[in] boot_options: Patch mode selector.
- *
- * \param[in] xtal_option: Select if TCXO is in use.
- *
- * \param[in] xo_freq: Frequency of TCXO or external crystal oscillator in Hz.
- *
- * \note Before this function si446x_reset should be called.
- *
- * \return The status/error code.
- */
-int __wrap_si446x_power_up(uint8_t boot_options, uint8_t xtal_options, uint32_t xo_freq);
+void __wrap_si446x_reg_config(void);
 
-int __wrap_si446x_configuration_init(uint8_t *p_set_prop_cmd, uint16_t p_set_prop_cmd_len);
+void __wrap_si446x_power_on_reset(void);
 
-int __wrap_si446x_part_info(si446x_part_info_t *part_info);
+bool __wrap_si446x_tx_packet(uint8_t *data, uint8_t len);
 
-int __wrap_si446x_start_tx(uint8_t channel, uint8_t condition, uint16_t tx_len);
+bool __wrap_si446x_tx_long_packet(uint8_t *packet, uint16_t len);
 
-int __wrap_si446x_start_rx(uint8_t channel, uint8_t condition, uint16_t rx_len, si446x_state_t next_state1, si446x_state_t next_state2, si446x_state_t next_state3);
+uint8_t __wrap_si446x_rx_packet(uint8_t *rx_buf, uint8_t read_len);
 
-int __wrap_si446x_get_int_status(uint8_t ph_clr_pend, uint8_t modem_clr_pend, uint8_t chip_clr_pend, si446x_int_status_t *int_status);
+bool __wrap_si446x_rx_init(void);
 
-int __wrap_si446x_gpio_pin_cfg(uint8_t gpio0, uint8_t gpio1, uint8_t gpio2, uint8_t gpio3, uint8_t nirq, uint8_t sdo, uint8_t gen_config);
+bool __wrap_si446x_check_device(void);
 
-int __wrap_si446x_set_property(uint8_t group, uint8_t num_props, uint8_t start_prop, uint8_t *data, uint16_t len);
+bool __wrap_si446x_check_cts(void);
 
-int __wrap_si446x_change_state(si446x_state_t next_state);
+bool __wrap_si446x_set_tx_power(uint8_t pwr);
 
-int __wrap_si446x_nop(void);
+bool __wrap_si446x_set_properties(uint16_t start_property, uint8_t *para_buf, uint8_t length);
 
-int __wrap_si446x_fifo_info(bool rst_rx, bool rst_tx, si446x_fifo_info_t *fifo_info);
+bool __wrap_si446x_get_properties(uint16_t start_property, uint8_t length, uint8_t *para_buf);
 
-int __wrap_si446x_write_tx_fifo(uint8_t num_bytes, uint8_t *p_tx_data);
+void __wrap_si446x_set_config(const uint8_t *parameters, uint16_t para_len);
 
-int __wrap_si446x_read_rx_fifo(uint8_t num_bytes, uint8_t *p_rx_data);
+bool __wrap_si446x_set_preamble_len(uint8_t len);
 
-int __wrap_si446x_get_property(uint8_t group, uint8_t num_props, uint8_t start_prop, uint8_t *data);
+bool __wrap_si446x_set_sync_word(uint8_t *sync_word, uint8_t len);
 
-int __wrap_si446x_func_info(si446x_func_info_t *func_info);
+bool __wrap_si446x_set_gpio_mode(uint8_t gpio0_mode, uint8_t gpio1_mode);
 
-int __wrap_si446x_frr_a_read(uint8_t resp_byte_count, uint8_t *frr_a_val);
+bool __wrap_si446x_set_cmd(uint8_t cmd, uint8_t *para_buf, uint8_t len);
 
-int __wrap_si446x_frr_b_read(uint8_t resp_byte_count, uint8_t *frr_b_val);
+bool __wrap_si446x_get_cmd(uint8_t cmd, uint8_t *para_buf, uint8_t length);
 
-int __wrap_si446x_frr_c_read(uint8_t resp_byte_count, uint8_t *frr_c_val);
+bool __wrap_si446x_set_tx_interrupt(void);
 
-int __wrap_si446x_frr_d_read(uint8_t resp_byte_count, uint8_t *frr_d_val);
+bool __wrap_si446x_set_rx_interrupt(void);
 
-int __wrap_si446x_get_adc_reading(uint8_t temp_en, bool bat_volt_en, bool adc_gpio_en, uint8_t adc_gpio_pin, si446x_adc_reading_t *adc_reading);
+bool __wrap_si446x_clear_interrupts(void);
 
-int __wrap_si446x_get_packet_info(uint8_t field_number_mask, uint16_t len, int16_t diff_len, uint16_t *last_len);
+void __wrap_si446x_write_tx_fifo(uint8_t *data, uint8_t len);
 
-int __wrap_si446x_get_ph_status(si446x_ph_status_t *ph_status);
+uint8_t __wrap_si446x_read_rx_fifo(uint8_t *data, uint8_t read_len);
 
-int __wrap_si446x_get_modem_status(uint8_t modem_clr_pend, si446x_modem_status_t *modem_status);
+void __wrap_si446x_fifo_reset(void);
 
-int __wrap_si446x_get_chip_status(uint8_t chip_clr_pend, si446x_chip_status_t *chip_status);
+void __wrap_si446x_enter_tx_mode(void);
 
-int __wrap_si446x_ircal(uint8_t searching_step_size, uint8_t searching_rssi_avg, uint8_t rx_chain_setting1, uint8_t rx_chain_setting2);
+void __wrap_si446x_enter_rx_mode(void);
 
-int __wrap_si446x_protocol_cfg(uint8_t protocol);
+bool __wrap_si446x_enter_standby_mode(void);
 
-int __wrap_si446x_request_device_state(si446x_device_state_t *dev_state);
+bool __wrap_si446x_wait_nirq(void);
 
-int __wrap_si446x_rx_hop(uint8_t inte, uint8_t frac2, uint8_t frac1, uint8_t frac0, uint8_t vco_cnt1, uint8_t vco_cnt0);
+bool __wrap_si446x_wait_packet_sent(void);
 
-int __wrap_si446x_shutdown(void);
-
-int __wrap_si446x_power_on(void);
-
-bool __wrap_si446x_check_cts(uint32_t timeout_ms);
-
-int __wrap_si446x_set_cmd(uint8_t *cmd, uint16_t cmd_len);
-
-int __wrap_si446x_get_cmd(uint8_t *cmd, uint16_t cmd_len, uint8_t *result, uint16_t result_len);
+bool __wrap_si446x_wait_gpio1(void);
 
 int __wrap_si446x_spi_init(void);
 
-int __wrap_si446x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len);
+void __wrap_si446x_spi_enable(void);
 
-int __wrap_si446x_spi_write_byte(uint8_t byte);
+void __wrap_si446x_spi_disable(void);
 
-int __wrap_si446x_spi_write(uint8_t *data, uint16_t len);
+void __wrap_si446x_spi_write(uint8_t *data, uint16_t size);
 
-int __wrap_si446x_spi_read(uint8_t *data, uint16_t len);
+void __wrap_si446x_spi_read(uint8_t *data, uint16_t size);
 
-int __wrap_si446x_gpio_init(void);
+uint8_t __wrap_si446x_spi_transfer(uint8_t byte);
 
-int __wrap_si446x_gpio_write_sdn(bool state);
+void __wrap_si446x_gpio_init(void);
 
-int __wrap_si446x_gpio_read_nirq(void);
+void __wrap_si446x_gpio_set_pin(si446x_gpio_pin_t pin);
 
-void __wrap_si446x_delay_ms(uint32_t ms);
+void __wrap_si446x_gpio_clear_pin(si446x_gpio_pin_t pin);
 
-#endif /* WDT_WRAP_H_ */
+int __wrap_si446x_gpio_get_pin(si446x_gpio_pin_t pin);
+
+void __wrap_si446x_delay_s(uint8_t s);
+
+void __wrap_si446x_delay_ms(uint16_t ms);
+
+void __wrap_si446x_delay_us(uint32_t us);
+
+#endif /* SI446X_WRAP_H_ */
 
 /** \} End of si446x_wrap group */
