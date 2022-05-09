@@ -1,7 +1,7 @@
 /*
  * radio_test.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.23
  * 
  * \date 2021/02/21
  * 
@@ -42,7 +42,7 @@
 #include <cmocka.h>
 
 #include <devices/radio/radio.h>
-#include <tests/mockups/si446x_wrap.h>
+#include <tests/mockups/drivers/si446x_wrap.h>
 
 #define RADIO_ID    0x4463
 
