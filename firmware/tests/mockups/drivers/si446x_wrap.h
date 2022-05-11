@@ -108,9 +108,9 @@ void __wrap_si446x_spi_enable(void);
 
 void __wrap_si446x_spi_disable(void);
 
-void __wrap_si446x_spi_write(uint8_t *data, uint16_t size);
+int __wrap_si446x_spi_write(uint8_t *data, uint16_t size);
 
-void __wrap_si446x_spi_read(uint8_t *data, uint16_t size);
+int __wrap_si446x_spi_read(uint8_t *data, uint16_t size);
 
 uint8_t __wrap_si446x_spi_transfer(uint8_t byte);
 

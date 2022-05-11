@@ -280,13 +280,15 @@ void __wrap_si446x_spi_disable(void)
     function_called();
 }
 
-void __wrap_si446x_spi_write(uint8_t *data, uint16_t size)
+int __wrap_si446x_spi_write(uint8_t *data, uint16_t size)
 {
-    check_expected_prt(data);
+    //check_expected_prt(data);
     check_expected(size);
+
+    return mock_type(int);
 }
 
-void __wrap_si446x_spi_read(uint8_t *data, uint16_t size)
+int __wrap_si446x_spi_read(uint8_t *data, uint16_t size)
 {
     check_expected(size);
 
@@ -298,6 +300,7 @@ void __wrap_si446x_spi_read(uint8_t *data, uint16_t size)
             data[i] = mock_type(uint8_t);
         }
     }
+    return mock_type(int);
 }
 
 uint8_t __wrap_si446x_spi_transfer(uint8_t byte)
