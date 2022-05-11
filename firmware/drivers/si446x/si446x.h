@@ -360,9 +360,9 @@ void si446x_spi_disable(void);
  *
  * \param[in] size is the size of the data to be transfered.
  * 
- * \return None.
+ * \return The status/error code.
  */
-void si446x_spi_write(uint8_t *data, uint16_t size);
+int si446x_spi_write(uint8_t *data, uint16_t size);
 
 /**
  * \brief Reads data from the SPI interface.
@@ -371,9 +371,9 @@ void si446x_spi_write(uint8_t *data, uint16_t size);
  *
  * \param[in] size is how many bytes will be read from the SPI interface.
  * 
- * \return None;
+ * \return The status/error code.
  */
-void si446x_spi_read(uint8_t *data, uint16_t size);
+int si446x_spi_read(uint8_t *data, uint16_t size);
 
 /**
  * \brief Makes a byte transfer in the SPI port (Writing and reading).

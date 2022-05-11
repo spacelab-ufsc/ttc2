@@ -654,7 +654,8 @@ bool si446x_enter_standby_mode(void)
 {
     if (si446x_mode == SI446X_MODE_STANDBY)
     {
-        return;
+        /*TODO*/
+        return -1;
     }
 
 #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)

@@ -57,12 +57,12 @@ void si446x_spi_disable(void)
     spi_select_slave(SPI_PORT_3, SPI_CS_0, false);
 }
 
-void si446x_spi_write(uint8_t *data, uint16_t size)
+int si446x_spi_write(uint8_t *data, uint16_t size)
 {
     return spi_write(SPI_PORT_3, SPI_CS_0, data, size);
 }
 
-void si446x_spi_read(uint8_t *data, uint16_t size)
+int si446x_spi_read(uint8_t *data, uint16_t size)
 {
     return spi_read(SPI_PORT_3, SPI_CS_0, data, size);
 }
