@@ -24,6 +24,7 @@
  * \brief Radio device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.1.23
  * 
@@ -47,25 +48,36 @@ int radio_init(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Initializing radio device...");
     sys_log_new_line();
 
-    int err = si446x_init();
-
-    si446x_rx_init();
+    int err = -1;
+    if (si446x_init())
+    {
+        if (si446x_rx_init())
+        {
+            err = 0;
+        }
+    }
 
     return err;
 }
 
 int radio_send(uint8_t *data, uint16_t len)
 {
-    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmmiting ");
+    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmitting ");
     sys_log_print_uint(len);
     sys_log_print_msg(" byte(s)...");
     sys_log_new_line();
 
-    int err = 0;
+    int err = -1;
 
-    si446x_tx_long_packet(data, len);
+    if(si446x_tx_long_packet(data, len))
+    {
+        if(si446x_rx_init())
+        {
+            err = 0;
+        }
+    }
 
-    si446x_rx_init();
+
 
     return err;
 }
@@ -97,6 +109,7 @@ int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms)
 
 int radio_available(void)
 {
+    /*TODO */
     return -1;
 }
 

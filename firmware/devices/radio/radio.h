@@ -78,7 +78,7 @@ int radio_send(uint8_t *data, uint16_t len);
  *
  * \param[in] timeout_ms is the timeout to received a packet in milliseconds.
  *
- * \return The number of read bytes (-1 on error).
+ * \return The status/error code.
  */
 int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms);
 
