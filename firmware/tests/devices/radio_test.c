@@ -50,8 +50,11 @@
 
 static void radio_init_test(void **state)
 {
-    expect_function_call(__wrap_si446x_init);
-    expect_function_call(__wrap_si446x_rx_init);
+    will_return(__wrap_si446x_init, 0);
+
+    will_return(__wrap_si446x_rx_init, true);
+    
+
     assert_return_code(radio_init(), 0);
 }
 
@@ -60,63 +63,50 @@ static void radio_send_test(void **state)
     uint8_t data[50] = {0};
     uint16_t len = 50;
 
-    will_return(__wrap_si446x_tx_long_packet,       data);
-    will_return(__wrap_si446x_tx_long_packet,       len);
+    
+    expect_value(__wrap_si446x_tx_long_packet, packet, data);
+    expect_value(__wrap_si446x_tx_long_packet, len, len);
 
-    expect_function_call(__wrap_si446x_tx_long_packet);
-    expect_function_call(__wrap_si446x_rx_init);
+    will_return(__wrap_si446x_tx_long_packet, true);
+    will_return(__wrap_si446x_rx_init, true);
 
-    assert_return_code(radio_sent(data, len), 0);
+    
+    assert_return_code(radio_send(data, len), 0);
 }
 
 static void radio_recv_test(void **state)
 {
     uint8_t data[50] = {0};
-    uint16_t len = 50;
+    uint8_t len = 50;
     uint32_t timeout_ms = 100;
-    uint32_t i;
-    for (i=0; i < (timeout_ms /= 100); i++)
+    uint16_t i;
+    
+
+    will_return(__wrap_si446x_wait_nirq, true);
+
+    expect_value(__wrap_si446x_rx_packet, rx_buf, data);
+    expect_value(__wrap_si446x_rx_packet, read_len, len);
+
+    for(i = 0; i < len; i++)
     {
-        expect_function_call(__wrap_si446x_wait_nirq);
-
-        will_return(__wrap_si446x_rx_packet, data);
-        will_return(__wrap_si446x_rx_packet, len);
-
-        will_return(__wrap_si446x_rx_packet, 0);
-
-        expect_function_call(__wrap_si446x_clear_interrupts);
-        expect_function_call(__wrap_si446x_rx_init);
-
+        will_return(__wrap_si446x_rx_packet, data[i]);
     }
+    will_return(__wrap_si446x_rx_packet, 50);
 
-    assert_return_code(radio_recv(data, len, timeout_ms), 0);
-}
+    will_return(__wrap_si446x_clear_interrupts, true);
 
-static void radio_available_test(void **state)
-{
-    /*TODO*/
-    assert_return_code(radio_available(), 0);
+    will_return(__wrap_si446x_rx_init, true);
+
+
+    assert_return_code(radio_recv(data, len, timeout_ms), len);
 }
 
 static void radio_sleep_test(void **state)
 {
     will_return(__wrap_si446x_enter_standby_mode, 0);
 
+
     assert_return_code(radio_sleep(), 0);
-}
-
-static void radio_get_temperature_test(void **state)
-{
-    /*TODO*/
-    radio_temp_t temp = 30;
-    assert_return_code(radio_get_temperature(&temp), 0);
-}
-
-static void radio_get_rssi_test(void **state)
-{
-    /*TODO*/
-    radio_rssi_t temp = 30;
-    assert_return_code(radio_get_temperature(&temp), 0);
 }
 
 int main(void)
@@ -125,10 +115,7 @@ int main(void)
         cmocka_unit_test(radio_init_test),
         cmocka_unit_test(radio_send_test),
         cmocka_unit_test(radio_recv_test),
-        cmocka_unit_test(radio_available_test),
-        cmocka_unit_test(radio_sleep_test),
-        cmocka_unit_test(radio_get_temperature_test),
-        cmocka_unit_test(radio_get_rssi_test)
+        cmocka_unit_test(radio_sleep_test)
     };
 
     return cmocka_run_group_tests(radio_tests, NULL, NULL);
