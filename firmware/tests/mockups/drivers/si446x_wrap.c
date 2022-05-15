@@ -77,6 +77,8 @@ bool __wrap_si446x_tx_long_packet(uint8_t *packet, uint16_t len)
 uint8_t __wrap_si446x_rx_packet(uint8_t *rx_buf, uint8_t read_len)
 {
     check_expected(read_len);
+    check_expected_ptr(rx_buf);
+
 
     if (rx_buf != NULL)
     {
