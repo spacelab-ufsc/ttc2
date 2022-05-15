@@ -49,7 +49,7 @@ int radio_init(void)
     sys_log_new_line();
 
     int err = -1;
-    if (si446x_init())
+    if (si446x_init() == 0)
     {
         if (si446x_rx_init())
         {
@@ -76,8 +76,6 @@ int radio_send(uint8_t *data, uint16_t len)
             err = 0;
         }
     }
-
-
 
     return err;
 }
