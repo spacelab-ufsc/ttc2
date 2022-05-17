@@ -8,6 +8,7 @@ v0.2 - 2022/05/17
 - Initial static analysis test
 - GitHub actions enabled
 - First minimal working version
+- Library to handle containers
 
 ===========================================
 
