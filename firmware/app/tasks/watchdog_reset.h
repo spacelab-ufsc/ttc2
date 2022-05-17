@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2020/01/11
  * 
@@ -41,7 +41,7 @@
 #include <task.h>
 
 #define TASK_WATCHDOG_RESET_NAME                    "WatchdogReset"     /**< Task name. */
-#define TASK_WATCHDOG_RESET_STACK_SIZE              128                 /**< Stack size in bytes. */
+#define TASK_WATCHDOG_RESET_STACK_SIZE              150                 /**< Stack size in bytes. */
 #define TASK_WATCHDOG_RESET_PRIORITY                1                   /**< Task priority. */
 #define TASK_WATCHDOG_RESET_PERIOD_MS               100                 /**< Task period in milliseconds. */
 #define TASK_WATCHDOG_RESET_INITIAL_DELAY_MS        0                   /**< Delay, in milliseconds, before the first execution. */
@@ -54,11 +54,9 @@ extern xTaskHandle xTaskWatchdogResetHandle;
 /**
  * \brief Watchdog reset task.
  *
- * \param[in] pvParameters is a value that will passed as the task's parameter.
- *
  * \return None.
  */
-void vTaskWatchdogReset(void *pvParameters);
+void vTaskWatchdogReset(void);
 
 #endif /* WATCHDOG_RESET_H_ */
 

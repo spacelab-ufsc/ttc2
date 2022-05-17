@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.13
+ * \version 0.1.9
  * 
  * \date 2021/04/04
  * 
@@ -43,10 +43,16 @@
 void main(void)
 {
     /* Watchdog device initialization */
-    watchdog_init();
+    int err = watchdog_init();
 
     /* System clocks configuration */
-    clocks_setup((clocks_config_t){.mclk_hz = 32000000UL, .smclk_hz=32000000UL, .aclk_hz=32768});
+    clocks_config_t clk_conf = {0};
+
+    clk_conf.mclk_hz    = 32000000UL;
+    clk_conf.smclk_hz   = 32000000UL;
+    clk_conf.aclk_hz    = 32768;
+
+    err = clocks_setup(clk_conf);
 
     /* Create all the tasks */
     create_tasks();
@@ -55,7 +61,9 @@ void main(void)
     vTaskStartScheduler();
 
     /* Will only get here if there was insufficient memory to create the idle and/or timer task */
-    while(1);
+    while(1)
+    {
+    }
 }
 
 /** \} End of main group */

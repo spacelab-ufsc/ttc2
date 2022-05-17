@@ -1,7 +1,7 @@
 /*
  * drivers.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.19
+ * \version 0.1.12
  * 
  * \date 2019/10/26
  * 
@@ -46,6 +46,7 @@
 #include "adc/adc.h"
 #include "flash/flash.h"
 #include "ina22x/ina22x.h"
+#include "tca4311a/tca4311a.h"
 
 #endif /* DRIVERS_H_ */
 

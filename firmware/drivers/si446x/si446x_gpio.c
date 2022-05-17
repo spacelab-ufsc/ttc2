@@ -1,7 +1,7 @@
 /*
  * si446x_gpio.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -12,25 +12,24 @@
  * 
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
 /**
- * \brief Si446x GPIO implementation.
+ * \brief Si446x GPIO driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.21
+ * \version 0.1.23
  * 
- * \date 2020/05/14
+ * \date 2017/07/29
  * 
- * \defgroup si446x_gpio GPIO
- * \ingroup si446x
+ * \addtogroup rf4463
  * \{
  */
 
@@ -38,64 +37,55 @@
 
 #include "si446x.h"
 
-#define SI446X_GPIO_SDN_PIN     GPIO_PIN_16
-#define SI446X_GPIO_NIRQ_PIN    GPIO_PIN_17
-#define SI446X_GPIO_0_PIN       GPIO_PIN_18
-#define SI446X_GPIO_1_PIN       GPIO_PIN_19
-
-int si446x_gpio_init(void)
+void si446x_gpio_init(void)
 {
+    int err = -1;
+
     gpio_config_t conf = {0};
 
-    /* SDN pin */
     conf.mode = GPIO_MODE_OUTPUT;
 
-    if (gpio_init(SI446X_GPIO_SDN_PIN, conf) != 0)
+    /* SDN pin */
+    if (gpio_init(GPIO_PIN_16, conf) == 0)
     {
-        return -1;
-    }
+        conf.mode = GPIO_MODE_INPUT;
 
-    /* GPIO0 pin */
-    if (gpio_init(SI446X_GPIO_0_PIN, conf) != 0)
+        /* nIRQ pin */
+        err = gpio_init(GPIO_PIN_17, conf);
+    }
+}
+
+void si446x_gpio_set_pin(si446x_gpio_pin_t pin)
+{
+    switch(pin)
     {
-        return -1;
+        case SI446X_GPIO_SDN:       gpio_set_state(GPIO_PIN_16, true);      break;
+        case SI446X_GPIO_GPIO_0:    gpio_set_state(GPIO_PIN_18, true);      break;
+        case SI446X_GPIO_GPIO_1:    gpio_set_state(GPIO_PIN_19, true);      break;
+        default:                                                            break;
     }
+}
 
-    /* nIRQ pin */
-    conf.mode = GPIO_MODE_INPUT;
-
-    if (gpio_init(SI446X_GPIO_NIRQ_PIN, conf) != 0)
+void si446x_gpio_clear_pin(si446x_gpio_pin_t pin)
+{
+    switch(pin)
     {
-        return -1;
+        case SI446X_GPIO_SDN:       gpio_set_state(GPIO_PIN_16, false);     break;
+        case SI446X_GPIO_GPIO_0:    gpio_set_state(GPIO_PIN_18, false);     break;
+        case SI446X_GPIO_GPIO_1:    gpio_set_state(GPIO_PIN_19, false);     break;
+        default:                                                            break;
     }
+}
 
-    /* GPIO1 pin */
-    if (gpio_init(SI446X_GPIO_1_PIN, conf) != 0)
+int si446x_gpio_get_pin(si446x_gpio_pin_t pin)
+{
+    switch(pin)
     {
-        return -1;
+        case SI446X_GPIO_NIRQ:      return gpio_get_state(GPIO_PIN_17);
+        case SI446X_GPIO_GPIO_0:    return gpio_get_state(GPIO_PIN_18);
+        case SI446X_GPIO_GPIO_1:    return gpio_get_state(GPIO_PIN_19);
+        default:                    return -1;
     }
-
-    return gpio_set_state(SI446X_GPIO_SDN_PIN, true);
 }
 
-int si446x_gpio_write_sdn(bool state)
-{
-    return gpio_set_state(SI446X_GPIO_SDN_PIN, state);
-}
-
-int si446x_gpio_write_gpio0(bool state)
-{
-    return gpio_set_state(SI446X_GPIO_0_PIN, state);
-}
-
-int si446x_gpio_read_nirq(void)
-{
-    return gpio_get_state(SI446X_GPIO_NIRQ_PIN);
-}
-
-int si446x_gpio_read_gpio1(bool state)
-{
-    return gpio_get_state(SI446X_GPIO_1_PIN);
-}
-
-/** \} End of si446x_gpio group */
+/**< \} End of rf4463 group */

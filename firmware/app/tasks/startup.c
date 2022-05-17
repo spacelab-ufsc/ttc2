@@ -1,7 +1,7 @@
 /*
  * startup.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.20
  * 
  * \date 2019/12/04
  * 
@@ -41,17 +41,12 @@
 #include <devices/watchdog/watchdog.h>
 #include <devices/leds/leds.h>
 #include <devices/radio/radio.h>
-#include <devices/current_sensor/current_sensor.h>
-#include <devices/voltage_sensor/voltage_sensor.h>
+#include <devices/power_sensor/power_sensor.h>
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
 
 #include <ngham/ngham.h>
-
-#include <csp/csp.h>
-#include <csp/interfaces/csp_if_spi.h>
-#include <csp/interfaces/csp_if_i2c.h>
 
 #include "startup.h"
 
@@ -59,7 +54,7 @@ xTaskHandle xTaskStartupHandle;
 
 EventGroupHandle_t task_startup_status;
 
-void vTaskStartup(void *pvParameters)
+void vTaskStartup(void)
 {
     unsigned int error_counter = 0;
 
@@ -104,14 +99,8 @@ void vTaskStartup(void *pvParameters)
         error_counter++;
     }
 
-    /* Current sensor device initialization */
-    if (current_sensor_init() != 0)
-    {
-        error_counter++;
-    }
-
-    /* Voltage sensor device initialization */
-    if (voltage_sensor_init() != 0)
+    /* Power sensor device initialization */
+    if (power_sensor_init() != 0)
     {
         error_counter++;
     }
@@ -132,19 +121,13 @@ void vTaskStartup(void *pvParameters)
     ngham_init_arrays();
     ngham_init();
 
-    /* CSP initialization */
-    if (startup_init_csp() != CSP_ERR_NONE)
-    {
-        error_counter++;
-    }
-
     /* Antenna device initialization */
     if (antenna_init() != 0)
     {
         error_counter++;
     }
 
-    if (error_counter > 0)
+    if (error_counter > 0U)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "Boot completed with ");
         sys_log_print_uint(error_counter);
@@ -165,46 +148,6 @@ void vTaskStartup(void *pvParameters)
     xEventGroupSetBits(task_startup_status, TASK_STARTUP_DONE);
 
     vTaskSuspend(xTaskStartupHandle);
-}
-
-int startup_init_csp()
-{
-#if CONFIG_CSP_ENABLED == 1
-    /* CSP initialization */
-    if (csp_init(CONFIG_CSP_MY_ADDRESS) != CSP_ERR_NONE)
-    {
-        return -1;  /* Error during CSP initialization */
-    }
-
-    /* Buffer initialization */
-    if (csp_buffer_init(CONFIG_CSP_BUFFER_MAX_PKTS, CONFIG_CSP_BUFFER_MAX_SIZE) != CSP_ERR_NONE)
-    {
-        return -1;  /* Error during the CSP buffer initialization */
-    }
-
-    if (csp_route_set(CONFIG_CSP_TTC_ADDRESS, &csp_if_spi, CSP_NODE_MAC) != CSP_ERR_NONE)
-    {
-        return -1;
-    }
-
-    if (csp_route_set(CONFIG_CSP_EPS_ADDRESS, &csp_if_i2c, CSP_NODE_MAC) != CSP_ERR_NONE)
-    {
-        return -1;
-    }
-
-    /* CSP router task initialization */
-	if (csp_route_start_task(CONFIG_CSP_ROUTER_WORD_STACK, CONFIG_CSP_ROUTER_TASK_PRIORITY) != CSP_ERR_NONE)
-    {
-        return -1;  /* Error during CSP router task initialization! */
-    }
-
-    return CSP_ERR_NONE;
-#else
-    sys_log_print_event_from_module(SYS_LOG_WARNING, TASK_STARTUP_NAME, "libcsp disabled!");
-    sys_log_new_line();
-
-    return CSP_ERR_NONE;
-#endif /* CONFIG_CSP_ENABLED */
 }
 
 /** \} End of startup group */
