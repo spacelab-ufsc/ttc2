@@ -52,10 +52,24 @@ jobs:
         run: cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/
 
       - name: Execute CppCheck on devices files
-        run: cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/
+        run: |
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/antenna
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/radio
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
 
       - name: Execute CppCheck on drivers files
-        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/
+        run: |
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/adc
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/flash
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/gpio
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/i2c
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/isis_antenna
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/spi
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/tca4311a
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/uart
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/wdt
 
       - name: Execute CppCheck on system files
         run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/
