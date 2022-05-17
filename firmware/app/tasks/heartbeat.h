@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2020/01/20
  * 
@@ -41,7 +41,7 @@
 #include <task.h>
 
 #define TASK_HEARTBEAT_NAME                 "Heartbeat"     /**< Task name. */
-#define TASK_HEARTBEAT_STACK_SIZE           128             /**< Memory stack size in bytes. */
+#define TASK_HEARTBEAT_STACK_SIZE           160             /**< Memory stack size in bytes. */
 #define TASK_HEARTBEAT_PRIORITY             1               /**< Priority. */
 #define TASK_HEARTBEAT_PERIOD_MS            500             /**< Period in milliseconds. */
 #define TASK_HEARTBEAT_INIT_TIMEOUT_MS      2000            /**< Wait time to initialize the task in milliseconds. */
@@ -54,11 +54,9 @@ extern xTaskHandle xTaskHeartbeatHandle;
 /**
  * \brief System heartbeat task.
  *
- * \param[in] pvParameters is a value that will passed as the task's parameter.
- *
  * \return None.
  */
-void vTaskHeartbeat(void *pvParameters);
+void vTaskHeartbeat(void);
 
 #endif /* HEARTBEAT_H_ */
 

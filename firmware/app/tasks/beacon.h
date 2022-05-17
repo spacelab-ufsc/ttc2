@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2019/10/27
  * 
@@ -55,11 +55,9 @@ extern xTaskHandle xTaskBeaconHandle;
 /**
  * \brief Beacon task.
  *
- * \param[in] pvParameters is a value that will passed as the task's parameter.
- *
  * \return None.
  */
-void vTaskBeacon(void *pvParameters);
+void vTaskBeacon(void);
 
 #endif /* BEACON_H_ */
 

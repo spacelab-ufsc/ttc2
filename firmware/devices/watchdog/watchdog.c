@@ -1,7 +1,7 @@
 /*
  * watchdog.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.16
+ * \version 0.2.0
  * 
  * \date 2019/11/01
  * 
@@ -35,7 +35,6 @@
 
 #include <drivers/gpio/gpio.h>
 #include <drivers/wdt/wdt.h>
-#include <drivers/tps382x/tps382x.h>
 
 #include "watchdog.h"
 
@@ -45,12 +44,6 @@
 #define WATCHDOG_INT_CLK_SRC        WDT_CLK_SRC_ACLK
 #define WATCHDOG_INT_CLK_DIV        WDT_CLK_DIV_32K
 
-/* External watchdog parameters */
-#define WATCHDOG_EXT_WDT_WDI_PIN    GPIO_PIN_41
-#define WATCHDOG_EXT_WDT_MR_PIN     GPIO_PIN_40
-
-tps382x_config_t ext_wdt = {0};
-
 int watchdog_init(void)
 {
     /* Internal watchdog configuration */
@@ -59,21 +52,14 @@ int watchdog_init(void)
     int_wdt.clk_src = WATCHDOG_INT_CLK_SRC;
     int_wdt.clk_div = WATCHDOG_INT_CLK_DIV;
 
-    /* External watchdog configuration */
-    ext_wdt.wdi_pin = WATCHDOG_EXT_WDT_WDI_PIN;
-    ext_wdt.mr_pin  = WATCHDOG_EXT_WDT_MR_PIN;
-
     /* Watchdogs initialization */
-    return wdt_init(int_wdt) | tps382x_init(ext_wdt);
+    return wdt_init(int_wdt);
 }
 
 void watchdog_reset(void)
 {
     /* Internal watchdog reset */
     wdt_reset();
-
-    /* External watchdog reset */
-    tps382x_trigger(ext_wdt);
 }
 
 /** \} End of watchdog group */

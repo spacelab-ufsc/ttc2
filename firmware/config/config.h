@@ -1,7 +1,7 @@
 /*
  * config.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.28
+ * \version 0.1.20
  * 
  * \date 2019/10/26
  * 
@@ -46,7 +46,6 @@
 #define CONFIG_TASK_BEACON_ENABLED                      1
 #define CONFIG_TASK_UPLINK_ENABLED                      1
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_CSP_SERVER_ENABLED                  0
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
@@ -56,25 +55,21 @@
 /* Packets IDs */
 #define CONFIG_PKT_ID_BEACON                            0x10
 
-/* CSP */
-#define CONFIG_CSP_ENABLED                              0
-#define CONFIG_CSP_MY_ADDRESS                           1
-#define CONFIG_CSP_OBDH_ADDRESS                         0
-#define CONFIG_CSP_EPS_ADDRESS                          2
-#define CONFIG_CSP_BUFFER_MAX_PKTS                      5
-#define CONFIG_CSP_BUFFER_MAX_SIZE                      300
-#define CONFIG_CSP_ROUTER_WORD_STACK                    300
-#define CONFIG_CSP_ROUTER_TASK_PRIORITY                 1
-#define CONFIG_CSP_MAX_CONN                             10
-#define CONFIG_CSP_WAIT_CONN_TIMEOUT_MS                 (10*1000)
-#define CONFIG_CSP_READ_PKT_TIMEOUT_MS                  1000
-#define CONFIG_CSP_PORT                                 10
+/* Ports */
+#define CONFIG_SPI_PORT_0_SPEED_BPS                     1000000UL
 
 /* Radio */
 #define SI446X_XO_TUNE_REG_VALUE                        97
 
 /* Drivers */
 #define ISIS_ANTENNA_ENABLED                            1
+#define CONFIG_DRV_ISIS_ANTENNA_ENABLED                 1
+
+/* Antenna */
+#define CONFIG_ANTENNA_INDEP_DEPLOY_BURN_TIME_SEC       10U
+#define CONFIG_ANTENNA_SEQ_DEPLOY_BURN_TIME_SEC         20U
+#define CONFIG_ANTENNA_DEPLOYMENT_ATTEMPTS              10U
+#define CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN       45
 
 /* Memory addresses */
 #define CONFIG_MEM_ADR_SYS_TIME                         0

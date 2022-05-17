@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.1.9
  * 
  * \date 2020/01/22
  * 
@@ -43,9 +43,9 @@
 /* interrupt vector for the chosen tick interrupt source.  This implementation of */
 /* vApplicationSetupTimerInterrupt() generates the tick from timer A0, so in this */
 /* case configTICK_VECTOR is set to TIMER0_A0_VECTOR */
-void vApplicationSetupTimerInterrupt(void)
+void vApplicationSetupTimerInterrupt(void)  // cppcheck-suppress misra-c2012-8.4
 {
-    const unsigned short aclk_freq_hz = 32768;
+    const unsigned short aclk_freq_hz = 32768U;
 
     /* Ensure the timer is stopped */
     TA0CTL = 0;

@@ -1,7 +1,7 @@
 /*
  * read_sensors.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.25
+ * \version 0.1.22
  * 
  * \date 2020/07/12
  * 
@@ -35,6 +35,7 @@
 
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/power_sensor/power_sensor.h>
+#include <devices/radio/radio.h>
 
 #include <structs/ttc_data.h>
 
@@ -43,7 +44,7 @@
 
 xTaskHandle xTaskReadSensorsHandle;
 
-void vTaskReadSensors(void *pvParameters)
+void vTaskReadSensors(void)
 {
     /* Wait startup task to finish */
     xEventGroupWaitBits(task_startup_status, TASK_STARTUP_DONE, pdFALSE, pdTRUE, pdMS_TO_TICKS(TASK_READ_SENSORS_INIT_TIMEOUT_MS));

@@ -32,6 +32,9 @@
     <a href="#license">
         <img src="https://img.shields.io/badge/license-GPL3-yellow?style=for-the-badge">
     </a>
+    <a href="https://github.com/spacelab-ufsc/ttc2/actions">
+        <img src="https://img.shields.io/github/workflow/status/spacelab-ufsc/ttc2/Test%20Workflow?style=for-the-badge">
+    </a>
 </p>
 
 <p align="center">

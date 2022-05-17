@@ -1,7 +1,7 @@
 /*
  * tasks.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.20
  * 
  * \date 2019/11/02
  * 
@@ -48,12 +48,11 @@
 #include "beacon.h"
 #include "uplink.h"
 #include "time_control.h"
-#include "csp_server.h"
 
 void create_tasks(void)
 {
     /* Startup task */
-#if CONFIG_TASK_STARTUP_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskStartup, TASK_STARTUP_NAME, TASK_STARTUP_STACK_SIZE, NULL, TASK_STARTUP_PRIORITY, &xTaskStartupHandle);
 
     if (xTaskStartupHandle == NULL)
@@ -63,7 +62,7 @@ void create_tasks(void)
 #endif /* CONFIG_TASK_STARTUP_ENABLED */
 
     /* Watchdog reset task */
-#if CONFIG_TASK_WATCHDOG_RESET_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskWatchdogReset, TASK_WATCHDOG_RESET_NAME, TASK_WATCHDOG_RESET_STACK_SIZE, NULL, TASK_WATCHDOG_RESET_PRIORITY, &xTaskWatchdogResetHandle);
 
     if (xTaskWatchdogResetHandle == NULL)
@@ -73,7 +72,7 @@ void create_tasks(void)
 #endif /* CONFIG_TASK_WATCHDOG_RESET_ENABLED */
 
     /* Heartbeat task */
-#if CONFIG_TASK_HEARTBEAT_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskHeartbeat, TASK_HEARTBEAT_NAME, TASK_HEARTBEAT_STACK_SIZE, NULL, TASK_HEARTBEAT_PRIORITY, &xTaskHeartbeatHandle);
 
     if (xTaskHeartbeatHandle == NULL)
@@ -82,7 +81,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_HEARTBEAT_ENABLED */
 
-#if CONFIG_TASK_SYSTEM_RESET_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskSystemReset, TASK_SYSTEM_RESET_NAME, TASK_SYSTEM_RESET_STACK_SIZE, NULL, TASK_SYSTEM_RESET_PRIORITY, &xTaskSystemResetHandle);
 
     if (xTaskSystemResetHandle == NULL)
@@ -91,7 +90,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_SYSTEM_RESET_ENABLED */
 
-#if CONFIG_TASK_RADIO_RESET_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskRadioReset, TASK_RADIO_RESET_NAME, TASK_RADIO_RESET_STACK_SIZE, NULL, TASK_RADIO_RESET_PRIORITY, &xTaskRadioResetHandle);
 
     if (xTaskRadioResetHandle == NULL)
@@ -100,7 +99,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_RADIO_RESET_ENABLED */
 
-#if CONFIG_TASK_READ_SENSORS_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskReadSensors, TASK_READ_SENSORS_NAME, TASK_READ_SENSORS_STACK_SIZE, NULL, TASK_READ_SENSORS_PRIORITY, &xTaskReadSensorsHandle);
 
     if (xTaskReadSensorsHandle == NULL)
@@ -109,7 +108,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_READ_TEMP_ENABLED */
 
-#if CONFIG_TASK_BEACON_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskBeacon, TASK_BEACON_NAME, TASK_BEACON_STACK_SIZE, NULL, TASK_BEACON_PRIORITY, &xTaskBeaconHandle);
 
     if (xTaskBeaconHandle == NULL)
@@ -118,7 +117,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
 
-#if CONFIG_TASK_UPLINK_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskUplink, TASK_UPLINK_NAME, TASK_UPLINK_STACK_SIZE, NULL, TASK_UPLINK_PRIORITY, &xTaskUplinkHandle);
 
     if (xTaskUplinkHandle == NULL)
@@ -127,7 +126,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_UPLINK_ENABLED */
 
-#if CONFIG_TASK_TIME_CONTROL_ENABLED == 1
+#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskTimeControl, TASK_TIME_CONTROL_NAME, TASK_TIME_CONTROL_STACK_SIZE, NULL, TASK_TIME_CONTROL_PRIORITY, &xTaskTimeControlHandle);
 
     if (xTaskTimeControlHandle == NULL)
@@ -135,15 +134,6 @@ void create_tasks(void)
         /* Error creating the time control task */
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
-
-#if CONFIG_TASK_CSP_SERVER_ENABLED == 1
-    xTaskCreate(vTaskCSPServer, TASK_CSP_SERVER_NAME, TASK_CSP_SERVER_STACK_SIZE, NULL, TASK_CSP_SERVER_PRIORITY, &xTaskCSPServerHandle);
-
-    if (xTaskCSPServerHandle == NULL)
-    {
-        /* Error creating the CSP server task */
-    }
-#endif /* CONFIG_TASK_CSP_SERVER_ENABLED */
 
     create_event_groups();
 }

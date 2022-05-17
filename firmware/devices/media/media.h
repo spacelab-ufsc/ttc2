@@ -1,7 +1,7 @@
 /*
  * media.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.7
+ * \version 0.1.19
  * 
  * \date 2020/04/21
  * 
@@ -47,13 +47,17 @@
 typedef enum
 {
     MEDIA_INT_FLASH=0,      /**< Internal flash memory. */
-    MEDIA_NOR               /**< NOR flash memory. */
-} media_types_e;
+} media_t;
 
 /**
- * \brief Media type.
+ * \brief Erase operation types.
  */
-typedef uint8_t media_t;
+typedef enum
+{
+    MEDIA_ERASE_DIE=0,      /**< Erases the whole die. */
+    MEDIA_ERASE_SECTOR,     /**< Erases a sector. */
+    MEDIA_ERASE_SUB_SECTOR  /**< Erases a sub-sector. */
+} media_erase_t;
 
 /**
  * \brief Media initialization.
@@ -61,7 +65,6 @@ typedef uint8_t media_t;
  * \param[in] med is the storage media to initiailize. It can be:
  * \parblock
  *      -\b MEDIA_INT_FLASH
- *      -\b MEDIA_NOR
  *      .
  * \endparblock
  *
@@ -75,7 +78,6 @@ int media_init(media_t med);
  * \param[in] med is the storage media to write. It can be:
  * \parblock
  *      -\b MEDIA_INT_FLASH
- *      -\b MEDIA_NOR
  *      .
  * \endparblock
  *
@@ -87,7 +89,7 @@ int media_init(media_t med);
  *
  * \return The status/error code.
  */
-int media_write(media_t med, uint32_t adr, uint32_t *data, uint16_t len);
+int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
 
 /**
  * \brief Reads data from a given address of a media device.
@@ -95,7 +97,6 @@ int media_write(media_t med, uint32_t adr, uint32_t *data, uint16_t len);
  * \param[in] med is the storage media to read. It can be:
  * \parblock
  *      -\b MEDIA_INT_FLASH
- *      -\b MEDIA_NOR
  *      .
  * \endparblock
  *
@@ -107,7 +108,7 @@ int media_write(media_t med, uint32_t adr, uint32_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-int media_read(media_t med, uint32_t adr, uint32_t *data, uint16_t len);
+int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
 
 /**
  * \brief Erases a memory region from a media device.
@@ -115,15 +116,22 @@ int media_read(media_t med, uint32_t adr, uint32_t *data, uint16_t len);
  * \param[in] med is the storage media to erase. It can be:
  * \parblock
  *      -\b MEDIA_INT_FLASH
- *      -\b MEDIA_NOR
  *      .
  * \endparblock
  *
- * \param[in] adr is the address to erase.
+ * \param[in] type is the erase operation type. It can be:
+ * \parblock
+ *      -\b MEDIA_ERASE_DIE
+ *      -\b MEDIA_ERASE_SECTOR
+ *      -\b MEDIA_ERASE_SUB_SECTOR
+ *      .
+ * \endparblock
+ *
+ * \param[in] sector is the sector number to erase.
  *
  * \return The status/error code.
  */
-int media_erase(media_t med, uint32_t adr);
+int media_erase(media_t med, media_erase_t type, uint32_t sector);
 
 #endif /* MEDIA_H_ */
 

@@ -1,7 +1,7 @@
 /*
  * system.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.3
+ * \version 0.1.24
  * 
  * \date 2020/01/29
  * 
@@ -38,7 +38,7 @@
 
 #include "system.h"
 
-sys_time_t sys_time = 0;
+static sys_time_t sys_time = 0;
 
 void system_reset(void)
 {
@@ -69,30 +69,32 @@ sys_time_t system_get_time(void)
 
 sys_hw_version_t system_get_hw_version(void)
 {
-    gpio_pin_t bit_0_pin = GPIO_PIN_14;
-    gpio_pin_t bit_1_pin = GPIO_PIN_15;
+    gpio_pin_t bit_0_pin = GPIO_PIN_34;
+    gpio_pin_t bit_1_pin = GPIO_PIN_35;
+
+    sys_hw_version_t res = HW_VERSION_UNKNOWN;
+
+    gpio_config_t pin_conf = {0};
+
+    pin_conf.mode = GPIO_MODE_INPUT;
 
     /* Initializing bit 0 GPIO pin */
-    if (gpio_init(bit_0_pin, (gpio_config_t){.mode=GPIO_MODE_INPUT}) != 0)
+    if (gpio_init(bit_0_pin, pin_conf) == 0)
     {
-        return HW_VERSION_UNKNOWN;
+        /* Initializing bit 1 GPIO pin */
+        if (gpio_init(bit_1_pin, pin_conf) == 0)
+        {
+            int bit_0_state = gpio_get_state(bit_0_pin);
+            int bit_1_state = gpio_get_state(bit_1_pin);
+
+            if ((bit_0_state != -1) && (bit_1_state != -1))
+            {
+                res = ((uint8_t)bit_1_state << 1) | (uint8_t)bit_0_state;
+            }
+        }
     }
 
-    /* Initializing bit 1 GPIO pin */
-    if (gpio_init(bit_1_pin, (gpio_config_t){.mode=GPIO_MODE_INPUT}) != 0)
-    {
-        return HW_VERSION_UNKNOWN;
-    }
-
-    int bit_0_state = gpio_get_state(bit_0_pin);
-    int bit_1_state = gpio_get_state(bit_1_pin);
-
-    if ((bit_0_state == -1) || (bit_1_state == -1))
-    {
-        return HW_VERSION_UNKNOWN;
-    }
-
-    return ((uint8_t)bit_1_state << 1) | (uint8_t)bit_0_state;
+    return res;
 }
 
 /** \} End of system group */

@@ -1,7 +1,7 @@
 /*
  * radio.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.24
+ * \version 0.1.23
  * 
  * \date 2019/10/27
  * 
@@ -42,6 +42,16 @@
 #define RADIO_MODULE_NAME           "Radio"
 
 /**
+ * \brief Temperature type.
+ */
+typedef uint16_t radio_temp_t;
+
+/**
+ * \brief RSSI type.
+ */
+typedef uint16_t radio_rssi_t;
+
+/**
  * \brief Radio device initialization routine.
  *
  * \return The status/error code.
@@ -55,22 +65,20 @@ int radio_init(void);
  *
  * \param[in] len is the number of bytes to write.
  *
- * \param[in] timeout_ms is the send timeout in milliseconds.
- *
  * \return The status/error code.
  */
-int radio_send(uint8_t *data, uint16_t len, uint32_t timeout_ms);
+int radio_send(uint8_t *data, uint16_t len);
 
 /**
  * \brief Reads data from the radio device (if available) with timeout.
  *
  * \param[in] data is a pointer to store the read data.
  *
- * \param[in] len is the number of bytes to read.
+ * \param[in] len is the number of bytes to read from the radio.
  *
  * \param[in] timeout_ms is the timeout to received a packet in milliseconds.
  *
- * \return The number of read bytes (-1 on error).
+ * \return The status/error code.
  */
 int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms);
 
@@ -89,22 +97,22 @@ int radio_available(void);
 int radio_sleep(void);
 
 /**
- * \brief Reads the current temperature of the radio.
+ * \brief Reads the current temperature of the radio device.
  *
  * \param[in,out] temp is a pointer to store the read temperature.
  *
  * \return The status/error code.
  */
-int radio_get_temperature(uint16_t *temp);
+int radio_get_temperature(radio_temp_t *temp);
 
 /**
- * \brief Reads the RSSI of the radio.
+ * \brief Reads the last available RSSI value of the radio device.
  *
  * \param[in,out] rssi is a pointer to store the read RSSI value.
  *
  * \return The status/error code.
  */
-int radio_get_rssi(uint16_t *rssi);
+int radio_get_rssi(radio_rssi_t *rssi);
 
 #endif /* RADIO_H_ */
 

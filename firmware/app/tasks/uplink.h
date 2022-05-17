@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.9
+ * \version 0.1.10
  * 
  * \date 2020/04/18
  * 
@@ -55,11 +55,9 @@ extern xTaskHandle xTaskUplinkHandle;
 /**
  * \brief Uplink task.
  *
- * \param[in] pvParameters is a value that will passed as the task's parameter.
- *
  * \return None.
  */
-void vTaskUplink(void *pvParameters);
+void vTaskUplink(void);
 
 #endif /* UPLINK_H_ */
 
