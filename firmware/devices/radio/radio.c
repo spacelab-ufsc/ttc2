@@ -24,8 +24,9 @@
  * \brief Radio device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.22
+ * \version 0.1.23
  * 
  * \date 2019/10/27
  * 
@@ -39,8 +40,6 @@
 #include <system/sys_log/sys_log.h>
 
 #include <drivers/si446x/si446x.h>
-#include <config/radio_config_Si4463.h>
-#include <config/config.h>
 
 #include "radio.h"
 
@@ -50,244 +49,57 @@ int radio_init(void)
     sys_log_new_line();
 
     int err = -1;
-
-    /* SPI interface initialization */
-    if (si446x_spi_init() == SI446X_SUCCESS)
+    if (si446x_init() == 0)
     {
-        /* Radio reset */
-        if (si446x_reset() == SI446X_SUCCESS)
+        if (si446x_rx_init())
         {
-            /* Verifies the device ID */
-            si446x_part_info_t part_info = {0};
-
-            if (si446x_part_info(&part_info) == SI446X_SUCCESS)
-            {
-                if (part_info.part == SI4463_PART_INFO)
-                {
-                    /* Loading configuration parameters from WDS */
-                    uint8_t si446x_config[] = RADIO_CONFIGURATION_DATA_ARRAY;
-
-                    if (si446x_configuration_init(si446x_config , sizeof(si446x_config)-1U) == SI446X_SUCCESS)
-                    {
-                        /* Frequency calibration */
-                        uint16_t prop = SI446X_PROP_GLOBAL_XO_TUNE;
-                        uint8_t prop_param = SI446X_XO_TUNE_REG_VALUE;
-
-                        if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
-                        {
-                            /* FIFO configuration (128 bytes shared between TX and RX) */
-                            prop = SI446X_PROP_GLOBAL_CONFIG;
-                            prop_param = 0x10;  /* FIFO_MODE = TX/RX FIFO are sharing with 128-byte size buffer */
-
-                            if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
-                            {
-                                /* FIFO reset */
-                                si446x_fifo_info_t fifo_info = {0};
-
-                                if (si446x_fifo_info(true, true, &fifo_info) == SI446X_SUCCESS)
-                                {
-                                    err = 0;
-                                }
-                                else
-                                {
-                                    sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error reseting the FIFO!");
-                                    sys_log_new_line();
-                                }
-                            }
-                            else
-                            {
-                                sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error configuring the FIFO!");
-                                sys_log_new_line();
-                            }
-                        }
-                        else
-                        {
-                            sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error calibrating the XO frequency!");
-                            sys_log_new_line();
-                        }
-                    }
-                    else
-                    {
-                        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error loading the configuration parameters!");
-                        sys_log_new_line();
-                    }
-                }
-                else
-                {
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Wrong device ID! (expected=");
-                    sys_log_print_hex(SI4463_PART_INFO);
-                    sys_log_print_msg(", read=");
-                    sys_log_print_hex(part_info.part);
-                    sys_log_print_msg(")");
-                    sys_log_new_line();
-                }
-            }
-            else
-            {
-                sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error reading the device ID!");
-                sys_log_new_line();
-            }
+            err = 0;
         }
-        else
-        {
-            sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error during the reset!");
-            sys_log_new_line();
-        }
-    }
-    else
-    {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error initializing the SPI interface!");
-        sys_log_new_line();
     }
 
     return err;
 }
 
-int radio_send(uint8_t *data, uint16_t len, uint32_t timeout_ms)
+int radio_send(uint8_t *data, uint16_t len)
 {
-    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmmiting ");
+    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmitting ");
     sys_log_print_uint(len);
     sys_log_print_msg(" byte(s)...");
     sys_log_new_line();
 
-    uint16_t prop = SI446X_PROP_PKT_FIELD_1_LENGTH_7_0;
-    uint8_t prop_param = (uint8_t)len;
-
     int err = -1;
 
-    /* Configuring the length of the packet */
-    if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
+    if(si446x_tx_long_packet(data, len))
     {
-        /* FIFO reset */
-        si446x_fifo_info_t fifo_info = {0};
-
-        if (si446x_fifo_info(true, true, &fifo_info) == SI446X_SUCCESS)
+        if(si446x_rx_init())
         {
-            /* Writing the packet to the TX FIFO */
-            if (si446x_write_tx_fifo(len, data) == SI446X_SUCCESS)
-            {
-                /* Clear interrupts */
-                si446x_int_status_t int_status = {0};
-
-                if (si446x_get_int_status(0, 0, 0, &int_status) == SI446X_SUCCESS)
-                {
-                    /* Start TX */
-                    if (si446x_start_tx(0, (SI446X_RX_STATE << 4) | SI446X_START_TX_DO_NOT_RETRANSMIT | SI446X_START_TX_START_TX_IMMEDIATELY, 0) == SI446X_SUCCESS)
-                    {
-                        /* Wait the packet transmission */
-                        uint32_t time_decr = timeout_ms / 10U;
-
-                        while((time_decr--) != 0)
-                        {
-                            int ret = si446x_get_int_status(0, 0, 0, &int_status);
-
-                            if ((int_status.ph_status & SI446X_INT_STATUS_PACKET_SENT) > 0)
-                            {
-                                break;
-                            }
-
-                            si446x_delay_ms(10);
-                        }
-
-                        if (time_decr != 0U)
-                        {
-                            err = 0;    /* Timeout not reached */
-                        }
-                    }
-                    else
-                    {
-                        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error starting the TX!");
-                        sys_log_new_line();
-                    }
-                }
-                else
-                {
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error clearing the interrupts!");
-                    sys_log_new_line();
-                }
-            }
-            else
-            {
-                sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error writing data to FIFO!");
-                sys_log_new_line();
-            }
+            err = 0;
         }
-        else
-        {
-            sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error reseting the FIFO!");
-            sys_log_new_line();
-        }
-    }
-    else
-    {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error transmitting a packet!");
-        sys_log_new_line();
     }
 
     return err;
 }
 
-int radio_recv(uint8_t *data, uint32_t timeout_ms)
+int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms)
 {
-    int res = -1;
+    int res = 0;
 
-    if (si446x_change_state(SI446X_RX_STATE) == SI446X_SUCCESS)
+    uint16_t i = 0;
+
+    for(i = 0; i < (timeout_ms/100); i++)
     {
-        uint16_t prop = SI446X_PROP_INT_CTL_ENABLE;
-        uint8_t prop_param = 0x03;
-
-        if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
+        if (si446x_wait_nirq())
         {
-            prop = SI446X_PROP_INT_CTL_PH_ENABLE;
-            prop_param = 0x18;
+            res = (int)si446x_rx_packet(data, len);
 
-            if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
-            {
-                prop = SI446X_PROP_INT_CTL_MODEM_ENABLE;
-                prop_param = 0x00;
+            si446x_clear_interrupts();
 
-                if (si446x_set_property((uint8_t)(prop >> 8), 1, (uint8_t)(prop & 0xFFU), &prop_param, 1) == SI446X_SUCCESS)
-                {
-                    if (si446x_start_rx(0, SI446X_START_RX_START_RX_IMMEDIATELY, 0, SI446X_RX_STATE, SI446X_RX_STATE, SI446X_RX_STATE) == SI446X_SUCCESS)
-                    {
-                        TickType_t timeout_tick = pdMS_TO_TICKS(timeout_ms);
+            si446x_rx_init();
 
-                        TickType_t start_time_tick = xTaskGetTickCount();
-
-                        while((start_time_tick + timeout_tick) >= xTaskGetTickCount())
-                        {
-                            int avail = radio_available();
-
-                            if (avail > 0)
-                            {
-                                si446x_read_rx_fifo(avail, data);
-
-                                sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "");
-                                sys_log_print_uint(avail);
-                                sys_log_print_msg(" byte(s) received!");
-                                sys_log_new_line();
-
-                                /* Clear interrupts */
-                                si446x_int_status_t int_status = {0};
-
-                                si446x_get_int_status(0, 0, 0, &int_status);
-
-                                res = avail;
-
-                                break;
-                            }
-
-                            vTaskDelay(pdMS_TO_TICKS(250));
-                        }
-                    }
-                }
-            }
+            break;
         }
-    }
-    else
-    {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error starting reception!");
-        sys_log_new_line();
+
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 
     return res;
@@ -295,39 +107,13 @@ int radio_recv(uint8_t *data, uint32_t timeout_ms)
 
 int radio_available(void)
 {
-    si446x_int_status_t int_status = {0};
-
-    si446x_get_int_status(0, 0, 0, &int_status);
-
-    int res = 0;
-
-    if ((int_status.ph_status | SI446X_INT_STATUS_PACKET_RX) > 0)
-    {
-        si446x_fifo_info_t fifo_info = {0};
-
-        si446x_fifo_info(false, false, &fifo_info);
-
-        res = fifo_info.rx_fifo_count;
-    }
-
-    return res;
+    /*TODO */
+    return -1;
 }
 
 int radio_sleep(void)
 {
-    int err = -1;
-
-    if (si446x_change_state(SI446X_SLEEP_STATE) == SI446X_SUCCESS)
-    {
-        err = 0;
-    }
-    else
-    {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Error configuring sleep mode!");
-        sys_log_new_line();
-    }
-
-    return err;
+    return (int)si446x_enter_standby_mode();
 }
 
 int radio_get_temperature(radio_temp_t *temp)

@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.18
+ * \version 0.1.23
  * 
  * \date 2020/04/18
  * 
@@ -54,7 +54,7 @@ void vTaskUplink(void)
         uint8_t data[129] = {0};
         uint8_t len = 50;
 
-        if (radio_recv(data, TASK_UPLINK_PERIOD_MS) > 0)
+        if (radio_recv(data, len, TASK_UPLINK_PERIOD_MS) > 0)
         {
             /* Process packets here */
         }

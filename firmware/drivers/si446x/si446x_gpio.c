@@ -1,7 +1,7 @@
 /*
  * si446x_gpio.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -12,7 +12,7 @@
  * 
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,16 +21,15 @@
  */
 
 /**
- * \brief Si446x GPIO implementation.
+ * \brief Si446x GPIO driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.8
+ * \version 0.1.23
  * 
- * \date 2020/05/14
+ * \date 2017/07/29
  * 
- * \defgroup si446x_gpio GPIO
- * \ingroup si446x
+ * \addtogroup rf4463
  * \{
  */
 
@@ -38,7 +37,7 @@
 
 #include "si446x.h"
 
-int si446x_gpio_init(void)
+void si446x_gpio_init(void)
 {
     int err = -1;
 
@@ -54,18 +53,39 @@ int si446x_gpio_init(void)
         /* nIRQ pin */
         err = gpio_init(GPIO_PIN_17, conf);
     }
-
-    return err;
 }
 
-int si446x_gpio_write_sdn(bool state)
+void si446x_gpio_set_pin(si446x_gpio_pin_t pin)
 {
-    return gpio_set_state(GPIO_PIN_16, state);
+    switch(pin)
+    {
+        case SI446X_GPIO_SDN:       gpio_set_state(GPIO_PIN_16, true);      break;
+        case SI446X_GPIO_GPIO_0:    gpio_set_state(GPIO_PIN_18, true);      break;
+        case SI446X_GPIO_GPIO_1:    gpio_set_state(GPIO_PIN_19, true);      break;
+        default:                                                            break;
+    }
 }
 
-int si446x_gpio_read_nirq(void)
+void si446x_gpio_clear_pin(si446x_gpio_pin_t pin)
 {
-    return gpio_get_state(GPIO_PIN_17);
+    switch(pin)
+    {
+        case SI446X_GPIO_SDN:       gpio_set_state(GPIO_PIN_16, false);     break;
+        case SI446X_GPIO_GPIO_0:    gpio_set_state(GPIO_PIN_18, false);     break;
+        case SI446X_GPIO_GPIO_1:    gpio_set_state(GPIO_PIN_19, false);     break;
+        default:                                                            break;
+    }
 }
 
-/** \} End of si446x_gpio group */
+int si446x_gpio_get_pin(si446x_gpio_pin_t pin)
+{
+    switch(pin)
+    {
+        case SI446X_GPIO_NIRQ:      return gpio_get_state(GPIO_PIN_17);
+        case SI446X_GPIO_GPIO_0:    return gpio_get_state(GPIO_PIN_18);
+        case SI446X_GPIO_GPIO_1:    return gpio_get_state(GPIO_PIN_19);
+        default:                    return -1;
+    }
+}
+
+/**< \} End of rf4463 group */

@@ -1,7 +1,7 @@
 /*
  * si446x_spi.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -12,7 +12,7 @@
  * 
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,24 +21,19 @@
  */
 
 /**
- * \brief Si446x SPI implementation.
+ * \brief Si446x SPI driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.8
+ * \version 0.1.23
  * 
  * \date 2017/07/29
  * 
- * \defgroup si446x_spi SPI
- * \ingroup si446x
+ * \addtogroup si446x
  * \{
  */
 
-#include <stdint.h>
-
-#include <config/config.h>
 #include <drivers/spi/spi.h>
-#include <drivers/gpio/gpio.h>
 
 #include "si446x.h"
 
@@ -46,30 +41,39 @@ int si446x_spi_init(void)
 {
     spi_config_t conf = {0};
 
-    conf.speed_hz   = CONFIG_SPI_PORT_0_SPEED_BPS;
-    conf.mode       = SPI_MODE_1;
+    conf.speed_hz   = 100000UL;
+    conf.mode       = SPI_MODE_0;
 
     return spi_init(SPI_PORT_3, conf);
 }
 
-int si446x_spi_transfer(uint8_t *wd, uint8_t *rd, uint16_t len)
+void si446x_spi_enable(void)
 {
-    return spi_transfer(SPI_PORT_3, SPI_CS_0, wd, rd, len);
+    spi_select_slave(SPI_PORT_3, SPI_CS_0, true);
 }
 
-int si446x_spi_write_byte(uint8_t byte)
+void si446x_spi_disable(void)
 {
-    return spi_write(SPI_PORT_3, SPI_CS_0, &byte, 1);
+    spi_select_slave(SPI_PORT_3, SPI_CS_0, false);
 }
 
-int si446x_spi_write(uint8_t *data, uint16_t len)
+int si446x_spi_write(uint8_t *data, uint16_t size)
 {
-    return spi_write(SPI_PORT_3, SPI_CS_0, data, len);
+    return spi_write(SPI_PORT_3, SPI_CS_0, data, size);
 }
 
-int si446x_spi_read(uint8_t *data, uint16_t len)
+int si446x_spi_read(uint8_t *data, uint16_t size)
 {
-    return spi_read(SPI_PORT_3, SPI_CS_0, data, len);
+    return spi_read(SPI_PORT_3, SPI_CS_0, data, size);
 }
 
-/** \} End of si446x group */
+uint8_t si446x_spi_transfer(uint8_t byte)
+{
+    uint8_t rd = UINT8_MAX;
+
+    spi_transfer(SPI_PORT_3, SPI_CS_0, &byte, &rd, 1U);
+
+    return rd;
+}
+
+/**< \} End of si446x group */

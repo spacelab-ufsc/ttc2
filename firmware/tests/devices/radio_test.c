@@ -1,7 +1,7 @@
 /*
  * radio_test.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.1.23
  * 
  * \date 2021/02/21
  * 
@@ -41,75 +41,70 @@
 #include <float.h>
 #include <cmocka.h>
 
+#include <stdlib.h>
+
 #include <devices/radio/radio.h>
-#include <tests/mockups/si446x_wrap.h>
+#include <tests/mockups/drivers/si446x_wrap.h>
 
 #define RADIO_ID    0x4463
 
 static void radio_init_test(void **state)
 {
-    will_return(__wrap_si446x_gpio_init,            SI446X_SUCCESS);
-    will_return(__wrap_si446x_spi_init,             SI446X_SUCCESS);
-    will_return(__wrap_si446x_reset,                SI446X_SUCCESS);
-    will_return(__wrap_si446x_power_up,             SI446X_SUCCESS);
-    will_return(__wrap_si446x_part_info,            RADIO_ID);
-    will_return(__wrap_si446x_part_info,            SI446X_SUCCESS);
-    will_return(__wrap_si446x_configuration_init,   SI446X_SUCCESS);
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_fifo_info,            SI446X_SUCCESS);
+    will_return(__wrap_si446x_init, 0);
+
+    will_return(__wrap_si446x_rx_init, true);
+    
 
     assert_return_code(radio_init(), 0);
 }
 
 static void radio_send_test(void **state)
 {
-    uint32_t timeout_ms = 100;
-
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_fifo_info,            SI446X_SUCCESS);
-    will_return(__wrap_si446x_write_tx_fifo,        SI446X_SUCCESS);
-    will_return(__wrap_si446x_get_int_status,       SI446X_SUCCESS);
-    will_return(__wrap_si446x_start_tx,             SI446X_SUCCESS);
-
-    timeout_ms /= 10;
-
-    while(timeout_ms--)
-    {
-        will_return(__wrap_si446x_get_int_status, SI446X_SUCCESS);
-
-        expect_function_call(__wrap_si446x_delay_ms);
-    }
-
     uint8_t data[50] = {0};
+    uint16_t len = 50;
 
-    assert_return_code(radio_send(data, 50, 100), 0);
+    
+    expect_value(__wrap_si446x_tx_long_packet, packet, data);
+    expect_value(__wrap_si446x_tx_long_packet, len, len);
+
+    will_return(__wrap_si446x_tx_long_packet, true);
+    will_return(__wrap_si446x_rx_init, true);
+
+    
+    assert_return_code(radio_send(data, len), 0);
 }
 
 static void radio_recv_test(void **state)
 {
-    will_return(__wrap_si446x_change_state,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_set_property,         SI446X_SUCCESS);
-    will_return(__wrap_si446x_start_rx,             SI446X_SUCCESS);
-
     uint8_t data[50] = {0};
+    uint8_t len = 50;
+    uint32_t timeout_ms = 100;
+    uint16_t i;
+    
 
-    assert_return_code(radio_recv(data, 10, 1000), 0);
-}
+    will_return(__wrap_si446x_wait_nirq, true);
 
-static void radio_available_test(void **state)
-{
-    will_return(__wrap_si446x_get_int_status,       SI446X_SUCCESS);
-    will_return(__wrap_si446x_fifo_info,            SI446X_SUCCESS);
+    expect_value(__wrap_si446x_rx_packet, rx_buf, data);
+    expect_value(__wrap_si446x_rx_packet, read_len, len);
 
-    assert_return_code(radio_available(), 0);
+    for(i = 0; i < len; i++)
+    {
+        will_return(__wrap_si446x_rx_packet, data[i]);
+    }
+    will_return(__wrap_si446x_rx_packet, 50);
+
+    will_return(__wrap_si446x_clear_interrupts, true);
+
+    will_return(__wrap_si446x_rx_init, true);
+
+
+    assert_return_code(radio_recv(data, len, timeout_ms), len);
 }
 
 static void radio_sleep_test(void **state)
 {
-    will_return(__wrap_si446x_change_state, SI446X_SUCCESS);
+    will_return(__wrap_si446x_enter_standby_mode, 0);
+
 
     assert_return_code(radio_sleep(), 0);
 }
@@ -120,8 +115,7 @@ int main(void)
         cmocka_unit_test(radio_init_test),
         cmocka_unit_test(radio_send_test),
         cmocka_unit_test(radio_recv_test),
-        cmocka_unit_test(radio_available_test),
-        cmocka_unit_test(radio_sleep_test),
+        cmocka_unit_test(radio_sleep_test)
     };
 
     return cmocka_run_group_tests(radio_tests, NULL, NULL);
