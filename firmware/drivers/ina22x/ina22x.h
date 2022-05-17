@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.11
+ * \version 0.2.0
  * 
  * \date 2021/04/10
  * 
@@ -38,6 +38,8 @@
 #define INA22X_H_
 
 #include <stdint.h>
+
+#include <drivers/i2c/i2c.h>
 
 /* I2C configuration */
 #define INA22X_I2C_PORT                 I2C_PORT_2
