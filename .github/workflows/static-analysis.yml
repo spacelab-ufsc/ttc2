@@ -55,7 +55,6 @@ jobs:
         run: |
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/antenna
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/radio
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
 
