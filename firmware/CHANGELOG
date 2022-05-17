@@ -1,12 +1,22 @@
 ===========================================
 
+v0.2 - 2022/05/17
+
+- Hardware v0.1.1 tested
+- RX mode on the UART driver
+- Initial unit tests
+- Initial static analysis test
+- GitHub actions enabled
+- First minimal working version
+
+===========================================
+
 v0.1 - 2021/06/06
 
 - First release
 - Useful source code imported from the OBDH 2.0 firmware
 - si446x driver updated
 - General improvements
-
 
 ===========================================
 
