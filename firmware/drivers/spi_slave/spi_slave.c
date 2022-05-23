@@ -439,6 +439,30 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
     return err;
 }
 
+int spi_slave_flush(spi_port_t port)
+{
+    int err = 0;
+
+    switch(port)
+    {
+        case SPI_PORT_0:   queue_clear(&spi_port_0_rx_buffer);   break;
+        case SPI_PORT_1:   queue_clear(&spi_port_1_rx_buffer);   break;
+        case SPI_PORT_2:   queue_clear(&spi_port_2_rx_buffer);   break;
+        case SPI_PORT_3:   queue_clear(&spi_port_3_rx_buffer);   break;
+        case SPI_PORT_4:   queue_clear(&spi_port_4_rx_buffer);   break;
+        case SPI_PORT_5:   queue_clear(&spi_port_5_rx_buffer);   break;
+        default:
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_SLAVE_MODULE_NAME, "Error flushing the RX buffer: Invalid port!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1;
+            break;
+    }
+
+    return err;
+}
+
 /* Interruption Service Routines */
 
 #pragma vector=USCI_A0_VECTOR
