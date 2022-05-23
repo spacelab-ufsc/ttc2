@@ -67,9 +67,9 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     int err = 0;
 
     uint16_t base_address;
-    uint8_t msbFirst = USCI_A_SPI_MSB_FIRST;
-    uint8_t clockPhase;
-    uint8_t clockPolarity;
+    uint8_t msb_first = USCI_A_SPI_MSB_FIRST;
+    uint8_t clock_phase;
+    uint8_t clock_polarity;
 
     switch(port)
     {
@@ -93,20 +93,20 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             switch(config.mode)
              {
                  case SPI_MODE_0:
-                     clockPhase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
-                     clockPolarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
+                     clock_phase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                      break;
                  case SPI_MODE_1:
-                     clockPhase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
-                     clockPolarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
+                     clock_phase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                      break;
                  case SPI_MODE_2:
-                     clockPhase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
-                     clockPolarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
+                     clock_phase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                      break;
                  case SPI_MODE_3:
-                     clockPhase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
-                     clockPolarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
+                     clock_phase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                      break;
                  default:
                  #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -116,7 +116,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                      err = -1;   /* Invalid SPI mode */
                      break;
              }
-            if (USCI_A_SPI_initSlave(base_address, msbFirst, clockPhase, clockPolarity) == STATUS_SUCCESS)
+            if (USCI_A_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
             {
                 USCI_A_SPI_enable(base_address);
             }
@@ -136,20 +136,20 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
            switch(config.mode)
             {
                 case SPI_MODE_0:
-                    clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
-                    clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
+                    clock_phase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                    clock_polarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                     break;
                 case SPI_MODE_1:
-                    clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
-                    clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
+                    clock_phase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                    clock_polarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                     break;
                 case SPI_MODE_2:
-                    clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
-                    clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
+                    clock_phase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                    clock_polarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                     break;
                 case SPI_MODE_3:
-                    clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
-                    clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
+                    clock_phase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                    clock_polarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                     break;
                 default:
                 #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -159,7 +159,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                     err = -1;   /* Invalid SPI mode */
                     break;
             }
-           if (USCI_B_SPI_initSlave(base_address, msbFirst, clockPhase, clockPolarity) == STATUS_SUCCESS)
+           if (USCI_B_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
            {
                USCI_B_SPI_enable(base_address);
            }
