@@ -177,4 +177,23 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len);
  */
 int spi_slave_flush(spi_port_t port);
 
+/**
+ * \brief Reads the number of bytes of data not yet sent.
+ *
+ * \param[in] port is the SPI port to be read. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ *
+ * \return The number of unsent bytes.
+ */
+uint16_t spi_slave_bytes_not_sent(spi_port_t port);
+
 #endif /* DRIVERS_SPI_SLAVE_SPI_SLAVE_H_ */

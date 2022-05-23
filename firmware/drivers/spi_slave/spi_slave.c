@@ -463,6 +463,30 @@ int spi_slave_flush(spi_port_t port)
     return err;
 }
 
+uint16_t spi_slave_bytes_not_sent(spi_port_t port)
+{
+    uint16_t bytes_not_sent = 0U;
+
+    switch(port)
+    {
+        case SPI_PORT_0:   bytes_not_sent = queue_size(&spi_port_0_tx_buffer);  break;
+        case SPI_PORT_1:   bytes_not_sent = queue_size(&spi_port_1_tx_buffer);  break;
+        case SPI_PORT_2:   bytes_not_sent = queue_size(&spi_port_2_tx_buffer);  break;
+        case SPI_PORT_3:   bytes_not_sent = queue_size(&spi_port_3_tx_buffer);  break;
+        case SPI_PORT_4:   bytes_not_sent = queue_size(&spi_port_4_tx_buffer);  break;
+        case SPI_PORT_5:   bytes_not_sent = queue_size(&spi_port_5_tx_buffer);  break;
+        default:
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during reading tx buffer unsent bytes: Invalid port!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            break;
+    }
+
+    return bytes_not_sent;
+}
+
+
 /* Interruption Service Routines */
 
 #pragma vector=USCI_A0_VECTOR
