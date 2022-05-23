@@ -60,7 +60,36 @@ static queue_t spi_port_3_tx_buffer;
 static queue_t spi_port_4_tx_buffer;
 static queue_t spi_port_5_tx_buffer;
 
+/**
+ * \brief Reads the MTU value of a given SPI RX buffer.
+ *
+ * \param[in,out] spi_rx_buffer is the SPI RX buffer to get the MTU size.
+ *
+ * \return The MTU of the given RX buffer.
+ */
+static uint16_t spi_read_mtu(queue_t *spi_rx_buffer);
 
+/**
+ * \brief Reads the RX ISR buffer.
+ *
+ * \param[in] port is the SPI port to read. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \param[in] data is an array to store the read data.
+ *
+ * \param[in] len is the number of bytes to be read from the buffer.
+ *
+ * \return The status/error code.
+ */
+static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
