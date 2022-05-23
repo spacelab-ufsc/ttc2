@@ -38,20 +38,143 @@
 #ifndef DRIVERS_SPI_SLAVE_SPI_SLAVE_H_
 #define DRIVERS_SPI_SLAVE_SPI_SLAVE_H_
 
-#define SPI_MODULE_NAME         "SPI_SLAVE"
+#define SPI_SLAVE_MODULE_NAME         "SPI_SLAVE"
 
+/**
+ * \brief SPI Slave port initialization.
+ *
+ * \param[in] port is the SPI port to initialize. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \param[in] config is the configuration of the SPI port.
+ *
+ * \return The status/error code.
+ */
 int spi_slave_init(spi_port_t port, spi_config_t config);
 
+/**
+ * \brief Enables SPI Slave port interruption.
+ *
+ * \param[in] port is the SPI port to be enabled. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
 int spi_slave_enable_isr(spi_port_t port);
 
+/**
+ * \brief Disables SPI Slave port interruption.
+ *
+ * \param[in] port is the SPI port to be disabled. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
 int spi_slave_disable_isr(spi_port_t port);
 
+/**
+ * \brief Reads the number of data bytes available to be read from the buffer.
+ *
+ * \param[in] port is the SPI port to be read. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ *
+ * \return The number of bytes received in the buffer.
+ */
 uint16_t spi_slave_read_available(spi_port_t port);
 
+/**
+ * \brief Reads data from a given SPI port.
+ *
+ * \param[in] port is the SPI port to be read. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \param[in] data is an array to store the read data.
+ *
+ * \param[in] len is the number of bytes to read.
+ *
+ * \return The status/error code.
+ */
 int spi_slave_read(spi_port_t port, uint8_t *data, uint16_t len);
 
+/**
+ * \brief Writes data from a given SPI port.
+ *
+ * \param[in] port is the SPI port to be written. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \param[in] data is an array with stored data.
+ *
+ * \param[in] len is the number of bytes to be written.
+ *
+ * \return The status/error code.
+ */
 int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len);
 
-int spi_flush(spi_port_t port);
+/**
+ * \brief Flushes/Clears the RX buffer of a given port.
+ *
+ * \param[in] port is the SPI port to flush. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \return The status/error code.
+ */
+int spi_slave_flush(spi_port_t port);
 
 #endif /* DRIVERS_SPI_SLAVE_SPI_SLAVE_H_ */
