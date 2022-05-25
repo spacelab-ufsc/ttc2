@@ -45,9 +45,9 @@
 
 int __wrap_spi_slave_init(spi_port_t port, spi_config_t config);
 
-int __wrap_spi_slave_enable_isr(spi_port_t port);
+int __wrap_spi_slave_enable(spi_port_t port);
 
-int __wrap_spi_slave_disable_isr(spi_port_t port);
+int __wrap_spi_slave_disable(spi_port_t port);
 
 uint16_t __wrap_spi_slave_read_available(spi_port_t port);
 
@@ -56,6 +56,8 @@ int __wrap_spi_slave_read(spi_port_t port, uint8_t *data, uint16_t len);
 int __wrap_spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len);
 
 int __wrap_spi_flush(spi_port_t port);
+
+uint16_t spi_slave_bytes_not_sent(spi_port_t port);
 
 #endif /* SPI_WRAP_H_ */
 
