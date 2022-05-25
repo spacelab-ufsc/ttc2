@@ -76,7 +76,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config);
  *
  * \return The status/error code.
  */
-int spi_slave_enable_isr(spi_port_t port);
+int spi_slave_enable(spi_port_t port);
 
 /**
  * \brief Disables SPI Slave port interruption.
@@ -94,7 +94,7 @@ int spi_slave_enable_isr(spi_port_t port);
  *
  * \return The status/error code.
  */
-int spi_slave_disable_isr(spi_port_t port);
+int spi_slave_disable(spi_port_t port);
 
 /**
  * \brief Reads the number of data bytes available to be read from the buffer.

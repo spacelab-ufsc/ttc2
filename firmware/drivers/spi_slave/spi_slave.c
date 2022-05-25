@@ -528,15 +528,11 @@ __interrupt void USCI_A0_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_A_SPI_transmitData(USCI_A0_BASE, &spi_port_0_tx_buffer);
+        USCI_A_SPI_transmitData(USCI_A0_BASE, queue_pop_front(&spi_port_0_tx_buffer));
         USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
@@ -550,15 +546,11 @@ __interrupt void USCI_A1_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_A_SPI_transmitData(USCI_A1_BASE, &spi_port_1_tx_buffer);
+        USCI_A_SPI_transmitData(USCI_A1_BASE, queue_pop_front(&spi_port_1_tx_buffer));
         USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
@@ -572,15 +564,11 @@ __interrupt void USCI_A2_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_A_SPI_transmitData(USCI_A2_BASE, &spi_port_2_tx_buffer);
+        USCI_A_SPI_transmitData(USCI_A2_BASE, queue_pop_front(&spi_port_2_tx_buffer));
         USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
@@ -594,15 +582,11 @@ __interrupt void USCI_B0_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_B_SPI_transmitData(USCI_B0_BASE, &spi_port_3_tx_buffer);
+        USCI_B_SPI_transmitData(USCI_B0_BASE, queue_pop_front(&spi_port_3_tx_buffer));
         USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
@@ -616,15 +600,11 @@ __interrupt void USCI_B1_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_B_SPI_transmitData(USCI_B1_BASE, &spi_port_4_tx_buffer);
+        USCI_B_SPI_transmitData(USCI_B1_BASE, queue_pop_front(&spi_port_4_tx_buffer));
         USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
@@ -638,15 +618,11 @@ __interrupt void USCI_B2_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
     }
     else if (USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
     {
-        USCI_B_SPI_transmitData(USCI_B2_BASE, &spi_port_5_tx_buffer);
+        USCI_B_SPI_transmitData(USCI_B2_BASE, queue_pop_front(&spi_port_5_tx_buffer));
         USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during interruption: No interruption captured!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 }
 
