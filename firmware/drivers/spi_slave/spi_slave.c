@@ -46,19 +46,19 @@
 
 #include "spi_slave.h"
 
-static queue_t spi_port_0_rx_buffer;
-static queue_t spi_port_1_rx_buffer;
-static queue_t spi_port_2_rx_buffer;
-static queue_t spi_port_3_rx_buffer;
-static queue_t spi_port_4_rx_buffer;
-static queue_t spi_port_5_rx_buffer;
+extern queue_t spi_port_0_rx_buffer;
+extern queue_t spi_port_1_rx_buffer;
+extern queue_t spi_port_2_rx_buffer;
+extern queue_t spi_port_3_rx_buffer;
+extern queue_t spi_port_4_rx_buffer;
+extern queue_t spi_port_5_rx_buffer;
 
-static queue_t spi_port_0_tx_buffer;
-static queue_t spi_port_1_tx_buffer;
-static queue_t spi_port_2_tx_buffer;
-static queue_t spi_port_3_tx_buffer;
-static queue_t spi_port_4_tx_buffer;
-static queue_t spi_port_5_tx_buffer;
+extern queue_t spi_port_0_tx_buffer;
+extern queue_t spi_port_1_tx_buffer;
+extern queue_t spi_port_2_tx_buffer;
+extern queue_t spi_port_3_tx_buffer;
+extern queue_t spi_port_4_tx_buffer;
+extern queue_t spi_port_5_tx_buffer;
 
 /**
  * \brief Reads the MTU value of a given SPI RX buffer.
@@ -515,114 +515,4 @@ uint16_t spi_slave_bytes_not_sent(spi_port_t port)
     return bytes_not_sent;
 }
 
-
-/* Interruption Service Routines */
-
-#pragma vector=USCI_A0_VECTOR
-__interrupt void USCI_A0_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_0_rx_buffer, USCI_A_SPI_receiveData(USCI_A0_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_A_SPI_transmitData(USCI_A0_BASE, queue_pop_front(&spi_port_0_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
-#pragma vector=USCI_A1_VECTOR
-__interrupt void USCI_A1_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_1_rx_buffer, USCI_A_SPI_receiveData(USCI_A1_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_A_SPI_transmitData(USCI_A1_BASE, queue_pop_front(&spi_port_1_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
-#pragma vector=USCI_A2_VECTOR
-__interrupt void USCI_A2_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_2_rx_buffer, USCI_A_SPI_receiveData(USCI_A2_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_A_SPI_transmitData(USCI_A2_BASE, queue_pop_front(&spi_port_2_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
-#pragma vector=USCI_B0_VECTOR
-__interrupt void USCI_B0_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_3_rx_buffer, USCI_B_SPI_receiveData(USCI_B0_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_B_SPI_transmitData(USCI_B0_BASE, queue_pop_front(&spi_port_3_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
-#pragma vector=USCI_B1_VECTOR
-__interrupt void USCI_B1_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_4_rx_buffer, USCI_B_SPI_receiveData(USCI_B1_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_B_SPI_transmitData(USCI_B1_BASE, queue_pop_front(&spi_port_4_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
-#pragma vector=USCI_B2_VECTOR
-__interrupt void USCI_B2_ISR_SPI(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_5_rx_buffer, USCI_B_SPI_receiveData(USCI_B1_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
-        USCI_B_SPI_transmitData(USCI_B2_BASE, queue_pop_front(&spi_port_5_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
-    }
-}
-
+/** \} End of spi_slave group */
