@@ -43,22 +43,9 @@
 #include <libs/containers/queue.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
+#include <drivers/isr/isr.h>
 
 #include "spi_slave.h"
-
-extern queue_t spi_port_0_rx_buffer;
-extern queue_t spi_port_1_rx_buffer;
-extern queue_t spi_port_2_rx_buffer;
-extern queue_t spi_port_3_rx_buffer;
-extern queue_t spi_port_4_rx_buffer;
-extern queue_t spi_port_5_rx_buffer;
-
-extern queue_t spi_port_0_tx_buffer;
-extern queue_t spi_port_1_tx_buffer;
-extern queue_t spi_port_2_tx_buffer;
-extern queue_t spi_port_3_tx_buffer;
-extern queue_t spi_port_4_tx_buffer;
-extern queue_t spi_port_5_tx_buffer;
 
 /**
  * \brief Reads the MTU value of a given SPI RX buffer.
