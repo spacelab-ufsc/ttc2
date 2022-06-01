@@ -40,12 +40,9 @@
 #include <config/config.h>
 #include <system/sys_log/sys_log.h>
 #include <libs/containers/queue.h>
+#include <drivers/isr/isr.h>
 
 #include "uart.h"
-
-extern queue_t uart_port_0_rx_buffer;
-extern queue_t uart_port_1_rx_buffer;
-extern queue_t uart_port_2_rx_buffer;
 
 /**
  * \brief Reads the MTU value of a given UART RX buffer.
