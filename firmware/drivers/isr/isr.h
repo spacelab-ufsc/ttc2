@@ -36,5 +36,26 @@
 
 #ifndef ISR_H_
 #define ISR_H_
+#include <libs/containers/queue.h>
+
+/* SPI Slave buffers */
+extern queue_t spi_port_0_rx_buffer;
+extern queue_t spi_port_1_rx_buffer;
+extern queue_t spi_port_2_rx_buffer;
+extern queue_t spi_port_3_rx_buffer;
+extern queue_t spi_port_4_rx_buffer;
+extern queue_t spi_port_5_rx_buffer;
+
+extern queue_t spi_port_0_tx_buffer;
+extern queue_t spi_port_1_tx_buffer;
+extern queue_t spi_port_2_tx_buffer;
+extern queue_t spi_port_3_tx_buffer;
+extern queue_t spi_port_4_tx_buffer;
+extern queue_t spi_port_5_tx_buffer;
+
+/* UART buffers */
+extern queue_t uart_port_0_rx_buffer;
+extern queue_t uart_port_1_rx_buffer;
+extern queue_t uart_port_2_rx_buffer;
 
 #endif /* ISR_H_ */
