@@ -241,7 +241,7 @@ int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t devic
     return err;
 }
 
-int ina22x_get_pow_raw(ina22x_config_t config, ina22x_current_t *pow)
+int ina22x_get_power_raw(ina22x_config_t config, ina22x_current_t *pow)
 {
     int err = -1;
     uint16_t power_reg;

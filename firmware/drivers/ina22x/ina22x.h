@@ -319,7 +319,7 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
  *
  * \return The status/error code.
  */
-int ina22x_get_voltage_W(ina22x_config_t config, ina22x_power_t *pow);
+int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pow);
 
 /**
  * \brief Reads the manufacturer ID.
