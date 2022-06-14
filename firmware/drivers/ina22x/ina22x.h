@@ -24,6 +24,7 @@
  * \brief INA22x driver definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.2.0
  * 
@@ -199,7 +200,7 @@ int ina22x_init(ina22x_config_t config);
 int ina22x_configuration(ina22x_config_t config);
 
 /**
- * \brief Calibrate the INA22X to scale better scale the measurements.
+ * \brief Calibrate the INA22X to better scale the measurements.
  *
  * \param[in] config is configuration parameters of the driver.
  *
@@ -271,7 +272,7 @@ int ina22x_get_current_raw(ina22x_config_t config, ina22x_current_t *cur);
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] cur is a pointer to store the read current.
+ * \param[in,out] vol is a pointer to store the read voltage.
  *
  * \return The status/error code.
  */
@@ -282,11 +283,46 @@ int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t devic
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] cur is a pointer to store the read voltage.
+ * \param[in,out] pow is a pointer to store the read power.
  *
  * \return The status/error code.
  */
 int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow);
+
+/**
+ * \brief Converts the read raw value to Amperes.
+ *
+ * \param[in] config is configuration parameters of the driver.
+ *
+ * \param[in] cur is a pointer to the stored raw current.
+ *
+ * \return The converted current in Amperes.
+ */
+ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur);
+
+/**
+ * \brief Converts the read raw value to Volts.
+ *
+ * \param[in] config is configuration parameters of the driver.
+ *
+ * \param[in] vol is a pointer to the stored raw voltage.
+ *
+ * \return The converted voltage in Volts.
+ */
+ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+
+/**
+ * \brief Converts the read raw value to Watts.
+ *
+ * \param[in] config is configuration parameters of the driver.
+ *
+ * \param[in] device is the parameter to define if the voltage is from bus or shunt.
+ *
+ * \param[in] pow is a pointer to the stored raw power.
+ *
+ * \return The converted power in Watts.
+ */
+ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pow);
 
 /**
  * \brief Reads the current from the device converting to Amperes.
