@@ -24,12 +24,13 @@
  * \brief Unit test of the Ina22x driver.
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
+ * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.2.1
  * 
  * \date 2022/06/07
  * 
- * \defgroup ina22x_unit_test Ina22x
+ * \defgroup ina22x_unit_test INA22x
  * \ingroup tests
  * \{
  */
@@ -47,10 +48,30 @@
 #include <drivers/i2c/i2c.h>
 #include <drivers/ina22x/ina22x.h>
 
+#define INA22X_IIC_PORT         I2C_PORT_2
+#define INA22X_IIC_CLOCK_HZ     100000UL
+#define INA22X_IIC_ADR          0x04
+
 unsigned int generate_random(unsigned int l, unsigned int r);
+
+void write_test(uint8_t *wd, uint16_t wd_len);
+
+void read_test(uint8_t *rd, uint16_t rd_len);
+
+ina22x_config_t conf = {0};
 
 static void ina22x_init_test(void **state)
 {
+    expect_value(__wrap_i2c_init, port, INA22X_IIC_PORT);
+    expect_value(__wrap_i2c_init, config.speed_hz, INA22X_IIC_CLOCK_HZ);
+
+    will_return(__wrap_i2c_init, 0);
+
+    uint8_t data[3] = {INA22X_REG_CONFIGURATION, 0x80, 0x00};
+
+    write_test(data, 3);
+
+    assert_return_code(ina22x_init(conf), 0);
 }
 
 static void ina22x_configuration_test(void **state)
@@ -103,6 +124,16 @@ static void ina22x_get_die_id_test(void **state)
 
 int main(void)
 {
+    conf.i2c_port                   = INA22X_IIC_PORT;
+    conf.i2c_conf.speed_hz          = INA22X_IIC_CLOCK_HZ;
+//    conf.avg_mode                   = ;
+//    conf.bus_voltage_conv_time      = ;
+//    conf.shunt_voltage_conv_time    = ;
+//    conf.op_mode                    = ;
+//    conf.device                     = ;
+//    conf.lsb_current                = ;
+//    conf.cal                        = ;
+
     const struct CMUnitTest ina22x_tests[] = {
         cmocka_unit_test(ina22x_init_test),
         cmocka_unit_test(ina22x_configuration_test),
@@ -125,6 +156,32 @@ int main(void)
 unsigned int generate_random(unsigned int l, unsigned int r)
 {
     return (rand() % (r - l + 1)) + l;
+}
+
+void write_test(uint8_t *wd, uint16_t wd_len)
+{
+    expect_value(__wrap_i2c_write, port, INA22X_IIC_PORT);
+    expect_value(__wrap_i2c_write, adr, INA22X_IIC_ADR);
+    expect_memory(__wrap_i2c_write, data, (void*)wd, wd_len);
+    expect_value(__wrap_i2c_write, len, wd_len);
+
+    will_return(__wrap_i2c_write, 0);
+}
+
+void read_test(uint8_t *rd, uint16_t rd_len)
+{
+    expect_value(__wrap_i2c_read, port, INA22X_IIC_PORT);
+    expect_value(__wrap_i2c_read, adr, INA22X_IIC_ADR);
+
+    expect_value(__wrap_i2c_read, len, rd_len);
+
+    uint16_t i = 0;
+    for(i = 0; i < rd_len; i++)
+    {
+        will_return(__wrap_i2c_read, rd[i]);
+    }
+
+    will_return(__wrap_i2c_read, 0);
 }
 
 /** \} End of ina22x_test group */
