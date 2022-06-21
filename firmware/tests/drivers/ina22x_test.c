@@ -76,10 +76,59 @@ static void ina22x_init_test(void **state)
 
 static void ina22x_configuration_test(void **state)
 {
+    uint16_t config_mask = conf.avg_mode |
+                           conf.bus_voltage_conv_time |
+                           conf.shunt_voltage_conv_time |
+                           conf.op_mode;
+
+    uint8_t data[3] = {0};
+
+    data[0] = INA22X_REG_CONFIGURATION;
+    data[1] = config_mask >> 8;
+    data[2] = config_mask & 0x00FFU;
+
+    write_test(data, 3);
+
+    assert_return_code(ina22x_configuration(conf), 0);
 }
 
 static void ina22x_calibration_test(void **state)
 {
+    uint8_t data[3] = {0};
+
+    uint8_t i = 0;
+    for(i = 0; i < UINT8_MAX; i++)
+    {
+        conf.device = i;
+
+        switch(i)
+        {
+            case INA22X_CAL_UC:
+                data[0] = INA22X_REG_CALIBRATION;
+                data[1] = 0x28; /* MSB of 10240 */
+                data[2] = 0x00; /* LSB of 10240 */
+
+                write_test(data, 3);
+
+                assert_return_code(ina22x_calibration(conf), 0);
+
+                break;
+            case INA22X_CAL_RADIO:
+                data[0] = INA22X_REG_CALIBRATION;
+                data[1] = 0x04; /* MSB of 1024 */
+                data[2] = 0x00; /* LSB of 1024 */
+
+                write_test(data, 3);
+
+                assert_return_code(ina22x_calibration(conf), 0);
+
+                break;
+            default:
+                assert_int_equal(ina22x_calibration(conf), -1);
+
+                break;
+        }
+    }
 }
 
 static void ina22x_write_reg_test(void **state)
@@ -126,11 +175,11 @@ int main(void)
 {
     conf.i2c_port                   = INA22X_IIC_PORT;
     conf.i2c_conf.speed_hz          = INA22X_IIC_CLOCK_HZ;
-//    conf.avg_mode                   = ;
-//    conf.bus_voltage_conv_time      = ;
-//    conf.shunt_voltage_conv_time    = ;
-//    conf.op_mode                    = ;
-//    conf.device                     = ;
+    conf.avg_mode                   = 0;
+    conf.bus_voltage_conv_time      = 0;
+    conf.shunt_voltage_conv_time    = 0;
+    conf.op_mode                    = 0;
+    conf.device                     = INA22X_CAL_UC;
 //    conf.lsb_current                = ;
 //    conf.cal                        = ;
 
