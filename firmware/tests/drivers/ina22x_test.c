@@ -133,22 +133,112 @@ static void ina22x_calibration_test(void **state)
 
 static void ina22x_write_reg_test(void **state)
 {
+    uint8_t reg_adr = generate_random(0, UINT8_MAX);
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    uint8_t data[3] = {0};
+
+    data[0] = reg_adr;
+    data[1] = reg_val >> 8;
+    data[2] = reg_val & 0xFFU;
+
+    write_test(data, 3);
+
+    assert_return_code(ina22x_write_reg(conf, reg_adr, reg_val), 0);
 }
 
 static void ina22x_read_reg_test(void **state)
 {
+    uint8_t reg_adr = generate_random(0, UINT8_MAX);
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    uint16_t read_reg_val = UINT16_MAX;
+
+    assert_return_code(ina22x_read_reg(conf, reg_adr, &read_reg_val), 0);
+
+    assert_int_equal(reg_val, read_reg_val);
 }
 
 static void ina22x_get_current_raw_test(void **state)
 {
+    uint8_t reg_adr = 0x04U;    /* INA22X_REG_CURRENT */
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    ina22x_current_t read_raw_cur = 0;
+
+    assert_return_code(ina22x_get_current_raw(conf, &read_raw_cur), 0);
+
+    assert_int_equal((ina22x_current_t)reg_val, read_raw_cur);
 }
 
 static void ina22x_get_voltage_raw_test(void **state)
 {
+    uint8_t reg_adr = 0;
+    for(reg_adr = 0; reg_adr < UINT8_MAX; reg_adr++)
+    {
+        ina22x_voltage_t read_raw_volt = 0;
+
+        if ((reg_adr == 0x01U) || (reg_adr == 0x02U))   /* INA22X_REG_SHUNT_VOLTAGE or INA22X_REG_BUS_VOLTAGE */
+        {
+            uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+            write_test(&reg_adr, 1);
+
+            uint8_t data[2] = {0};
+
+            data[0] = reg_val >> 8;
+            data[1] = reg_val & 0xFFU;
+
+            read_test(data, 2);
+
+            assert_return_code(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), 0);
+
+            assert_int_equal((ina22x_voltage_t)reg_val, read_raw_volt);
+        }
+        else
+        {
+            assert_int_equal(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), -1);
+        }
+    }
 }
 
 static void ina22x_power_raw_test(void **state)
 {
+    uint8_t reg_adr = 0x03U;    /* INA22X_REG_POWER */
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    ina22x_power_t read_raw_pwr = 0;
+
+    assert_return_code(ina22x_get_power_raw(conf, &read_raw_pwr), 0);
+
+    assert_int_equal((ina22x_power_t)reg_val, read_raw_pwr);
 }
 
 static void ina22x_get_current_A_test(void **state)
