@@ -42,10 +42,11 @@
 int ina22x_init(ina22x_config_t config)
 {
     int err = -1;
+
     if (i2c_init(INA22X_I2C_PORT, config.i2c_conf) == 0)
     {
         /* Sets ina22x to default */
-        if (ina22x_write_reg(config, INA22X_REG_CONFIGURATION, 0X8000) == 0)
+        if (ina22x_write_reg(config, INA22X_REG_CONFIGURATION, 0x8000) == 0)
         {
             err = 0;
         }
@@ -64,9 +65,8 @@ int ina22x_init(ina22x_config_t config)
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
+
     return err;
-
-
 }
 
 int ina22x_configuration(ina22x_config_t config)
@@ -116,6 +116,7 @@ int ina22x_calibration(ina22x_config_t config)
             err = -1;       /* Invalid calibration value */
         break;
     }
+
     if (err == 0)
     {
         if (ina22x_write_reg(config, INA22X_REG_CALIBRATION, config.cal) == -1)
@@ -127,27 +128,29 @@ int ina22x_calibration(ina22x_config_t config)
             err = -1;       /* Invalid calibration value */
         }
     }
+
     return err;
 }
 
 int ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val)
 {
     int err = 0;
+
     uint8_t buf[3];
     buf[0] = reg;
     buf[1] = val >> 8;
     buf[2] = val & (uint16_t) 0xFF;
+
     if (i2c_write(config.i2c_port, INA22X_I2C_SLAVE_ADDRESS, buf, 3) != 0)
     {
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x write reg function: Could not write register!");
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-    err = -1;       /* Invalid calibration value */
+        err = -1;       /* Invalid calibration value */
     }
 
     return err;
-
 }
 
 int ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val)
@@ -275,24 +278,25 @@ ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_
 ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
 {
     ina22x_voltage_t voltage;
+
     switch(device)
-            {
-                case INA22X_BUS_VOLTAGE:      voltage = *vol * 1.25e-3;    break;
-                case INA22X_SHUNT_VOLTAGE:    voltage = *vol * 2.5e-6;     break;
-                default:
-                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get voltage in volts, invalid device!");
-                    sys_log_new_line();
-                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-                    break;
-            }
+    {
+        case INA22X_BUS_VOLTAGE:      voltage = *vol * 1.25e-3;    break;
+        case INA22X_SHUNT_VOLTAGE:    voltage = *vol * 2.5e-6;     break;
+        default:
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get voltage in volts, invalid device!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            break;
+    }
 
     return voltage;
 }
 
-ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pow)
+ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pwr)
 {
-    return *pow * 25 * config.lsb_current;
+    return *pwr * 25 * config.lsb_current;
 }
 
 int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
@@ -338,7 +342,7 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
     return err;
 }
 
-int ina22x_get_power_W(ina22x_config_t config, ina22x_current_t *pow)
+int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
 {
     int err = -1;
     ina22x_power_t power_reg;
@@ -346,7 +350,7 @@ int ina22x_get_power_W(ina22x_config_t config, ina22x_current_t *pow)
     if (ina22x_get_power_raw(config, &power_reg) == 0)
     {
         err = 0;
-        ina22x_convert_raw_to_W(config, &power_reg);
+        *pwr = ina22x_convert_raw_to_W(config, &power_reg);
     }
     else
     {

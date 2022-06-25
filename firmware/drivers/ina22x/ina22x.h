@@ -318,11 +318,11 @@ ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_
  *
  * \param[in] device is the parameter to define if the voltage is from bus or shunt.
  *
- * \param[in] pow is a pointer to the stored raw power.
+ * \param[in] pwr is a pointer to the stored raw power.
  *
  * \return The converted power in Watts.
  */
-ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pow);
+ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pwr);
 
 /**
  * \brief Reads the current from the device converting to Amperes.
@@ -351,11 +351,11 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] cur is a pointer to store the read power.
+ * \param[in,out] pwr is a pointer to store the read power.
  *
  * \return The status/error code.
  */
-int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pow);
+int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr);
 
 /**
  * \brief Reads the manufacturer ID.
