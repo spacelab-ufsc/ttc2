@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.11
+ * \version 0.2.1
  * 
  * \date 2022/06/01
  * 
@@ -160,7 +160,7 @@ int ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val)
         if (i2c_read(config.i2c_port, INA22X_I2C_SLAVE_ADDRESS, buf, 2) == 0)
         {
             err = 0;
-            *val = ((uint16_t) buf[1] << 8 ) | buf[0];
+            *val = ((uint16_t)buf[0] << 8) | buf[1];
         }
         else
         {
@@ -208,40 +208,42 @@ int ina22x_get_current_raw(ina22x_config_t config, ina22x_current_t *cur)
 int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
 {
     int err = -1;
-    uint16_t voltage_reg;
-    int16_t voltage_signed = 0x0000;
-    uint16_t target_reg;
+    uint16_t target_reg = 0U;
 
     switch(device)
     {
-    case INA22X_BUS_VOLTAGE:    target_reg = INA22X_REG_BUS_VOLTAGE;    break;
-    case INA22X_SHUNT_VOLTAGE:  target_reg = INA22X_REG_SHUNT_VOLTAGE;  break;
-    default:
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get current raw: Invalid target!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-        break;
-    }
-    if(ina22x_read_reg(config, target_reg, &voltage_reg) == 0)
-    {
-        err = 0;
-        voltage_signed |= voltage_reg;
-    }
-    else
-    {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get current: Could not read register!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        case INA22X_BUS_VOLTAGE:    target_reg = INA22X_REG_BUS_VOLTAGE;    err = 0;    break;
+        case INA22X_SHUNT_VOLTAGE:  target_reg = INA22X_REG_SHUNT_VOLTAGE;  err = 0;    break;
+        default:
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get current raw: Invalid target!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            break;
     }
 
-    *vol = voltage_signed;
+    if (err == 0)
+    {
+        uint16_t voltage_reg = 0U;
+
+        if (ina22x_read_reg(config, target_reg, &voltage_reg) == 0)
+        {
+            *vol = (ina22x_voltage_t)voltage_reg;
+        }
+        else
+        {
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x get current: Could not read register!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1;
+        }
+    }
 
     return err;
 }
 
-int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow)
+int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pwr)
 {
     int err = -1;
     uint16_t power_reg;
@@ -259,7 +261,8 @@ int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow)
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
-    *pow = power_signed;
+
+    *pwr = power_signed;
 
     return err;
 }

@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.0
+ * \version 0.2.1
  * 
  * \date 2022/06/01
  * 
@@ -134,8 +134,8 @@ typedef enum
  */
 typedef enum
 {
-    INA22X_BUS_VOLTAGE=0,                       /**< Access to BUS voltage register */
-    INA22X_SHUNT_VOLTAGE,                       /**< Access to shunt voltage register */
+    INA22X_SHUNT_VOLTAGE=1,                     /**< Access to shunt voltage register */
+    INA22X_BUS_VOLTAGE,                         /**< Access to BUS voltage register */
 } ina22x_voltage_device_t;
 
 /**
@@ -283,11 +283,11 @@ int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t devic
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] pow is a pointer to store the read power.
+ * \param[in,out] pwr is a pointer to store the read power.
  *
  * \return The status/error code.
  */
-int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow);
+int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pwr);
 
 /**
  * \brief Converts the read raw value to Amperes.
