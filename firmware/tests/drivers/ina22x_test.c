@@ -251,14 +251,65 @@ static void ina22x_get_voltage_V_test(void **state)
 
 static void ina22x_get_power_W_test(void **state)
 {
+    uint8_t reg_adr = 0x03U;    /* INA22X_REG_POWER */
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    ina22x_power_t read_raw_pwr = 0;
+
+    assert_return_code(ina22x_get_power_W(conf, &read_raw_pwr), 0);
+
+//  TODO  assert_int_equal((ina22x_power_t)reg_val, read_raw_pwr);
 }
 
 static void ina22x_get_manufacturer_id_test(void **state)
 {
+    uint8_t reg_adr = 0xFEU;    /* INA22X_REG_MANUFACTURER_ID */
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    ina22x_id_t read_id = 0;
+
+    assert_return_code(ina22x_get_manufacturer_id(conf, &read_id), 0);
+
+    assert_int_equal(reg_val, read_id);
 }
 
 static void ina22x_get_die_id_test(void **state)
 {
+    uint8_t reg_adr = 0xFFU;    /* INA22X_REG_DIE_ID */
+    uint16_t reg_val = generate_random(0, UINT16_MAX);
+
+    write_test(&reg_adr, 1);
+
+    uint8_t data[2] = {0};
+
+    data[0] = reg_val >> 8;
+    data[1] = reg_val & 0xFFU;
+
+    read_test(data, 2);
+
+    ina22x_id_t read_id = 0;
+
+    assert_return_code(ina22x_get_die_id(conf, &read_id), 0);
+
+    assert_int_equal(reg_val, read_id);
 }
 
 int main(void)
