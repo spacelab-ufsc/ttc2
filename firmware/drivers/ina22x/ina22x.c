@@ -98,35 +98,13 @@ int ina22x_calibration(ina22x_config_t config)
 {
     int err = 0;
 
-    switch(config.device)
+    if (ina22x_write_reg(config, INA22X_REG_CALIBRATION, config.cal) == -1)
     {
-        case INA22X_CAL_UC:
-            config.cal= 10240;
-            config.lsb_current = 5e-6;
-            break;
-        case INA22X_CAL_RADIO:
-            config.cal = 1024;
-            config.lsb_current = 50e-6;
-            break;
-        default:
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x calibration: Invalid calibration value!");
-            sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-            err = -1;       /* Invalid calibration value */
-        break;
-    }
-
-    if (err == 0)
-    {
-        if (ina22x_write_reg(config, INA22X_REG_CALIBRATION, config.cal) == -1)
-        {
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x calibration: Could not write register!");
-            sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-            err = -1;       /* Invalid calibration value */
-        }
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, INA22X_MODULE_NAME, "Error during ina22x calibration: Could not write register!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;       /* Invalid calibration value */
     }
 
     return err;

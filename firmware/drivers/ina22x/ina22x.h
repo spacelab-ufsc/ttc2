@@ -173,7 +173,6 @@ typedef struct
     ina22x_bus_voltage_conv_time_t bus_voltage_conv_time;
     ina22x_shunt_voltage_conv_time_t shunt_voltage_conv_time;
     ina22x_mode_t op_mode;
-    ina22x_cal_device_t device;
     ina22x_lsb_current_t lsb_current;
     ina22x_cal_value_t cal;
 
