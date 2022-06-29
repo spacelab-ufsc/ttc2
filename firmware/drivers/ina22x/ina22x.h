@@ -289,29 +289,29 @@ int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t devic
 int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pwr);
 
 /**
- * \brief Converts the read raw value to Amperes.
+ * \brief Converts the read raw value to miliAmperes.
  *
  * \param[in] config is configuration parameters of the driver.
  *
  * \param[in] cur is a pointer to the stored raw current.
  *
- * \return The converted current in Amperes.
+ * \return The converted current in miliAmperes.
  */
-ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur);
+ina22x_current_t ina22x_convert_raw_to_mA(ina22x_config_t config, ina22x_current_t *cur);
 
 /**
- * \brief Converts the read raw value to Volts.
+ * \brief Converts the read raw value to miliVolts.
  *
  * \param[in] config is configuration parameters of the driver.
  *
  * \param[in] vol is a pointer to the stored raw voltage.
  *
- * \return The converted voltage in Volts.
+ * \return The converted voltage in miliVolts.
  */
-ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+ina22x_voltage_t ina22x_convert_raw_to_mV(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
 
 /**
- * \brief Converts the read raw value to Watts.
+ * \brief Converts the read raw value to miliWatts.
  *
  * \param[in] config is configuration parameters of the driver.
  *
@@ -319,12 +319,12 @@ ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_
  *
  * \param[in] pwr is a pointer to the stored raw power.
  *
- * \return The converted power in Watts.
+ * \return The converted power in miliWatts.
  */
-ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pwr);
+ina22x_power_t ina22x_convert_raw_to_mW(ina22x_config_t config, ina22x_current_t *pwr);
 
 /**
- * \brief Reads the current from the device converting to Amperes.
+ * \brief Reads the current from the device converting to miliAmperes.
  *
  * \param[in] config is configuration parameters of the driver.
  *
@@ -332,10 +332,10 @@ ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t 
  *
  * \return The status/error code.
  */
-int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
+int ina22x_get_current_mA(ina22x_config_t config, ina22x_current_t *cur);
 
 /**
- * \brief Reads the voltage from the device converting to Volts.
+ * \brief Reads the voltage from the device converting to miliVolts.
  *
  * \param[in] config is configuration parameters of the driver.
  *
@@ -343,10 +343,10 @@ int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
  *
  * \return The status/error code.
  */
-int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+int ina22x_get_voltage_mV(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
 
 /**
- * \brief Reads the power from the device converting to watts.
+ * \brief Reads the power from the device converting to miliWatts.
  *
  * \param[in] config is configuration parameters of the driver.
  *
@@ -354,7 +354,7 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
  *
  * \return The status/error code.
  */
-int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr);
+int ina22x_get_power_mW(ina22x_config_t config, ina22x_power_t *pwr);
 
 /**
  * \brief Reads the manufacturer ID.

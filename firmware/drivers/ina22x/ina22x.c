@@ -248,12 +248,12 @@ int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pwr)
     return err;
 }
 
-ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur)
+ina22x_current_t ina22x_convert_raw_to_mA(ina22x_config_t config, ina22x_current_t *cur)
 {
-    return (*cur * config.lsb_current);
+    return (*cur * config.lsb_current * 1000);
 }
 
-ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
+ina22x_voltage_t ina22x_convert_raw_to_mV(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
 {
     ina22x_voltage_t voltage;
 
@@ -269,15 +269,15 @@ ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_
             break;
     }
 
-    return voltage;
+    return voltage * 1000;
 }
 
-ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pwr)
+ina22x_power_t ina22x_convert_raw_to_mW(ina22x_config_t config, ina22x_power_t *pwr)
 {
-    return *pwr * 25 * config.lsb_current;
+    return (*pwr * 25 * config.lsb_current * 1000);
 }
 
-int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
+int ina22x_get_current_mA(ina22x_config_t config, ina22x_current_t *cur)
 {
     int err = -1;
     ina22x_current_t current_reg;
@@ -294,12 +294,12 @@ int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 
-    *cur = ina22x_convert_raw_to_A(config, &current_reg);
+    *cur = ina22x_convert_raw_to_mA(config, &current_reg);
 
     return err;
 }
 
-int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
+int ina22x_get_voltage_mV(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
 {
     int err = -1;
     ina22x_voltage_t voltage_reg;
@@ -307,7 +307,7 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
     if (ina22x_get_voltage_raw(config, device, &voltage_reg) == 0)
     {
         err = 0;
-        ina22x_convert_raw_to_V(config, device, &voltage_reg);
+        ina22x_convert_raw_to_mV(config, device, &voltage_reg);
     }
     else
     {
@@ -320,7 +320,7 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
     return err;
 }
 
-int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
+int ina22x_get_power_mW(ina22x_config_t config, ina22x_power_t *pwr)
 {
     int err = -1;
     ina22x_power_t power_reg;
@@ -328,7 +328,7 @@ int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
     if (ina22x_get_power_raw(config, &power_reg) == 0)
     {
         err = 0;
-        *pwr = ina22x_convert_raw_to_W(config, &power_reg);
+        *pwr = ina22x_convert_raw_to_mW(config, &power_reg);
     }
     else
     {
