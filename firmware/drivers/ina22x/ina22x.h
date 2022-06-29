@@ -265,51 +265,51 @@ int ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val);
  *
  * \return The status/error code.
  */
-int ina22x_get_current_raw(ina22x_config_t config, ina22x_current_t *cur);
+int ina22x_get_current_raw(ina22x_config_t config, uint16_t *cur);
 
 /**
  * \brief Reads the voltage from the device without conversion.
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] vol is a pointer to store the read voltage.
+ * \param[in,out] volt is a pointer to store the read raw voltage.
  *
  * \return The status/error code.
  */
-int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t device, uint16_t *volt);
 
 /**
  * \brief Reads the power from the device without conversion.
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] pwr is a pointer to store the read power.
+ * \param[in,out] pwr is a pointer to store the read raw power.
  *
  * \return The status/error code.
  */
-int ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pwr);
+int ina22x_get_power_raw(ina22x_config_t config, uint16_t *pwr);
 
 /**
  * \brief Converts the read raw value to Amperes.
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in] cur is a pointer to the stored raw current.
+ * \param[in] cur is the raw current to convert.
  *
  * \return The converted current in Amperes.
  */
-ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur);
+ina22x_current_t ina22x_convert_raw_to_A(ina22x_config_t config, uint16_t cur);
 
 /**
  * \brief Converts the read raw value to Volts.
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in] vol is a pointer to the stored raw voltage.
+ * \param[in] volt is the raw voltage to convert.
  *
  * \return The converted voltage in Volts.
  */
-ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, uint16_t volt);
 
 /**
  * \brief Converts the read raw value to Watts.
@@ -318,11 +318,11 @@ ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_
  *
  * \param[in] device is the parameter to define if the voltage is from bus or shunt.
  *
- * \param[in] pwr is a pointer to the stored raw power.
+ * \param[in] pwr is the raw power to convert.
  *
  * \return The converted power in Watts.
  */
-ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pwr);
+ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, uint16_t pwr);
 
 /**
  * \brief Reads the current from the device converting to Amperes.
@@ -340,11 +340,11 @@ int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
  *
  * \param[in] config is configuration parameters of the driver.
  *
- * \param[in,out] cur is a pointer to store the read current.
+ * \param[in,out] volt is a pointer to store the read voltage.
  *
  * \return The status/error code.
  */
-int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
+int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt);
 
 /**
  * \brief Reads the power from the device converting to watts.
