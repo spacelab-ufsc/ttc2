@@ -26,7 +26,7 @@
  * \author Miguel Boing <miguelboing13@gmail.com>
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.1
+ * \version 0.2.2
  * 
  * \date 2022/06/07
  * 
@@ -50,7 +50,7 @@
 
 #define INA22X_IIC_PORT         I2C_PORT_2
 #define INA22X_IIC_CLOCK_HZ     100000UL
-#define INA22X_IIC_ADR          0x04
+#define INA22X_IIC_ADR          0x00
 
 unsigned int generate_random(unsigned int l, unsigned int r);
 
@@ -96,38 +96,18 @@ static void ina22x_calibration_test(void **state)
 {
     uint8_t data[3] = {0};
 
+    uint16_t cal_val = (uint16_t)conf.cal;
+
     uint8_t i = 0;
     for(i = 0; i < UINT8_MAX; i++)
     {
-        conf.device = i;
+        data[0] = INA22X_REG_CALIBRATION;
+        data[1] = (cal_val >> 8) & 0xFF;
+        data[2] = (cal_val >> 0) & 0xFF;
 
-        switch(i)
-        {
-            case INA22X_CAL_UC:
-                data[0] = INA22X_REG_CALIBRATION;
-                data[1] = 0x28; /* MSB of 10240 */
-                data[2] = 0x00; /* LSB of 10240 */
+        write_test(data, 3);
 
-                write_test(data, 3);
-
-                assert_return_code(ina22x_calibration(conf), 0);
-
-                break;
-            case INA22X_CAL_RADIO:
-                data[0] = INA22X_REG_CALIBRATION;
-                data[1] = 0x04; /* MSB of 1024 */
-                data[2] = 0x00; /* LSB of 1024 */
-
-                write_test(data, 3);
-
-                assert_return_code(ina22x_calibration(conf), 0);
-
-                break;
-            default:
-                assert_int_equal(ina22x_calibration(conf), -1);
-
-                break;
-        }
+        assert_return_code(ina22x_calibration(conf), 0);
     }
 }
 
@@ -168,78 +148,78 @@ static void ina22x_read_reg_test(void **state)
     assert_int_equal(reg_val, read_reg_val);
 }
 
-static void ina22x_get_current_raw_test(void **state)
-{
-    uint8_t reg_adr = 0x04U;    /* INA22X_REG_CURRENT */
-    uint16_t reg_val = generate_random(0, UINT16_MAX);
+//static void ina22x_get_current_raw_test(void **state)
+//{
+//    uint8_t reg_adr = 0x04U;    /* INA22X_REG_CURRENT */
+//    uint16_t reg_val = generate_random(0, UINT16_MAX);
+//
+//    write_test(&reg_adr, 1);
+//
+//    uint8_t data[2] = {0};
+//
+//    data[0] = reg_val >> 8;
+//    data[1] = reg_val & 0xFFU;
+//
+//    read_test(data, 2);
+//
+//    uint16_t read_raw_cur = UINT16_MAX;
+//
+//    assert_return_code(ina22x_get_current_raw(conf, &read_raw_cur), 0);
+//
+//    assert_int_equal(reg_val, read_raw_cur);
+//}
 
-    write_test(&reg_adr, 1);
+//static void ina22x_get_voltage_raw_test(void **state)
+//{
+//    uint8_t reg_adr = 0;
+//    for(reg_adr = 0; reg_adr < UINT8_MAX; reg_adr++)
+//    {
+//        uint16_t read_raw_volt = 0;
+//
+//        if ((reg_adr == 0x01U) || (reg_adr == 0x02U))   /* INA22X_REG_SHUNT_VOLTAGE or INA22X_REG_BUS_VOLTAGE */
+//        {
+//            uint16_t reg_val = generate_random(0, UINT16_MAX);
+//
+//            write_test(&reg_adr, 1);
+//
+//            uint8_t data[2] = {0};
+//
+//            data[0] = reg_val >> 8;
+//            data[1] = reg_val & 0xFFU;
+//
+//            read_test(data, 2);
+//
+//            assert_return_code(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), 0);
+//
+//            assert_int_equal(reg_val, read_raw_volt);
+//        }
+//        else
+//        {
+//            assert_int_equal(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), -1);
+//        }
+//    }
+//}
 
-    uint8_t data[2] = {0};
-
-    data[0] = reg_val >> 8;
-    data[1] = reg_val & 0xFFU;
-
-    read_test(data, 2);
-
-    uint16_t read_raw_cur = UINT16_MAX;
-
-    assert_return_code(ina22x_get_current_raw(conf, &read_raw_cur), 0);
-
-    assert_int_equal(reg_val, read_raw_cur);
-}
-
-static void ina22x_get_voltage_raw_test(void **state)
-{
-    uint8_t reg_adr = 0;
-    for(reg_adr = 0; reg_adr < UINT8_MAX; reg_adr++)
-    {
-        uint16_t read_raw_volt = 0;
-
-        if ((reg_adr == 0x01U) || (reg_adr == 0x02U))   /* INA22X_REG_SHUNT_VOLTAGE or INA22X_REG_BUS_VOLTAGE */
-        {
-            uint16_t reg_val = generate_random(0, UINT16_MAX);
-
-            write_test(&reg_adr, 1);
-
-            uint8_t data[2] = {0};
-
-            data[0] = reg_val >> 8;
-            data[1] = reg_val & 0xFFU;
-
-            read_test(data, 2);
-
-            assert_return_code(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), 0);
-
-            assert_int_equal(reg_val, read_raw_volt);
-        }
-        else
-        {
-            assert_int_equal(ina22x_get_voltage_raw(conf, reg_adr, &read_raw_volt), -1);
-        }
-    }
-}
-
-static void ina22x_power_raw_test(void **state)
-{
-    uint8_t reg_adr = 0x03U;    /* INA22X_REG_POWER */
-    uint16_t reg_val = generate_random(0, UINT16_MAX);
-
-    write_test(&reg_adr, 1);
-
-    uint8_t data[2] = {0};
-
-    data[0] = reg_val >> 8;
-    data[1] = reg_val & 0xFFU;
-
-    read_test(data, 2);
-
-    uint16_t read_raw_pwr = 0;
-
-    assert_return_code(ina22x_get_power_raw(conf, &read_raw_pwr), 0);
-
-    assert_int_equal(reg_val, read_raw_pwr);
-}
+//static void ina22x_power_raw_test(void **state)
+//{
+//    uint8_t reg_adr = 0x03U;    /* INA22X_REG_POWER */
+//    uint16_t reg_val = generate_random(0, UINT16_MAX);
+//
+//    write_test(&reg_adr, 1);
+//
+//    uint8_t data[2] = {0};
+//
+//    data[0] = reg_val >> 8;
+//    data[1] = reg_val & 0xFFU;
+//
+//    read_test(data, 2);
+//
+//    uint16_t read_raw_pwr = 0;
+//
+//    assert_return_code(ina22x_get_power_raw(conf, &read_raw_pwr), 0);
+//
+//    assert_int_equal(reg_val, read_raw_pwr);
+//}
 
 static void ina22x_get_current_A_test(void **state)
 {
@@ -371,9 +351,8 @@ int main(void)
     conf.bus_voltage_conv_time      = 0;
     conf.shunt_voltage_conv_time    = 0;
     conf.op_mode                    = 0;
-    conf.device                     = INA22X_CAL_UC;
 //    conf.lsb_current                = ;
-//    conf.cal                        = ;
+    conf.cal                        = 0.0;
 
     const struct CMUnitTest ina22x_tests[] = {
         cmocka_unit_test(ina22x_init_test),
@@ -381,9 +360,9 @@ int main(void)
         cmocka_unit_test(ina22x_calibration_test),
         cmocka_unit_test(ina22x_write_reg_test),
         cmocka_unit_test(ina22x_read_reg_test),
-        cmocka_unit_test(ina22x_get_current_raw_test),
-        cmocka_unit_test(ina22x_get_voltage_raw_test),
-        cmocka_unit_test(ina22x_power_raw_test),
+//        cmocka_unit_test(ina22x_get_current_raw_test),
+//        cmocka_unit_test(ina22x_get_voltage_raw_test),
+//        cmocka_unit_test(ina22x_power_raw_test),
         cmocka_unit_test(ina22x_get_current_A_test),
         cmocka_unit_test(ina22x_get_voltage_V_test),
         cmocka_unit_test(ina22x_get_power_W_test),
