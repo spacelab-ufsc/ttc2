@@ -142,10 +142,10 @@ int ina22x_configuration(ina22x_config_t config)
     int err = -1;
     uint16_t config_mask = 0x0000;
 
-    config_mask |= ((uint16_t) config.avg_mode << 9);                /* Bits [11:9] */
-    config_mask |= ((uint16_t) config.bus_voltage_conv_time << 6);   /* Bits [8:6] */
-    config_mask |= ((uint16_t) config.shunt_voltage_conv_time << 3); /* Bits [5:3] */
-    config_mask |= (uint16_t) config.op_mode;                        /* Bits [2:0] */
+    config_mask |= ((uint16_t)config.avg_mode << 9);                /* Bits [11:9] */
+    config_mask |= ((uint16_t)config.bus_voltage_conv_time << 6);   /* Bits [8:6] */
+    config_mask |= ((uint16_t)config.shunt_voltage_conv_time << 3); /* Bits [5:3] */
+    config_mask |= (uint16_t)config.op_mode;                        /* Bits [2:0] */
 
     if (ina22x_write_reg(config, INA22X_REG_CONFIGURATION, config_mask) == 0)
     {
@@ -166,7 +166,7 @@ int ina22x_calibration(ina22x_config_t config)
 {
     int err = 0;
     uint16_t calib_reg = 0;
-    calib_reg = (uint16_t) config.cal;
+    calib_reg = (uint16_t)config.cal;
 
     if (ina22x_write_reg(config, INA22X_REG_CALIBRATION, calib_reg) == -1)
     {
@@ -234,10 +234,10 @@ int ina22x_read_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t *val
 static int ina22x_get_current_raw(ina22x_config_t config, uint16_t *cur)
 {
     int err = -1;
-    uint16_t current_reg;
+    uint16_t current_reg = 0U;
     int16_t current_signed = 0x0000;
 
-    if(ina22x_read_reg(config, INA22X_REG_CURRENT, &current_reg) == 0)
+    if (ina22x_read_reg(config, INA22X_REG_CURRENT, &current_reg) == 0)
     {
         err = 0;
         current_signed |= current_reg;
@@ -296,10 +296,10 @@ static int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_
 static int ina22x_get_power_raw(ina22x_config_t config, uint16_t *pwr)
 {
     int err = -1;
-    uint16_t power_reg;
+    uint16_t power_reg = 0U;
     int16_t power_signed = 0x00;
 
-    if(ina22x_read_reg(config, INA22X_REG_POWER, &power_reg) == 0)
+    if (ina22x_read_reg(config, INA22X_REG_POWER, &power_reg) == 0)
     {
         err = 0;
         power_signed |= power_reg;
@@ -344,7 +344,7 @@ ina22x_voltage_t ina22x_convert_raw_to_V(ina22x_voltage_device_t device, uint16_
 
 static ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, uint16_t pwr)
 {
-    return ((float) pwr * 25.0 * config.lsb_current);
+    return ((float)pwr * 25.0 * config.lsb_current);
 }
 
 float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
@@ -372,7 +372,7 @@ float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
 float ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt)
 {
     int err = -1;
-    uint16_t voltage_reg = 0;
+    uint16_t voltage_reg = 0U;
 
     if (ina22x_get_voltage_raw(config, device, &voltage_reg) == 0)
     {
@@ -434,7 +434,7 @@ int ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id)
 {
     int err = -1;
 
-    if(ina22x_read_reg(config, INA22X_REG_DIE_ID, id) == 0)
+    if (ina22x_read_reg(config, INA22X_REG_DIE_ID, id) == 0)
     {
         err = 0;
     }
