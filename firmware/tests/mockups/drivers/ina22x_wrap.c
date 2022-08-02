@@ -24,6 +24,7 @@
  * \brief INA22x driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.1.5
  * 
@@ -45,48 +46,262 @@
 
 int __wrap_ina22x_init(ina22x_config_t config)
 {
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+
+    return mock_type(int);
+}
+
+int __wrap_ina22x_configuration(ina22x_config_t config)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    return mock_type(int);
+}
+
+int __wrap_ina22x_calibration(ina22x_config_t config)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
     return mock_type(int);
 }
 
 int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val)
 {
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
     check_expected(reg);
+    check_expected(val);
 
     return mock_type(int);
 }
 
 int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val)
 {
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+    
     check_expected(reg);
 
+    if (*val != NULL)   *val = mock_type(uint16_t);
+
     return mock_type(int);
 }
 
-int __wrap_ina22x_get_current(ina22x_config_t config, ina22x_current_t *cur)
+
+int __wrap_ina22x_get_current_raw(ina22x_config_t config, ina22x_current_t *cur)
 {
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    if (*cur != NULL) *cur = mock_type(int16_t);
+
     return mock_type(int);
 }
+
+int __wrap_ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    check_expected(device);
+
+    if (*vol != NULL) *vol = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
+int __wrap_ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    if (*pow != NULL) *pow = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
+ina22x_current_t __wrap_ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    if (*cur != NULL) *cur = mock_type(int16_t);
+
+    return mock_type(int16_t);
+}
+
+ina22x_voltage_t __wrap_ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    check_expected(device);
+
+    if (*vol != NULL) *vol = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
+ina22x_power_t __wrap_ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pow)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+    
+    if (*pow != NULL) *pow = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
+int __wrap_ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    if (*cur != NULL) *cur = mock_type(int16_t);
+
+    return mock_type(int16_t);
+}
+
+int __wrap_ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    check_expected(device);
+
+    if (*vol != NULL) *vol = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
+int __wrap_ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pow)
+{
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
+
+    if (*pow != NULL) *pow = mock_type(int16_t);
+
+    return mock_type(int);
+}
+
 
 int __wrap_ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id)
 {
-    ina22x_id_t id_val = mock_type(ina22x_id_t);
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
 
-    if (id != NULL)
-    {
-        *id = id_val;
-    }
+    if (*id != NULL) *id = mock_type(uin16_t);
 
     return mock_type(int);
 }
 
 int __wrap_ina22x_get_die_id(ina22x_config_t config, ina22x_id_t *id)
 {
-    ina22x_id_t id_val = mock_type(ina22x_id_t);
+    check_expected(config.i2c_port);
+    check_expected(config.i2c_conf);
+    check_expected(config.avg_mode);
+    check_expected(config.bus_voltage_conv_time);
+    check_expected(config.op_mode);
+    check_expected(config.device);
+    check_expected(config.lsb_current);
+    check_expected(config.cal);
 
-    if (id != NULL)
-    {
-        *id = id_val;
-    }
+    if (*id != NULL) *id = mock_type(uin16_t);
 
     return mock_type(int);
 }
