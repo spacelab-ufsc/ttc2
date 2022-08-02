@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.1
+ * \version 0.2.2
  * 
  * \date 2022/07/19
  * 
@@ -183,7 +183,7 @@ int ina22x_calibration(ina22x_config_t config)
 int ina22x_write_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t val)
 {
     int err = 0;
-    uint8_t buf[3] = 0;
+    uint8_t buf[3] = {0};
     buf[0] = reg;
     buf[1] = val >> 8;
     buf[2] = val & (uint16_t) 0xFF;
@@ -203,9 +203,9 @@ int ina22x_write_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t val
 int ina22x_read_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t *val)
 {
     int err = -1;
-    uint8_t buf[2] = 0;
+    uint8_t buf[2] = {0};
 
-    if (i2c_write(config.i2c_port, config.i2c_adr, &reg, 1) == 0)
+    if (i2c_write(config.i2c_port, config.i2c_adr, (uint8_t*)&reg, 1) == 0)
     {
         if (i2c_read(config.i2c_port, config.i2c_adr, buf, 2) == 0)
         {
