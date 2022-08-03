@@ -94,10 +94,12 @@ void vTaskStartup(void)
     }
 
     /* LEDs device initialization */
-    if (leds_init() != 0)
-    {
-        error_counter++;
-    }
+    #if defined(CONFIG_DEVICE_LEDS_ENABLED) && (CONFIG_DEVICE_LEDS_ENABLED)
+        if (leds_init() != 0)
+        {
+            error_counter++;
+        }
+    #endif /* CONFIG_DEVICE_LEDS_ENABLED */
 
     /* Power sensor device initialization */
     if (power_sensor_init() != 0)
