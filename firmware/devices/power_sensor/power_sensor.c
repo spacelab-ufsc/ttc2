@@ -24,6 +24,7 @@
  * \brief Power sensor device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.0.17
  * 
@@ -35,34 +36,259 @@
 
 #include <system/sys_log/sys_log.h>
 
+#include <drivers/ina22x/ina22x.h>
+
+
 #include "power_sensor.h"
+
+static ina22x_config_t uc_config = {
+                                    .i2c_port = I2C_PORT_1,
+                                    .i2c_conf = 100000,
+                                    .i2c_adr  = 0x44,
+                                    .avg_mode = INA22X_AVERAGING_MODE_128,
+                                    .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
+                                    .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
+                                    .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
+                                    .lsb_current = 5e-6,
+                                    .cal = 10240,
+} ;
+static ina22x_config_t radio_config = {
+                                       .i2c_port = I2C_PORT_1,
+                                       .i2c_conf = 100000,
+                                       .i2c_adr  = 0x45,
+                                       .avg_mode = INA22X_AVERAGING_MODE_128,
+                                       .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
+                                       .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
+                                       .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
+                                       .lsb_current = 5e-5,
+                                       .cal = 1024,
+
+} ;
 
 int power_sensor_init(void)
 {
+    int err = -1;
+
     sys_log_print_event_from_module(SYS_LOG_INFO, POWER_SENSOR_MODULE_NAME, "Initializing the power sensor...");
     sys_log_new_line();
 
-    return -1;
+    /* Power sensor initialization */
+    if ((ina22x_init(radio_config) == 0) && (ina22x_init(uc_config) == 0))
+    {
+        /* Power sensor configuration */
+        if ((ina22x_configuration(radio_config) == 0) && (ina22x_configuration(uc_config) == 0))
+        {
+            /* Power sensor calibration */
+            if ((ina22x_calibration(radio_config) == 0) && (ina22x_calibration(uc_config) == 0))
+            {
+                err = 0;
+            }
+            else
+            {
+            #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during the initialization: Driver calibration has failed!");
+                sys_log_new_line();
+            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            }
+        }
+        else
+        {
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during the initialization: Driver configuration has failed!");
+                sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        }
+    }
+    else
+    {
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during the initialization: Driver initialization has failed!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    }
+
+    return err;
 }
 
-int power_sensor_read(power_sensor_data_t *data)
+int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t *data)
 {
-    return -1;
+    int err = -1;
+    power_sensor_data_t sensor_data = {0};
+
+    /* Voltage reading */
+    if (power_sensor_read_voltage_mv(device, &sensor_data.shunt_voltage, &sensor_data.bus_voltage) == 0)
+    {
+        if (power_sensor_read_current_ma(device, &sensor_data.current) == 0)
+        {
+            if (power_sensor_read_power_mw(device, &sensor_data.power) == 0)
+            {
+                err = 0;
+            }
+            else
+            {
+            #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error sensor power reading (power): Driver level error!");
+                sys_log_new_line();
+            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            }
+        }
+        else
+        {
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error sensor power reading (current): Driver level error!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        }
+    }
+    else
+    {
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error sensor power reading (voltage): Driver level error!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    }
+
+    *data = sensor_data;
+
+    return err;
 }
 
-int power_sensor_read_voltage_mv(voltage_t *volt)
+int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, voltage_t *volt_shunt, voltage_t *volt_bus, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale)
 {
-    return -1;
+    int err = 0;
+    ina22x_config_t config;
+    float f_volt_shunt, f_volt_bus;
+
+    switch(device)
+    {
+    case POWER_SENSOR_RADIO:
+        config = radio_config;
+
+        break;
+    case POWER_SENSOR_UC:
+        config = uc_config;
+
+        break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading (mV): Invalid device!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;
+
+        break;
+    }
+
+    if (err == 0)
+    {
+        if ((ina22x_get_voltage_V(config, INA22X_BUS_VOLTAGE, &f_volt_bus) == -1) || (ina22x_get_voltage_V(config, INA22X_SHUNT_VOLTAGE, &f_volt_shunt) == -1))
+        {
+
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading (mV): Driver level error!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1;
+        }
+    }
+
+    *volt_shunt = (voltage_t) (f_volt_shunt * 1000);
+    *volt_bus   = (voltage_t) (f_volt_bus * 1000);
+
+    return err;
 }
 
-int power_sensor_read_current_ma(current_t *curr)
+int power_sensor_read_current_scaled(power_sensor_measured_device_t device, current_t *curr, power_sensor_scale_t scale)
 {
-    return -1;
+    int err = 0;
+    ina22x_config_t config;
+    float f_curr;
+
+    switch(device)
+    {
+    case POWER_SENSOR_RADIO:
+        config = radio_config;
+
+        break;
+    case POWER_SENSOR_UC:
+        config = uc_config;
+
+        break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading (mA): Invalid device!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;
+
+        break;
+    }
+
+    if (err == 0)
+    {
+        if ((ina22x_get_current_A(config, &f_curr) == -1))
+        {
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading (mA): Driver level error!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1;
+        }
+    }
+
+    *curr = (current_t) (f_curr * 1000);
+
+    return err;
 }
 
-int power_sensor_read_power_mw(power_t *pwr)
+int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_t *pwr, power_sensor_scale_t scale)
 {
-    return -1;
+    int err = 0;
+    ina22x_config_t config;
+    float f_pwr;
+
+    switch(device)
+    {
+    case POWER_SENSOR_RADIO:
+        config = radio_config;
+
+        break;
+    case POWER_SENSOR_UC:
+        config = uc_config;
+
+        break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading (mW): Invalid device!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;
+
+        break;
+    }
+
+    if (err == 0)
+    {
+        if ((ina22x_get_power_W(config, &f_pwr) == -1))
+        {
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading (mW): Driver level error!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            err = -1;
+        }
+    }
+
+    *pwr = (power_t) (f_pwr * 1000);
+
+    return err;
 }
+
+/*TODO: Implement different scale measurements */
+/*TODO: Update function descriptions */
+/*TODO: Check for misra rules */
+/*TODO: Update ina22x mockup */
+/*TODO: Power sensor unitary test */
+
 
 /** \} End of power_sensor group */

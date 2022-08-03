@@ -42,6 +42,24 @@
 #define POWER_SENSOR_MODULE_NAME    "Power Sensor"
 
 /**
+ * \brief Power Sensor measurement devices
+ */
+typedef enum
+{
+    POWER_SENSOR_UC = 0,                        /**< Measurements from uC */
+    POWER_SENSOR_RADIO,                         /**< Measurements from Radio */
+}power_sensor_measured_device_t;
+
+/**
+ * \brief Power Sensor measurement scale
+ */
+typedef enum
+{
+    POWER_SENSOR_MICRO_SCALE = 0,                        /**< Measurements in micro scale */
+    POWER_SENSOR_MILI_SCALE,                             /**< Measurements in mili scale */
+}power_sensor_scale_t;
+
+/**
  * \brief Current type.
  */
 typedef uint16_t current_t;
@@ -61,9 +79,10 @@ typedef uint16_t power_t;
  */
 typedef struct
 {
-    voltage_t voltage;      /**< Power sensor voltage. */
-    current_t current;      /**< Power sensor current. */
-    power_t power;          /**< Power sensor power. */
+    voltage_t shunt_voltage;      /**< Power sensor shunt voltage. */
+    voltage_t bus_voltage;        /**< Power sensor bus voltage. */
+    current_t current;            /**< Power sensor current. */
+    power_t power;                /**< Power sensor power. */
 } power_sensor_data_t;
 
 /**
@@ -80,7 +99,7 @@ int power_sensor_init(void);
  *
  * \return The status/error code.
  */
-int power_sensor_read(power_sensor_data_t *data);
+int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t *data);
 
 /**
  * \brief Reads the voltage, in mV, from the power sensor.
@@ -89,7 +108,7 @@ int power_sensor_read(power_sensor_data_t *data);
  *
  * \return The status/error code.
  */
-int power_sensor_read_voltage_mv(voltage_t *volt);
+int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, voltage_t *volt_shunt, voltage_t *volt_bus, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale);
 
 /**
  * \brief Reads the current, in mA, from the power sensor.
@@ -98,7 +117,7 @@ int power_sensor_read_voltage_mv(voltage_t *volt);
  *
  * \return The status/error code.
  */
-int power_sensor_read_current_ma(current_t *curr);
+int power_sensor_read_current_scaled(power_sensor_measured_device_t device, current_t *curr, power_sensor_scale_t scale);
 
 /**
  * \brief Reads the power, in mW, from the power sensor.
@@ -107,7 +126,7 @@ int power_sensor_read_current_ma(current_t *curr);
  *
  * \return The status/error code.
  */
-int power_sensor_read_power_mw(power_t *pwr);
+int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_t *pwr, power_sensor_scale_t scale);
 
 #endif /* POWER_SENSOR_H_ */
 
