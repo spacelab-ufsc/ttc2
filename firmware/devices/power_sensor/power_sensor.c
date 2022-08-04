@@ -114,13 +114,46 @@ int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t
 {
     int err = -1;
     power_sensor_data_t sensor_data = {0};
+    power_sensor_scale_t shunt_v_scale;
+    power_sensor_scale_t bus_v_scale;
+    power_sensor_scale_t curr_scale;
+    power_sensor_scale_t pwr_scale;
 
-    /* Voltage reading */
-    if (power_sensor_read_voltage_mv(device, &sensor_data.shunt_voltage, &sensor_data.bus_voltage) == 0)
+    switch(device)
     {
-        if (power_sensor_read_current_ma(device, &sensor_data.current) == 0)
+    case POWER_SENSOR_UC:
+        shunt_v_scale = POWER_SENSOR_MICRO_SCALE;
+        bus_v_scale = POWER_SENSOR_MILI_SCALE;
+        curr_scale = POWER_SENSOR_MICRO_SCALE;
+        pwr_scale = POWER_SENSOR_MILI_SCALE;
+
+        break;
+
+    case POWER_SENSOR_RADIO:
+        shunt_v_scale = POWER_SENSOR_MICRO_SCALE;
+        bus_v_scale = POWER_SENSOR_MILI_SCALE;
+        curr_scale = POWER_SENSOR_MILI_SCALE;
+        pwr_scale = POWER_SENSOR_MILI_SCALE;
+
+        break;
+
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during sensor reading: Invalid device for scale");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;
+
+        break;
+    }
+    /* Voltage reading */
+    if (power_sensor_read_voltage_scaled(device, &sensor_data.shunt_voltage, &sensor_data.bus_voltage, shunt_v_scale, bus_v_scale) == 0)
+    {
+        /* Current reading */
+        if (power_sensor_read_current_scaled(device, &sensor_data.current, curr_scale) == 0)
         {
-            if (power_sensor_read_power_mw(device, &sensor_data.power) == 0)
+            /* Power reading */
+            if (power_sensor_read_power_scaled(device, &sensor_data.power, pwr_scale) == 0)
             {
                 err = 0;
             }
@@ -158,6 +191,7 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, volt
     int err = 0;
     ina22x_config_t config;
     float f_volt_shunt, f_volt_bus;
+    uint16_t scale_coef_bus, scale_coef_shunt;
 
     switch(device)
     {
@@ -179,6 +213,34 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, volt
         break;
     }
 
+    switch(shunt_scale)
+    {
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef_shunt = 1000000;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef_shunt = 1000;      break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage power reading: Invalid scale!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    err = -1;
+
+    break;
+    }
+
+    switch(bus_scale)
+    {
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef_bus = 1000000;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef_bus = 1000;      break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage power reading: Invalid scale!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    err = -1;
+
+    break;
+    }
+
     if (err == 0)
     {
         if ((ina22x_get_voltage_V(config, INA22X_BUS_VOLTAGE, &f_volt_bus) == -1) || (ina22x_get_voltage_V(config, INA22X_SHUNT_VOLTAGE, &f_volt_shunt) == -1))
@@ -192,8 +254,8 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, volt
         }
     }
 
-    *volt_shunt = (voltage_t) (f_volt_shunt * 1000);
-    *volt_bus   = (voltage_t) (f_volt_bus * 1000);
+    *volt_shunt = (voltage_t) (f_volt_shunt) * scale_coef_shunt;
+    *volt_bus   = (voltage_t) (f_volt_bus) * scale_coef_bus;
 
     return err;
 }
@@ -203,6 +265,7 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, curr
     int err = 0;
     ina22x_config_t config;
     float f_curr;
+    uint16_t scale_coef = 0;
 
     switch(device)
     {
@@ -224,6 +287,20 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, curr
         break;
     }
 
+    switch(scale)
+    {
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000;      break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading: Invalid scale!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    err = -1;
+
+    break;
+    }
+
     if (err == 0)
     {
         if ((ina22x_get_current_A(config, &f_curr) == -1))
@@ -236,7 +313,13 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, curr
         }
     }
 
-    *curr = (current_t) (f_curr * 1000);
+    switch(scale)
+    {
+    case POWER_SENSOR_MICRO_SCALE: scale_coef = 1000000;  break;
+    case POWER_SENSOR_MILI_SCALE:  scale_coef = 1000;     break;
+    }
+
+    *curr = (current_t) (f_curr) * scale_coef;
 
     return err;
 }
@@ -246,6 +329,7 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
     int err = 0;
     ina22x_config_t config;
     float f_pwr;
+    uint16_t scale_coef = 0;
 
     switch(device)
     {
@@ -259,7 +343,7 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
         break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading (mW): Invalid device!");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading: Invalid device!");
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
         err = -1;
@@ -267,24 +351,37 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
         break;
     }
 
+    switch(scale)
+    {
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000;      break;
+    default:
+    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+        sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during power reading: Invalid scale!");
+        sys_log_new_line();
+    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+    err = -1;
+
+    break;
+    }
+
     if (err == 0)
     {
         if ((ina22x_get_power_W(config, &f_pwr) == -1))
         {
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading (mW): Driver level error!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage reading: Driver level error!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;
         }
     }
 
-    *pwr = (power_t) (f_pwr * 1000);
+    *pwr = (power_t) (f_pwr) * scale_coef;
 
     return err;
 }
 
-/*TODO: Implement different scale measurements */
 /*TODO: Update function descriptions */
 /*TODO: Check for misra rules */
 /*TODO: Update ina22x mockup */
