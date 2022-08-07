@@ -250,7 +250,7 @@ int ina22x_read_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t *val
  *
  * \return The status/error code.
  */
-float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
+int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
 
 /**
  * \brief Reads the voltage from the device converting to Volts.
@@ -261,7 +261,7 @@ float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
  *
  * \return The status/error code.
  */
-float ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt);
+int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt);
 
 /**
  * \brief Reads the power from the device converting to Watts.
@@ -272,7 +272,7 @@ float ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t devic
  *
  * \return The status/error code.
  */
-float ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr);
+int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr);
 
 /**
  * \brief Reads the manufacturer ID.

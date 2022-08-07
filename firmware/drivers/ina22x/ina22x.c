@@ -347,7 +347,7 @@ static ina22x_power_t ina22x_convert_raw_to_W(ina22x_config_t config, uint16_t p
     return ((float)pwr * 25.0 * config.lsb_current);
 }
 
-float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
+int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
 {
     int err = -1;
     uint16_t cur_reg = UINT16_MAX;
@@ -369,7 +369,7 @@ float ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
 }
 
 
-float ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt)
+int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt)
 {
     int err = -1;
     uint16_t voltage_reg = 0U;
@@ -390,7 +390,7 @@ float ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t devic
     return err;
 }
 
-float ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
+int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
 {
     int err = -1;
     uint16_t power_reg = UINT16_MAX;
