@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -53,17 +53,80 @@ static ina22x_config_t uc_config = {
                                     .cal = 10240,
 } ;
 static ina22x_config_t radio_config = {
-                                       .i2c_port = I2C_PORT_1,
-                                       .i2c_conf = 100000,
-                                       .i2c_adr  = 0x45,
-                                       .avg_mode = INA22X_AVERAGING_MODE_128,
-                                       .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
-                                       .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
-                                       .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
-                                       .lsb_current = 5e-5,
-                                       .cal = 1024,
+                                    .i2c_port = I2C_PORT_1,
+                                    .i2c_conf = 100000,
+                                    .i2c_adr  = 0x45,
+                                    .avg_mode = INA22X_AVERAGING_MODE_128,
+                                    .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
+                                    .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
+                                    .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
+                                    .lsb_current = 5e-5,
+                                    .cal = 1024,
 
 } ;
+
+/**
+ * \brief Reads the voltage scaled from the power sensor.
+ *
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in] shunt_scale is the SI scale for shunt voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in] bus_scale is the SI scale for bus voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] volt_shunt is a pointer to store the read voltage scaled.
+ *
+ * \param[in,out] volt_bus is a pointer to store the read voltage scaled.
+ *
+ * \return The status/error code.
+ */
+static int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus);
+
+/**
+ * \brief Reads the current scaled from the power sensor.
+ *
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt current. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] curr is a pointer to store the read current scaled.
+ *
+ * \return The status/error code.
+ */
+static int power_sensor_read_current_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr);
+
+/**
+ * \brief Reads the power scaled from the power sensor.
+ *
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt power. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] pwr is a pointer to store the read power scaled.
+ *
+ * \return The status/error code.
+ */
+static int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr);
 
 int power_sensor_init(void)
 {
@@ -147,13 +210,13 @@ int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t
         break;
     }
     /* Voltage reading */
-    if (power_sensor_read_voltage_scaled(device, &sensor_data.shunt_voltage, &sensor_data.bus_voltage, shunt_v_scale, bus_v_scale) == 0)
+    if (power_sensor_read_voltage_scaled(device, shunt_v_scale, bus_v_scale, &sensor_data.shunt_voltage, &sensor_data.bus_voltage) == 0)
     {
         /* Current reading */
-        if (power_sensor_read_current_scaled(device, &sensor_data.current, curr_scale) == 0)
+        if (power_sensor_read_current_scaled(device, curr_scale, &sensor_data.current) == 0)
         {
             /* Power reading */
-            if (power_sensor_read_power_scaled(device, &sensor_data.power, pwr_scale) == 0)
+            if (power_sensor_read_power_scaled(device, pwr_scale, &sensor_data.power) == 0)
             {
                 err = 0;
             }
@@ -186,12 +249,14 @@ int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t
     return err;
 }
 
-int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus)
+static int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus)
 {
     int err = 0;
     ina22x_config_t config;
-    float f_volt_shunt, f_volt_bus;
-    uint16_t scale_coef_bus, scale_coef_shunt;
+    float f_volt_shunt;
+    float f_volt_bus;
+    float scale_coef_bus = 0.0;
+    float scale_coef_shunt = 0.0;
 
     switch(device)
     {
@@ -215,8 +280,8 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  pow
 
     switch(shunt_scale)
     {
-    case POWER_SENSOR_MICRO_SCALE:   scale_coef_shunt = 1000000;   break;
-    case POWER_SENSOR_MILI_SCALE:    scale_coef_shunt = 1000;      break;
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef_shunt = 1000000.0;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef_shunt = 1000.0;      break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage power reading: Invalid scale!");
@@ -229,8 +294,8 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  pow
 
     switch(bus_scale)
     {
-    case POWER_SENSOR_MICRO_SCALE:   scale_coef_bus = 1000000;   break;
-    case POWER_SENSOR_MILI_SCALE:    scale_coef_bus = 1000;      break;
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef_bus = 1000000.0;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef_bus = 1000.0;      break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during voltage power reading: Invalid scale!");
@@ -254,18 +319,21 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  pow
         }
     }
 
-    *volt_shunt = (voltage_t) (f_volt_shunt) * scale_coef_shunt;
-    *volt_bus   = (voltage_t) (f_volt_bus) * scale_coef_bus;
+    f_volt_shunt *= scale_coef_shunt;
+    f_volt_bus *= scale_coef_bus;
+
+    *volt_shunt = (voltage_t) f_volt_shunt;
+    *volt_bus   = (voltage_t) f_volt_bus;
 
     return err;
 }
 
-int power_sensor_read_current_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr)
+static int power_sensor_read_current_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr)
 {
     int err = 0;
     ina22x_config_t config;
     float f_curr;
-    uint16_t scale_coef = 0;
+    float scale_coef = 0.0;
 
     switch(device)
     {
@@ -289,8 +357,8 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, powe
 
     switch(scale)
     {
-    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000;   break;
-    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000;      break;
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000.0;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000.0;      break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during current reading: Invalid scale!");
@@ -312,24 +380,18 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, powe
             err = -1;
         }
     }
-
-    switch(scale)
-    {
-    case POWER_SENSOR_MICRO_SCALE: scale_coef = 1000000;  break;
-    case POWER_SENSOR_MILI_SCALE:  scale_coef = 1000;     break;
-    }
-
-    *curr = (current_t) (f_curr) * scale_coef;
+    f_curr *= scale_coef;
+    *curr = (current_t) f_curr;
 
     return err;
 }
 
-int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr)
+static int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr)
 {
     int err = 0;
     ina22x_config_t config;
     float f_pwr;
-    uint16_t scale_coef = 0;
+    float scale_coef = 0.0;
 
     switch(device)
     {
@@ -353,8 +415,8 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
 
     switch(scale)
     {
-    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000;   break;
-    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000;      break;
+    case POWER_SENSOR_MICRO_SCALE:   scale_coef = 1000000.0;   break;
+    case POWER_SENSOR_MILI_SCALE:    scale_coef = 1000.0;      break;
     default:
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, POWER_SENSOR_MODULE_NAME, "Error during power reading: Invalid scale!");
@@ -377,12 +439,12 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
         }
     }
 
-    *pwr = (power_t) (f_pwr) * scale_coef;
+    f_pwr *= scale_coef;
+    *pwr = (power_t) f_pwr;
 
     return err;
 }
 
-/*TODO: Check for misra rules */
 /*TODO: Update ina22x mockup */
 /*TODO: Power sensor unitary test */
 
