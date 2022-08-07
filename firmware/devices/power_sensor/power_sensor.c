@@ -186,7 +186,7 @@ int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t
     return err;
 }
 
-int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, voltage_t *volt_shunt, voltage_t *volt_bus, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale)
+int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device,  power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus)
 {
     int err = 0;
     ina22x_config_t config;
@@ -260,7 +260,7 @@ int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, volt
     return err;
 }
 
-int power_sensor_read_current_scaled(power_sensor_measured_device_t device, current_t *curr, power_sensor_scale_t scale)
+int power_sensor_read_current_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr)
 {
     int err = 0;
     ina22x_config_t config;
@@ -324,7 +324,7 @@ int power_sensor_read_current_scaled(power_sensor_measured_device_t device, curr
     return err;
 }
 
-int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_t *pwr, power_sensor_scale_t scale)
+int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr)
 {
     int err = 0;
     ina22x_config_t config;
@@ -382,7 +382,6 @@ int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_
     return err;
 }
 
-/*TODO: Update function descriptions */
 /*TODO: Check for misra rules */
 /*TODO: Update ina22x mockup */
 /*TODO: Power sensor unitary test */

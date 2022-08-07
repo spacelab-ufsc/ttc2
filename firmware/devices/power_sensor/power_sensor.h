@@ -95,38 +95,77 @@ int power_sensor_init(void);
 /**
  * \brief Reads the power sensor data.
  *
+ * \param[in] device is the target sensor to be read.
+ *
  * \param[in,out] data is a pointer to store the read data.
+ *
  *
  * \return The status/error code.
  */
 int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t *data);
 
 /**
- * \brief Reads the voltage, in mV, from the power sensor.
+ * \brief Reads the voltage scaled from the power sensor.
  *
- * \param[in,out] volt is a pointer to store the read voltage in mV.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in] shunt_scale is the SI scale for shunt voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in] bus_scale is the SI scale for bus voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] volt_shunt is a pointer to store the read voltage scaled.
+ *
+ * \param[in,out] volt_bus is a pointer to store the read voltage scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, voltage_t *volt_shunt, voltage_t *volt_bus, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale);
+int power_sensor_read_voltage_scaled(power_sensor_measured_device_t device, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus);
 
 /**
- * \brief Reads the current, in mA, from the power sensor.
+ * \brief Reads the current scaled from the power sensor.
  *
- * \param[in,out] curr is a pointer to store the read current in mW.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt current. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] curr is a pointer to store the read current scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_current_scaled(power_sensor_measured_device_t device, current_t *curr, power_sensor_scale_t scale);
+int power_sensor_read_current_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr);
 
 /**
- * \brief Reads the power, in mW, from the power sensor.
+ * \brief Reads the power scaled from the power sensor.
  *
- * \param[in,out] pwr is a pointer to store the read power in mW.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt power. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] pwr is a pointer to store the read power scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_t *pwr, power_sensor_scale_t scale);
+int power_sensor_read_power_scaled(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr);
 
 #endif /* POWER_SENSOR_H_ */
 
