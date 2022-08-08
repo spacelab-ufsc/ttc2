@@ -43,7 +43,7 @@
 
 static ina22x_config_t uc_config = {
                                     .i2c_port = I2C_PORT_1,
-                                    .i2c_conf = 100000,
+                                    .i2c_conf.speed_hz = 100000,
                                     .i2c_adr  = 0x44,
                                     .avg_mode = INA22X_AVERAGING_MODE_128,
                                     .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
@@ -54,7 +54,7 @@ static ina22x_config_t uc_config = {
 } ;
 static ina22x_config_t radio_config = {
                                     .i2c_port = I2C_PORT_1,
-                                    .i2c_conf = 100000,
+                                    .i2c_conf.speed_hz = 100000,
                                     .i2c_adr  = 0x45,
                                     .avg_mode = INA22X_AVERAGING_MODE_128,
                                     .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
