@@ -352,6 +352,10 @@ int ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur)
     int err = -1;
     uint16_t cur_reg = UINT16_MAX;
 
+    if ((config.op_mode == INA22X_MODE_SHUNT_TRIG) || (config.op_mode == INA22X_MODE_BUS_TRIG) || (config.op_mode == INA22X_MODE_SHUNT_BUS_TRIG))
+    {
+        err = ina22x_configuration(config);
+    }
     if (ina22x_get_current_raw(config, &cur_reg) == 0)
     {
         err = 0;
@@ -374,6 +378,11 @@ int ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device,
     int err = -1;
     uint16_t voltage_reg = 0U;
 
+    if ((config.op_mode == INA22X_MODE_SHUNT_TRIG) || (config.op_mode == INA22X_MODE_BUS_TRIG) || (config.op_mode == INA22X_MODE_SHUNT_BUS_TRIG))
+    {
+        err = ina22x_configuration(config);
+    }
+
     if (ina22x_get_voltage_raw(config, device, &voltage_reg) == 0)
     {
         err = 0;
@@ -394,6 +403,11 @@ int ina22x_get_power_W(ina22x_config_t config, ina22x_power_t *pwr)
 {
     int err = -1;
     uint16_t power_reg = UINT16_MAX;
+
+    if ((config.op_mode == INA22X_MODE_SHUNT_TRIG) || (config.op_mode == INA22X_MODE_BUS_TRIG) || (config.op_mode == INA22X_MODE_SHUNT_BUS_TRIG))
+    {
+        err = ina22x_configuration(config);
+    }
 
     if (ina22x_get_power_raw(config, &power_reg) == 0)
     {
