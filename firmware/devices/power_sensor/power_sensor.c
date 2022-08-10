@@ -445,8 +445,25 @@ static int power_sensor_read_power_scaled(power_sensor_measured_device_t device,
     return err;
 }
 
-/*TODO: Update ina22x mockup */
-/*TODO: Power sensor unitary test */
+int power_sensor_read_voltage(power_sensor_measured_device_t device, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *volt_shunt, voltage_t *volt_bus)
+{
+    int err = power_sensor_read_voltage_scaled(device, shunt_scale, bus_scale, volt_shunt, volt_bus);
 
+    return err;
+}
+
+int power_sensor_read_current(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr)
+{
+    int err = power_sensor_read_current_scaled(device, scale, curr);
+
+    return err;
+}
+
+int power_sensor_read_power(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr)
+{
+    int err = power_sensor_read_power_scaled(device, scale, pwr);
+
+    return err;
+}
 
 /** \} End of power_sensor group */
