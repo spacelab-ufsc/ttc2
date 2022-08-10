@@ -24,6 +24,7 @@
  * \brief Unit test of the power sensor device.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.1.3
  * 
@@ -114,8 +115,7 @@ static void power_sensor_read_test(void **state)
 
     expect_value(__wrap_ina22x_get_voltage_V, device, INA22X_BUS_VOLTAGE);
 
-    //expect_memory(__wrap_ina22x_get_voltage_V, volt, &f_volt_i_b, 1); // Primeira coisa a se olhar se teste falhar
-    expect_value(__wrap_ina22x_get_voltage_V, volt, &f_volt_i_b);
+    will_return(__wrap_ina22x_get_voltage_V, &f_volt_i_b);
 
     will_return(__wrap_ina22x_get_voltage_V, 0);
 
@@ -124,8 +124,7 @@ static void power_sensor_read_test(void **state)
 
     expect_value(__wrap_ina22x_get_voltage_V, device, INA22X_SHUNT_VOLTAGE);
 
-    //expect_memory(__wrap_ina22x_get_voltage_V, volt, &f_volt_i_s, 1); // Primeira coisa a se olhar se teste falhar
-    expect_value(__wrap_ina22x_get_voltage_V, volt, &f_volt_i_s);
+    will_return(__wrap_ina22x_get_voltage_V, &f_volt_i_s);
 
     will_return(__wrap_ina22x_get_voltage_V, 0);
 
@@ -141,7 +140,7 @@ static void power_sensor_read_test(void **state)
     expect_value(__wrap_ina22x_get_current_A, config.lsb_current, uc_config.lsb_current);
     expect_value(__wrap_ina22x_get_current_A, config.cal, uc_config.cal);
 
-    expect_memory(__wrap_ina22x_get_voltage_V, curr, &f_curr, 1); // Primeira coisa a se olhar se teste falhar
+    will_return(__wrap_ina22x_get_current_A, &f_curr);
 
     will_return(__wrap_ina22x_get_current_A, 0);
 
@@ -157,7 +156,7 @@ static void power_sensor_read_test(void **state)
     expect_value(__wrap_ina22x_get_power_W, config.lsb_current, uc_config.lsb_current);
     expect_value(__wrap_ina22x_get_power_W, config.cal, uc_config.cal);
 
-    expect_memory(__wrap_ina22x_get_voltage_V, pwr, &f_pwr, 1); // Primeira coisa a se olhar se teste falhar
+    will_return(__wrap_ina22x_get_power_W, &f_pwr);
 
     will_return(__wrap_ina22x_get_power_W, 0);
 
