@@ -49,6 +49,7 @@
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
+#define CONFIG_DEVICE_LEDS_ENABLED                      1
 
 #define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"
 
