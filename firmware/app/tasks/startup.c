@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.20
+ * \version 0.2.3
  * 
  * \date 2019/12/04
  * 
@@ -94,12 +94,12 @@ void vTaskStartup(void)
     }
 
     /* LEDs device initialization */
-    #if defined(CONFIG_DEVICE_LEDS_ENABLED) && (CONFIG_DEVICE_LEDS_ENABLED)
-        if (leds_init() != 0)
-        {
-            error_counter++;
-        }
-    #endif /* CONFIG_DEVICE_LEDS_ENABLED */
+#if defined(CONFIG_DEVICE_LEDS_ENABLED) && (CONFIG_DEVICE_LEDS_ENABLED)
+    if (leds_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEVICE_LEDS_ENABLED */
 
     /* Power sensor device initialization */
     if (power_sensor_init() != 0)
