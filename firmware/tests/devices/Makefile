@@ -49,7 +49,7 @@ radio_test: $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_
 
 .PHONY: power_sensor_test
 power_sensor_test: $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o
-	$(CC) $(POWER_SENSOR_TEST_FLAGS) $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o -o $(BUILD_DIR)/$(TARGET_POWER_SENSOR) -lcmocka
+	$(CC) $(POWER_SENSOR_TEST_FLAGS) $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o -o $(BUILD_DIR)/$(TARGET_POWER_SENSOR) -lcmocka -lm
 
 .PHONY: leds_test
 leds_test: $(BUILD_DIR)/leds.o $(BUILD_DIR)/leds_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/gpio_wrap.o
