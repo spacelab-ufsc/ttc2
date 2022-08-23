@@ -46,24 +46,15 @@ int __wrap_ina22x_configuration(ina22x_config_t config);
 
 int __wrap_ina22x_calibration(ina22x_config_t config);
 
+int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t val);
 
-int __wrap_ina22x_write_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t val);
+int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_register_t reg, uint16_t *val);
 
-int __wrap_ina22x_read_reg(ina22x_config_t config, ina22x_reg_t reg, uint16_t *val);
+int __wrap_ina22x_get_current_A(ina22x_config_t config, ina22x_current_t *cur);
 
+int __wrap_ina22x_get_voltage_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *volt);
 
-int __wrap_ina22x_get_current_raw(ina22x_config_t config, ina22x_current_t *cur);
-
-int __wrap_ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
-
-int __wrap_ina22x_get_power_raw(ina22x_config_t config, ina22x_power_t *pow);
-
-ina22x_current_t __wrap_ina22x_convert_raw_to_A(ina22x_config_t config, ina22x_current_t *cur);
-
-ina22x_voltage_t __wrap_ina22x_convert_raw_to_V(ina22x_config_t config, ina22x_voltage_device_t device, ina22x_voltage_t *vol);
-
-ina22x_power_t __wrap_ina22x_convert_raw_to_W(ina22x_config_t config, ina22x_current_t *pow);
-
+int __wrap_ina22x_get_power_W(ina22x_config_t config,ina22x_power_t *pwr);
 
 int __wrap_ina22x_get_manufacturer_id(ina22x_config_t config, ina22x_id_t *id);
 

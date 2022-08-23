@@ -42,6 +42,24 @@
 #define POWER_SENSOR_MODULE_NAME    "Power Sensor"
 
 /**
+ * \brief Power Sensor measurement devices
+ */
+typedef enum
+{
+    POWER_SENSOR_UC = 0,                        /**< Measurements from uC */
+    POWER_SENSOR_RADIO,                         /**< Measurements from Radio */
+}power_sensor_measured_device_t;
+
+/**
+ * \brief Power Sensor measurement scale
+ */
+typedef enum
+{
+    POWER_SENSOR_MICRO_SCALE = 0,                        /**< Measurements in micro scale */
+    POWER_SENSOR_MILI_SCALE,                             /**< Measurements in mili scale */
+}power_sensor_scale_t;
+
+/**
  * \brief Current type.
  */
 typedef uint16_t current_t;
@@ -61,9 +79,10 @@ typedef uint16_t power_t;
  */
 typedef struct
 {
-    voltage_t voltage;      /**< Power sensor voltage. */
-    current_t current;      /**< Power sensor current. */
-    power_t power;          /**< Power sensor power. */
+    voltage_t shunt_voltage;      /**< Power sensor shunt voltage. */
+    voltage_t bus_voltage;        /**< Power sensor bus voltage. */
+    current_t current;            /**< Power sensor current. */
+    power_t power;                /**< Power sensor power. */
 } power_sensor_data_t;
 
 /**
@@ -76,38 +95,77 @@ int power_sensor_init(void);
 /**
  * \brief Reads the power sensor data.
  *
+ * \param[in] device is the target sensor to be read.
+ *
  * \param[in,out] data is a pointer to store the read data.
  *
+ *
  * \return The status/error code.
  */
-int power_sensor_read(power_sensor_data_t *data);
+int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t *data);
 
 /**
- * \brief Reads the voltage, in mV, from the power sensor.
+ * \brief Reads the voltage scaled from the power sensor.
  *
- * \param[in,out] volt is a pointer to store the read voltage in mV.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in] shunt_scale is the SI scale for shunt voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in] bus_scale is the SI scale for bus voltage. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] volt_shunt is a pointer to store the read voltage scaled.
+ *
+ * \param[in,out] volt_bus is a pointer to store the read voltage scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_voltage_mv(voltage_t *volt);
+int power_sensor_read_voltage(power_sensor_measured_device_t device, power_sensor_scale_t shunt_scale, power_sensor_scale_t bus_scale, voltage_t *shunt_volt, voltage_t *bus_volt);
 
 /**
- * \brief Reads the current, in mA, from the power sensor.
+ * \brief Reads the current scaled from the power sensor.
  *
- * \param[in,out] curr is a pointer to store the read current in mW.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt current. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] curr is a pointer to store the read current scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_current_ma(current_t *curr);
+int power_sensor_read_current(power_sensor_measured_device_t device, power_sensor_scale_t scale, current_t *curr);
 
 /**
- * \brief Reads the power, in mW, from the power sensor.
+ * \brief Reads the power scaled from the power sensor.
  *
- * \param[in,out] pwr is a pointer to store the read power in mW.
+ * \param[in] device is the target sensor to be read.
+ *
+ * \param[in,out] scale is the SI scale for shunt power. It can be:
+ * \parblock
+ *     -\b POWER_SENSOR_MICRO_SCALE
+ *     -\b POWER_SENSOR_MILI_SCALE
+ *     .
+ * \endparblock
+ *
+ * \param[in,out] pwr is a pointer to store the read power scaled.
  *
  * \return The status/error code.
  */
-int power_sensor_read_power_mw(power_t *pwr);
+int power_sensor_read_power(power_sensor_measured_device_t device, power_sensor_scale_t scale, power_t *pwr);
 
 #endif /* POWER_SENSOR_H_ */
 

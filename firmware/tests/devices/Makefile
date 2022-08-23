@@ -22,7 +22,7 @@ ANTENNA_TEST_FLAGS=$(FLAGS),--wrap=isis_antenna_init,--wrap=isis_antenna_get_dat
 
 RADIO_TEST_FLAGS=$(FLAGS),--wrap=si446x_init,--wrap=si446x_reg_config,--wrap=si446x_power_on_reset,--wrap=si446x_tx_packet,--wrap=si446x_tx_long_packet,--wrap=si446x_rx_packet,--wrap=si446x_rx_init,--wrap=si446x_check_device,--wrap=si446x_check_cts,--wrap=si446x_set_tx_power,--wrap=si446x_set_properties,--wrap=si446x_get_properties,--wrap=si446x_set_config,--wrap=si446x_set_preamble_len,--wrap=si446x_set_sync_word,--wrap=si446x_set_gpio_mode,--wrap=si446x_set_cmd,--wrap=si446x_get_cmd,--wrap=si446x_set_tx_interrupt,--wrap=si446x_set_rx_interrupt,--wrap=si446x_clear_interrupts,--wrap=si446x_write_tx_fifo,--wrap=si446x_read_rx_fifo,--wrap=si446x_fifo_reset,--wrap=si446x_enter_tx_mode,--wrap=si446x_enter_rx_mode,--wrap=si446x_enter_standby_mode,--wrap=si446x_wait_nirq,--wrap=si446x_wait_packet_sent,--wrap=si446x_wait_gpio1,--wrap=si446x_spi_init,--wrap=si446x_spi_enable,--wrap=si446x_spi_disable,--wrap=si446x_spi_write,--wrap=si446x_spi_read,--wrap=si446x_spi_transfer,--wrap=si446x_gpio_init,--wrap=si446x_gpio_set_pin,--wrap=si446x_gpio_clear_pin,--wrap=si446x_gpio_get_pin,--wrap=si446x_delay_s,--wrap=si446x_delay_ms,--wrap=si446x_delay_us
 
-POWER_SENSOR_TEST_FLAGS=$(FLAGS),--wrap=ina22x_init,--wrap=ina22x_write_reg,--wrap=ina22x_read_reg,--wrap=ina22x_get_current,--wrap=ina22x_get_manufacturer_id,--wrap=ina22x_get_die_id
+POWER_SENSOR_TEST_FLAGS=$(FLAGS),--wrap=ina22x_init,--wrap=ina22x_configuration,--wrap=ina22x_calibration,--wrap=ina22x_write_reg,--wrap=ina22x_read_reg,--wrap=ina22x_get_current_A,--wrap=ina22x_get_voltage_V,--wrap=ina22x_get_power_W,--wrap=ina22x_get_manufacturer_id,--wrap=ina22x_get_die_id
 
 LEDS_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_state,--wrap=gpio_toggle
 
@@ -49,7 +49,7 @@ radio_test: $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_
 
 .PHONY: power_sensor_test
 power_sensor_test: $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o
-	$(CC) $(POWER_SENSOR_TEST_FLAGS) $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o -o $(BUILD_DIR)/$(TARGET_POWER_SENSOR) -lcmocka
+	$(CC) $(POWER_SENSOR_TEST_FLAGS) $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o -o $(BUILD_DIR)/$(TARGET_POWER_SENSOR) -lcmocka -lm
 
 .PHONY: leds_test
 leds_test: $(BUILD_DIR)/leds.o $(BUILD_DIR)/leds_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/gpio_wrap.o
