@@ -3,7 +3,7 @@
 	<br>
 </h1>
 
-<h4 align="center">Presentation of the OBDH 2.0 Module.</h4>
+<h4 align="center">Presentation of the TTC 2.0 Module.</h4>
 
 <p align="center">
     <a href="https://github.com/spacelab-ufsc/spacelab#versioning">
