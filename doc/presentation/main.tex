@@ -1,0 +1,72 @@
+%
+% main.tex
+%
+% Copyright (C) 2022 by SpaceLab.
+%
+% TTC 2.0 Module
+%
+% This work is licensed under the Creative Commons Attribution-ShareAlike 4.0
+% International License. To view a copy of this license,
+% visit http://creativecommons.org/licenses/by-sa/4.0/.
+%
+
+%
+% \brief Main file.
+%
+% \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+% \author Miguel Boing <miguelboing13@gmail.com>
+%
+% \version 0.1.0
+%
+% \date 2022/07/28
+%
+
+\documentclass{beamer}
+
+\usepackage{presentation}
+
+\title[Presentation]{SpaceLab TTC 2.0}
+\author[SpaceLab]{Miguel Boing, Gabriel M. Marcelino}
+\institute[]{SpaceLab - UFSC}
+\date{2022 August 24}
+
+\hypersetup
+{
+    pdfauthor	= {SpaceLab},
+    pdfsubject	= {TTC 2.0 module},
+    pdftitle	= {\title},
+    pdfkeywords	= {Nanosatellites, CubeSats, TMTC}
+}
+
+\begin{document}
+
+    \include{header/titlepage}
+    \include{header/contents}
+
+    \section{Project Overview}
+
+        \include{sections/introduction}
+
+    \section{Hardware}
+
+        \include{sections/hardware}
+
+    \section{Firmware}
+
+        \include{sections/firmware}
+
+    \section{Operation}
+
+        \include{sections/operation}
+
+    \section{Documentation}
+
+        \include{sections/documentation}
+
+    \section{Management}
+
+        \include{sections/management}
+
+    \sectionpic{Thanks!}{figures/brazil-south.jpeg}
+
+\end{document}
