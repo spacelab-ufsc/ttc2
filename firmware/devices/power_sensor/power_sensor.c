@@ -187,7 +187,7 @@ int power_sensor_read(power_sensor_measured_device_t device, power_sensor_data_t
     case POWER_SENSOR_UC:
         shunt_v_scale = POWER_SENSOR_MICRO_SCALE;
         bus_v_scale = POWER_SENSOR_MILI_SCALE;
-        curr_scale = POWER_SENSOR_MICRO_SCALE;
+        curr_scale = POWER_SENSOR_MILI_SCALE;
         pwr_scale = POWER_SENSOR_MILI_SCALE;
 
         break;
