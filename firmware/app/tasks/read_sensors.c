@@ -24,8 +24,9 @@
  * \brief Read onboard sensors task implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.22
+ * \version 0.2.4
  * 
  * \date 2020/07/12
  * 
