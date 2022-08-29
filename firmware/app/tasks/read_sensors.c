@@ -54,6 +54,7 @@ void vTaskReadSensors(void)
         TickType_t last_cycle = xTaskGetTickCount();
 
         uint16_t buf = 0;
+        power_sensor_data_t pwr_sensor_buf;
 
         /* uC temperature */
         if (temp_sensor_read_raw(&buf) == 0)
@@ -61,22 +62,20 @@ void vTaskReadSensors(void)
             ttc_data_buf.temperature = buf;
         }
 
-        /* TTC voltage */
-        if (power_sensor_read_voltage_mv(&buf) == 0)
+        /* uC  current, voltage and power*/
+        if (power_sensor_read(POWER_SENSOR_UC, &pwr_sensor_buf) == 0)
         {
-            ttc_data_buf.voltage = buf;
+            ttc_data_buf.current = (uint16_t) pwr_sensor_buf.current;
+            ttc_data_buf.voltage = (uint16_t) pwr_sensor_buf.bus_voltage;
+            ttc_data_buf.power   = (uint16_t) pwr_sensor_buf.power;
         }
 
-        /* TTC current */
-        if (power_sensor_read_current_ma(&buf) == 0)
+        /* Radio current, voltage and power*/
+        if (power_sensor_read(POWER_SENSOR_RADIO, &pwr_sensor_buf) == 0)
         {
-            ttc_data_buf.current = buf;
-        }
-
-        /* TTC power */
-        if (power_sensor_read_power_mw(&buf) == 0)
-        {
-            ttc_data_buf.current = buf;
+            ttc_data_buf.radio.current = (uint16_t) pwr_sensor_buf.current;
+            ttc_data_buf.radio.voltage = (uint16_t) pwr_sensor_buf.bus_voltage;
+            ttc_data_buf.radio.power   = (uint16_t) pwr_sensor_buf.power;
         }
 
         /* Radio temperature */
