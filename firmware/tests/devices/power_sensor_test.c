@@ -127,7 +127,7 @@ static void power_sensor_read_test(void **state)
     float comp_s = (float) f_volt_i_s;
 
     ina22x_current_t current_value = (ina22x_current_t) generate_random_u_value(1e-4, 1e4);
-    f_curr = (current_t) (current_value * 1000000);
+    f_curr = (current_t) (current_value * 1000);
     float comp_curr = (float) f_curr;
 
     ina22x_power_t power_value = (ina22x_power_t) generate_random_m_value(1e-4, 1e4);
@@ -176,7 +176,7 @@ static void power_sensor_read_test(void **state)
     assert_return_code(power_sensor_read(POWER_SENSOR_UC, &test_data), 0);
     assert_float_equal(comp_b, floor(voltage_value_b * 1000), 0.0);
     assert_float_equal(comp_s, floor(voltage_value_s * 1000000), 0.0);
-    assert_float_equal(comp_curr, floor(current_value * 1000000), 0.0);
+    assert_float_equal(comp_curr, floor(current_value * 1000), 0.0);
     assert_float_equal(comp_pwr, floor(power_value * 1000), 0.0);
 }
 
