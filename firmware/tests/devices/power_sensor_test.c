@@ -1,7 +1,7 @@
 /*
  * power_sensor_test.c
  *
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  *
  * This file is part of TTC 2.0.
  *
@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.1.3
+ * \version 0.2.5
  *
  * \date 2021/08/12
  *
@@ -73,28 +73,28 @@ float generate_random_u_value(float l, float r);
 float generate_random_m_value(float l, float r);
 
 ina22x_config_t uc_config = {
-                                    .i2c_port = I2C_PORT_1,
-                                    .i2c_conf.speed_hz = 100000,
-                                    .i2c_adr  = 0x44,
-                                    .avg_mode = INA22X_AVERAGING_MODE_128,
-                                    .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
-                                    .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
-                                    .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
-                                    .lsb_current = 5e-6,
-                                    .cal = 10240,
-} ;
-ina22x_config_t radio_config = {
-                                    .i2c_port = I2C_PORT_1,
-                                    .i2c_conf.speed_hz = 100000,
-                                    .i2c_adr  = 0x45,
-                                    .avg_mode = INA22X_AVERAGING_MODE_128,
-                                    .bus_voltage_conv_time = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
-                                    .shunt_voltage_conv_time = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
-                                    .op_mode = INA22X_MODE_SHUNT_BUS_CONT,
-                                    .lsb_current = 5e-5,
-                                    .cal = 1024,
+    .i2c_port                   = I2C_PORT_1,
+    .i2c_conf.speed_hz          = 100000,
+    .i2c_adr                    = 0x44,
+    .avg_mode                   = INA22X_AVERAGING_MODE_128,
+    .bus_voltage_conv_time      = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
+    .shunt_voltage_conv_time    = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
+    .op_mode                    = INA22X_MODE_SHUNT_BUS_CONT,
+    .lsb_current                = 5e-6,
+    .cal                        = 10240,
+};
 
-} ;
+ina22x_config_t radio_config = {
+    .i2c_port                   = I2C_PORT_1,
+    .i2c_conf.speed_hz          = 100000,
+    .i2c_adr                    = 0x45,
+    .avg_mode                   = INA22X_AVERAGING_MODE_128,
+    .bus_voltage_conv_time      = INA22X_BUS_VOLTAGE_CONV_TIME_588u,
+    .shunt_voltage_conv_time    = INA22X_SHUNT_VOLTAGE_CONV_TIME_588u,
+    .op_mode                    = INA22X_MODE_SHUNT_BUS_CONT,
+    .lsb_current                = 5e-5,
+    .cal                        = 1024,
+};
 
 static void power_sensor_init_test(void **state)
 {
