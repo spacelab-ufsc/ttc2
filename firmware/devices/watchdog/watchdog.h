@@ -49,7 +49,7 @@ int watchdog_init(void);
  *
  * \return None.
  */
-void watchdog_reset(void);
+int watchdog_reset(void);
 
 #endif /* WATCHDOG_H_ */
 
