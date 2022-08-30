@@ -23,7 +23,7 @@ INA22X_TEST_FLAGS=$(FLAGS),--wrap=i2c_init,--wrap=i2c_write,--wrap=i2c_read
 TPS382X_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_state,--wrap=gpio_toggle
 
 .PHONY: all
-all: tca4311a_test isis_antenna_test si446x_test ina22x_test tps382_test
+all: tca4311a_test isis_antenna_test si446x_test ina22x_test tps382x_test
 
 .PHONY: tca4311a_test
 tca4311a_test: $(BUILD_DIR)/tca4311a.o $(BUILD_DIR)/tca4311a_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/i2c_wrap.o $(BUILD_DIR)/gpio_wrap.o
