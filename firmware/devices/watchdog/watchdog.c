@@ -24,8 +24,9 @@
  * \brief Watchdog device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.0
+ * \version 0.2.6
  * 
  * \date 2019/11/01
  * 
