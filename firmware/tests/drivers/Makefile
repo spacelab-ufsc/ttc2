@@ -2,6 +2,7 @@ TARGET_TCA4311A=tca4311a_unit_test
 TARGET_ISIS_ANTENNA=isis_antenna_unit_test
 TARGET_SI446X=si446x_unit_test
 TARGET_INA22X=ina22x_unit_test
+TARGET_TPS382X=tps382x_unit_test
 
 ifndef BUILD_DIR
 	BUILD_DIR=$(CURDIR)
@@ -19,8 +20,10 @@ SI446X_TEST_FLAGS=$(FLAGS),--wrap=spi_init,--wrap=spi_select_slave,--wrap=spi_wr
 
 INA22X_TEST_FLAGS=$(FLAGS),--wrap=i2c_init,--wrap=i2c_write,--wrap=i2c_read
 
+TPS382X_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_state,--wrap=gpio_toggle
+
 .PHONY: all
-all: tca4311a_test isis_antenna_test si446x_test ina22x_test
+all: tca4311a_test isis_antenna_test si446x_test ina22x_test tps382x_test
 
 .PHONY: tca4311a_test
 tca4311a_test: $(BUILD_DIR)/tca4311a.o $(BUILD_DIR)/tca4311a_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/i2c_wrap.o $(BUILD_DIR)/gpio_wrap.o
@@ -38,6 +41,9 @@ si446x_test: $(BUILD_DIR)/si446x.o $(BUILD_DIR)/si446x_delay.o $(BUILD_DIR)/si44
 ina22x_test: $(BUILD_DIR)/ina22x.o $(BUILD_DIR)/ina22x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/i2c_wrap.o
 	$(CC) $(INA22X_TEST_FLAGS) $(BUILD_DIR)/ina22x.o $(BUILD_DIR)/ina22x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/i2c_wrap.o -o $(BUILD_DIR)/$(TARGET_INA22X) -lm -lcmocka
 
+.PHONY: tps382x_test
+tps382x_test: $(BUILD_DIR)/tps382x.o $(BUILD_DIR)/tps382x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/gpio_wrap.o
+	$(CC) $(TPS382X_TEST_FLAGS) $(BUILD_DIR)/tps382x.o $(BUILD_DIR)/tps382x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/gpio_wrap.o -o $(BUILD_DIR)/$(TARGET_TPS382X) -lcmocka
 
 # Drivers
 $(BUILD_DIR)/tca4311a.o: ../../drivers/tca4311a/tca4311a.c
@@ -67,6 +73,9 @@ $(BUILD_DIR)/si446x_spi.o: ../../drivers/si446x/si446x_spi.c
 $(BUILD_DIR)/ina22x.o: ../../drivers/ina22x/ina22x.c
 	$(CC) $(INA22X_TEST_FLAGS) -c $< -o $@
 
+$(BUILD_DIR)/tps382x.o: ../../drivers/tps382x/tps382x.c
+	$(CC) $(TPS382X_TEST_FLAGS) -c $< -o $@
+
 # Tests
 $(BUILD_DIR)/tca4311a_test.o: tca4311a_test.c
 	$(CC) $(TCA4311A_TEST_FLAGS) -c $< -o $@
@@ -79,6 +88,9 @@ $(BUILD_DIR)/si446x_test.o: si446x_test.c
 
 $(BUILD_DIR)/ina22x_test.o: ina22x_test.c
 	$(CC) $(INA22X_TEST_FLAGS) -c $< -o $@
+
+$(BUILD_DIR)/tps382x_test.o: tps382x_test.c
+	$(CC) $(TPS382X_TEST_FLAGS) -c $< -o $@
 
 # Mockups
 $(BUILD_DIR)/sys_log_wrap.o: ../mockups/system/sys_log_wrap.c
@@ -110,4 +122,4 @@ $(BUILD_DIR)/task.o: ../freertos_sim/task.c
 
 .PHONY: clean
 clean:
-	rm $(BUILD_DIR)/$(TARGET_TCA4311A) $(BUILD_DIR)/$(TARGET_ISIS_ANTENNA) $(BUILD_DIR)/$(TARGET_SI446X) $(BUILD_DIR)/$(TARGET_INA22X) $(BUILD_DIR)/*.o
+	rm $(BUILD_DIR)/$(TARGET_TCA4311A) $(BUILD_DIR)/$(TARGET_ISIS_ANTENNA) $(BUILD_DIR)/$(TARGET_SI446X) $(BUILD_DIR)/$(TARGET_INA22X) $(BUILD_DIR)/$(TARGET_TPS382X) $(BUILD_DIR)*.o

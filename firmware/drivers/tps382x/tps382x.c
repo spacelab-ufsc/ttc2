@@ -1,5 +1,5 @@
 /*
- * watchdog.h
+ * tps382x.c
  * 
  * Copyright The TTC 2.0 Contributors.
  * 
@@ -16,42 +16,52 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
 /**
- * \brief Watchdog device definition.
+ * \brief TPS382x driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.2.6
  * 
- * \date 2019/11/01
+ * \date 2020/01/15
  * 
- * \defgroup watchdog Watchdog
- * \ingroup devices
+ * \addtogroup tps382x
  * \{
  */
 
-#ifndef WATCHDOG_H_
-#define WATCHDOG_H_
+#include "tps382x.h"
 
-/**
- * \brief Watchdog initialization.
- *
- * \return The status/error code.
- */
-int watchdog_init(void);
+int tps382x_init(tps382x_config_t config)
+{
+    int err = -1;
 
-/**
- * \brief Watchdog timer reset.
- *
- * \return None.
- */
-int watchdog_reset(void);
+    gpio_config_t gpio_conf = {0};
 
-#endif /* WATCHDOG_H_ */
+    gpio_conf.mode = GPIO_MODE_OUTPUT;
 
-/** \} End of watchdog group */
+    if (gpio_init(config.wdi_pin, gpio_conf) == 0)
+    {
+        if (gpio_init(config.mr_pin, gpio_conf) == 0)
+        {
+            err = 0;
+        }
+    }
+
+    return err;
+}
+
+int tps382x_trigger(tps382x_config_t config)
+{
+    return gpio_toggle(config.wdi_pin);
+}
+
+int tps382x_manual_reset(tps382x_config_t config)
+{
+    return gpio_set_state(config.mr_pin, false);
+}
+
+/** \} End of tps382x group */
