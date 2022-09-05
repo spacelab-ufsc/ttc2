@@ -44,8 +44,7 @@
 #include "heartbeat.h"
 #include "system_reset.h"
 #include "radio_reset.h"
-#include "read_sensors.h"
-#include "beacon.h"
+#include "read_sensors.h"W
 #include "uplink.h"
 #include "time_control.h"
 
@@ -109,15 +108,6 @@ void create_tasks(void)
 #endif /* CONFIG_TASK_READ_TEMP_ENABLED */
 
 #if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
-    xTaskCreate(vTaskBeacon, TASK_BEACON_NAME, TASK_BEACON_STACK_SIZE, NULL, TASK_BEACON_PRIORITY, &xTaskBeaconHandle);
-
-    if (xTaskBeaconHandle == NULL)
-    {
-        /* Error creating the beacon task */
-    }
-#endif /* CONFIG_TASK_BEACON_ENABLED */
-
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
     xTaskCreate(vTaskUplink, TASK_UPLINK_NAME, TASK_UPLINK_STACK_SIZE, NULL, TASK_UPLINK_PRIORITY, &xTaskUplinkHandle);
 
     if (xTaskUplinkHandle == NULL)
@@ -133,7 +123,7 @@ void create_tasks(void)
     {
         /* Error creating the time control task */
     }
-#endif /* CONFIG_TASK_BEACON_ENABLED */
+#endif /* CONFIG_TASK_TIME_CONTROL_ENABLED */
 
     create_event_groups();
 }
