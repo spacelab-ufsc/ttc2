@@ -44,7 +44,7 @@
 #include "heartbeat.h"
 #include "system_reset.h"
 #include "radio_reset.h"
-#include "read_sensors.h"W
+#include "read_sensors.h"
 #include "uplink.h"
 #include "time_control.h"
 
