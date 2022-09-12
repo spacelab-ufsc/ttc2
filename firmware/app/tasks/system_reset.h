@@ -1,4 +1,4 @@
-+/*
+/*
  * system_reset.h
  * 
  * Copyright (C) 2021, SpaceLab.
