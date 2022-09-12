@@ -1,4 +1,4 @@
-/*
++/*
  * system_reset.h
  * 
  * Copyright (C) 2021, SpaceLab.
@@ -43,7 +43,7 @@
 #define TASK_SYSTEM_RESET_NAME                      "SystemReset"           /**< Task name. */
 #define TASK_SYSTEM_RESET_STACK_SIZE                128                     /**< Stack size in bytes. */
 #define TASK_SYSTEM_RESET_PRIORITY                  2                       /**< Task priority. */
-#define TASK_SYSTEM_RESET_PERIOD_MS                 (1000UL*60U*60U*10U)    /**< Task period in milliseconds. */
+#define TASK_SYSTEM_RESET_PERIOD_MS                 36000000UL              /**< Task period in milliseconds. */
 
 /**
  * \brief Periodic system reset handle.
