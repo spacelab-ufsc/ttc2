@@ -106,7 +106,7 @@ void create_tasks(void)
     {
         /* Error creating the read sensors task */
     }
-#endif /* CONFIG_TASK_READ_TEMP_ENABLED */
+#endif /* CONFIG_TASK_READ_SENSORS_ENABLED */
 
 #if defined(CONFIG_TASK_BEACON_ENABLED) && (CONFIG_TASK_BEACON_ENABLED == 1)
     xTaskCreate(vTaskBeacon, TASK_BEACON_NAME, TASK_BEACON_STACK_SIZE, NULL, TASK_BEACON_PRIORITY, &xTaskBeaconHandle);
