@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.3
+ * \version 0.2.8
  * 
  * \date 2019/12/04
  * 
@@ -87,47 +87,57 @@ void vTaskStartup(void)
     sys_log_print_hex(system_get_reset_cause());
     sys_log_new_line();
 
+#if defined(CONFIG_DEV_MEDIA_INT_ENABLED) && (CONFIG_DEV_MEDIA_INT_ENABLED == 1)
     /* Internal non-volatile memory initialization */
     if (media_init(MEDIA_INT_FLASH) != 0)
     {
         error_counter++;
     }
+#endif /* CONFIG_DEV_MEDIA_INT_ENABLED */
 
     /* LEDs device initialization */
-#if defined(CONFIG_DEVICE_LEDS_ENABLED) && (CONFIG_DEVICE_LEDS_ENABLED)
+#if defined(CONFIG_DEV_LEDS_ENABLED) && (CONFIG_DEV_LEDS_ENABLED)
     if (leds_init() != 0)
     {
         error_counter++;
     }
-#endif /* CONFIG_DEVICE_LEDS_ENABLED */
+#endif /* CONFIG_DEV_LEDS_ENABLED */
 
     /* Power sensor device initialization */
+#if defined(CONFIG_DEV_POWER_SENSOR_ENABLED) && (CONFIG_DEV_POWER_SENSOR_ENABLED)
     if (power_sensor_init() != 0)
     {
         error_counter++;
     }
+#endif /* CONFIG_DEV_POWER_SENSOR_ENABLED */
 
     /* Temperature sensor device initialization */
+#if defined(CONFIG_DEV_TEMP_SENSOR_ENABLED) && (CONFIG_DEV_TEMP_SENSOR_ENABLED)
     if (temp_sensor_init() != 0)
     {
         error_counter++;
     }
+#endif /* CONFIG_DEV_TEMP_SENSOR_ENABLED */
 
     /* Radio device initialization */
+#if defined(CONFIG_DEV_RADIO_ENABLED) && (CONFIG_DEV_RADIO_ENABLED)
     if (radio_init() != 0)
     {
         error_counter++;
     }
+#endif /* CONFIG_DEV_RADIO_ENABLED */
 
     /* NGHam initialization */
     ngham_init_arrays();
     ngham_init();
 
     /* Antenna device initialization */
+#if defined(CONFIG_DEV_ANTENNA_ENABLED) && (CONFIG_DEV_ANTENNA_ENABLED)
     if (antenna_init() != 0)
     {
         error_counter++;
     }
+#endif /* CONFIG_DEV_ANTENNA_ENABLED */
 
     if (error_counter > 0U)
     {
