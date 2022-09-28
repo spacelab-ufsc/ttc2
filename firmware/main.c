@@ -40,10 +40,13 @@
 #include "system/clocks.h"
 #include "app/tasks/tasks.h"
 
+#include <drivers/spi_slave/spi_slave.h>
+
 void main(void)
 {
+    int err = -1;
     /* Watchdog device initialization */
-    int err = watchdog_init();
+    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
     /* System clocks configuration */
     clocks_config_t clk_conf = {0};
@@ -53,6 +56,63 @@ void main(void)
     clk_conf.aclk_hz    = 32768;
 
     err = clocks_setup(clk_conf);
+
+    spi_config_t spi_config;
+    spi_config.mode = SPI_MODE_0;
+    spi_config.speed_hz = 10000000;
+
+    uint16_t av_bytes = 0;
+    uint16_t len = 10;
+    uint8_t data[len];
+
+
+
+    /* 1. Initialize the spi with spi_slave_init() */
+    err = spi_slave_init(SPI_PORT_0, spi_config);
+
+    /* 2. Enable interruption using spi_slave_enable() */
+    err = spi_slave_enable_isr(SPI_PORT_0);
+
+     /* 3. Check ISR (3-4 times)*/
+
+    /*  4. Check number of available bytes with spi_read_available() */
+    av_bytes = spi_slave_read_available(SPI_PORT_0);
+
+    /*  5. Read the received data with spi_slave_read() */
+    spi_slave_read(SPI_PORT_0, data, len);
+
+    /* 6. Check number of available bytes with spi_read_available() */
+    av_bytes = spi_slave_read_available(SPI_PORT_0);
+
+    /* 7. Write to master (3-4 times) with spi_slave_write() */
+    data[0] = 0;
+    data[0] = 1;
+    data[0] = 2;
+    data[0] = 3;
+    spi_slave_write(SPI_PORT_0, data, 4);
+
+    /* 8. Disable interruption (spi_slave_disable()) */
+    spi_slave_disable_isr(SPI_PORT_0);
+
+    /* 9. Try interruption */
+
+    /* 10. Enable interruption (spi_slave_enable()) */
+    spi_slave_enable_isr(SPI_PORT_0);
+
+    /* 11. Fill the RX_buffer to max */
+
+    /* 12. Try (spi_flush()) and check with spi_read_available() */
+    spi_slave_flush(SPI_PORT_0);
+    av_bytes = spi_slave_read_available(SPI_PORT_0);
+
+    /* 13. Write to master buffer and check spi_unread_bytes() */
+    spi_slave_write(SPI_PORT_0, data, 3);
+    av_bytes = spi_slave_bytes_not_sent(SPI_PORT_0);
+
+
+
+
+
 
     /* Create all the tasks */
     create_tasks();
