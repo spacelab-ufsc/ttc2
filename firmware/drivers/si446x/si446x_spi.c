@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.2.10
  * 
  * \date 2017/07/29
  * 
@@ -59,19 +59,19 @@ void si446x_spi_disable(void)
 
 int si446x_spi_write(uint8_t *data, uint16_t size)
 {
-    return spi_write(SPI_PORT_3, SPI_CS_0, data, size);
+    return spi_write(SPI_PORT_3, SPI_CS_NONE, data, size);
 }
 
 int si446x_spi_read(uint8_t *data, uint16_t size)
 {
-    return spi_read(SPI_PORT_3, SPI_CS_0, data, size);
+    return spi_read(SPI_PORT_3, SPI_CS_NONE, data, size);
 }
 
 uint8_t si446x_spi_transfer(uint8_t byte)
 {
     uint8_t rd = UINT8_MAX;
 
-    spi_transfer(SPI_PORT_3, SPI_CS_0, &byte, &rd, 1U);
+    spi_transfer(SPI_PORT_3, SPI_CS_NONE, &byte, &rd, 1U);
 
     return rd;
 }
