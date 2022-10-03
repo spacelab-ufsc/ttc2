@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.2.12
  * 
  * \date 2019/10/27
  * 
@@ -40,6 +40,8 @@
 #include <system/sys_log/sys_log.h>
 
 #include <drivers/si446x/si446x.h>
+
+#include <devices/leds/leds.h>
 
 #include "radio.h"
 
@@ -69,13 +71,19 @@ int radio_send(uint8_t *data, uint16_t len)
 
     int err = -1;
 
+    led_set(LED_DOWNLINK);
+
     if(si446x_tx_long_packet(data, len))
     {
+        led_clear(LED_DOWNLINK);
+
         if(si446x_rx_init())
         {
             err = 0;
         }
     }
+
+    led_clear(LED_DOWNLINK);
 
     return err;
 }
