@@ -20,7 +20,7 @@ TEMP_SENSOR_TEST_FLAGS=$(FLAGS),--wrap=adc_init,--wrap=adc_read,--wrap=adc_temp_
 
 ANTENNA_TEST_FLAGS=$(FLAGS),--wrap=isis_antenna_init,--wrap=isis_antenna_get_data,--wrap=isis_antenna_arm,--wrap=isis_antenna_disarm,--wrap=isis_antenna_start_sequential_deploy,--wrap=isis_antenna_start_independent_deploy,--wrap=isis_antenna_read_deployment_status_code,--wrap=isis_antenna_read_deployment_status,--wrap=isis_antenna_get_antenna_status,--wrap=isis_antenna_get_antenna_timeout,--wrap=isis_antenna_get_burning,--wrap=isis_antenna_get_arming_status,--wrap=isis_antenna_get_raw_temperature,--wrap=isis_antenna_raw_to_temp_c,--wrap=isis_antenna_get_temperature_c,--wrap=isis_antenna_delay_s,--wrap=isis_antenna_delay_ms
 
-RADIO_TEST_FLAGS=$(FLAGS),--wrap=si446x_init,--wrap=si446x_reg_config,--wrap=si446x_power_on_reset,--wrap=si446x_tx_packet,--wrap=si446x_tx_long_packet,--wrap=si446x_rx_packet,--wrap=si446x_rx_init,--wrap=si446x_check_device,--wrap=si446x_check_cts,--wrap=si446x_set_tx_power,--wrap=si446x_set_properties,--wrap=si446x_get_properties,--wrap=si446x_set_config,--wrap=si446x_set_preamble_len,--wrap=si446x_set_sync_word,--wrap=si446x_set_gpio_mode,--wrap=si446x_set_cmd,--wrap=si446x_get_cmd,--wrap=si446x_set_tx_interrupt,--wrap=si446x_set_rx_interrupt,--wrap=si446x_clear_interrupts,--wrap=si446x_write_tx_fifo,--wrap=si446x_read_rx_fifo,--wrap=si446x_fifo_reset,--wrap=si446x_enter_tx_mode,--wrap=si446x_enter_rx_mode,--wrap=si446x_enter_standby_mode,--wrap=si446x_wait_nirq,--wrap=si446x_wait_packet_sent,--wrap=si446x_wait_gpio1,--wrap=si446x_spi_init,--wrap=si446x_spi_enable,--wrap=si446x_spi_disable,--wrap=si446x_spi_write,--wrap=si446x_spi_read,--wrap=si446x_spi_transfer,--wrap=si446x_gpio_init,--wrap=si446x_gpio_set_pin,--wrap=si446x_gpio_clear_pin,--wrap=si446x_gpio_get_pin,--wrap=si446x_delay_s,--wrap=si446x_delay_ms,--wrap=si446x_delay_us
+RADIO_TEST_FLAGS=$(FLAGS),--wrap=si446x_init,--wrap=si446x_reg_config,--wrap=si446x_power_on_reset,--wrap=si446x_tx_packet,--wrap=si446x_tx_long_packet,--wrap=si446x_rx_packet,--wrap=si446x_rx_init,--wrap=si446x_check_device,--wrap=si446x_check_cts,--wrap=si446x_set_tx_power,--wrap=si446x_set_properties,--wrap=si446x_get_properties,--wrap=si446x_set_config,--wrap=si446x_set_preamble_len,--wrap=si446x_set_sync_word,--wrap=si446x_set_gpio_mode,--wrap=si446x_set_cmd,--wrap=si446x_get_cmd,--wrap=si446x_set_tx_interrupt,--wrap=si446x_set_rx_interrupt,--wrap=si446x_clear_interrupts,--wrap=si446x_write_tx_fifo,--wrap=si446x_read_rx_fifo,--wrap=si446x_fifo_reset,--wrap=si446x_enter_tx_mode,--wrap=si446x_enter_rx_mode,--wrap=si446x_enter_standby_mode,--wrap=si446x_wait_nirq,--wrap=si446x_wait_packet_sent,--wrap=si446x_wait_gpio1,--wrap=si446x_spi_init,--wrap=si446x_spi_enable,--wrap=si446x_spi_disable,--wrap=si446x_spi_write,--wrap=si446x_spi_read,--wrap=si446x_spi_transfer,--wrap=si446x_gpio_init,--wrap=si446x_gpio_set_pin,--wrap=si446x_gpio_clear_pin,--wrap=si446x_gpio_get_pin,--wrap=si446x_delay_s,--wrap=si446x_delay_ms,--wrap=si446x_delay_us,--wrap=led_set,--wrap=led_clear
 
 POWER_SENSOR_TEST_FLAGS=$(FLAGS),--wrap=ina22x_init,--wrap=ina22x_configuration,--wrap=ina22x_calibration,--wrap=ina22x_write_reg,--wrap=ina22x_read_reg,--wrap=ina22x_get_current_A,--wrap=ina22x_get_voltage_V,--wrap=ina22x_get_power_W,--wrap=ina22x_get_manufacturer_id,--wrap=ina22x_get_die_id
 
@@ -44,8 +44,8 @@ antenna_test: $(BUILD_DIR)/antenna.o $(BUILD_DIR)/antenna_test.o $(BUILD_DIR)/sy
 	$(CC) $(ANTENNA_TEST_FLAGS) $(BUILD_DIR)/antenna.o $(BUILD_DIR)/antenna_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/isis_antenna_wrap.o -o $(BUILD_DIR)/$(TARGET_ANTENNA) -lcmocka
 
 .PHONY: radio_test
-radio_test: $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/si446x_wrap.o $(BUILD_DIR)/task.o
-	$(CC) $(RADIO_TEST_FLAGS) $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/si446x_wrap.o $(BUILD_DIR)/task.o -o $(BUILD_DIR)/$(TARGET_RADIO) -lcmocka -lm
+radio_test: $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/si446x_wrap.o $(BUILD_DIR)/leds_wrap.o $(BUILD_DIR)/task.o
+	$(CC) $(RADIO_TEST_FLAGS) $(BUILD_DIR)/radio.o $(BUILD_DIR)/radio_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/si446x_wrap.o $(BUILD_DIR)/leds_wrap.o $(BUILD_DIR)/task.o -o $(BUILD_DIR)/$(TARGET_RADIO) -lcmocka -lm
 
 .PHONY: power_sensor_test
 power_sensor_test: $(BUILD_DIR)/power_sensor.o $(BUILD_DIR)/power_sensor_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/ina22x_wrap.o
@@ -130,6 +130,9 @@ $(BUILD_DIR)/gpio_wrap.o: ../mockups/drivers/gpio_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/flash_wrap.o: ../mockups/drivers/flash_wrap.c
+	$(CC) $(FLAGS) -c $< -o $@
+
+$(BUILD_DIR)/leds_wrap.o: ../mockups/devices/leds_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/task.o: ../freertos_sim/task.c
