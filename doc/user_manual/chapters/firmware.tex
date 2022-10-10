@@ -15,14 +15,15 @@
 %
 % \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
 %
-% \version 0.2.0
+% \version 0.3.0
 %
 % \date 2021/05/12
 %
 
+
 \chapter{Firmware} \label{ch:firmware}
 
-.
+This chapter describes the main characteristics of the firmware part of the TTC module.
 
 \section{Product tree}
 
@@ -57,9 +58,9 @@ The SPI\nomenclature{\textbf{SPI}}{\textit{Serial Peripheral Interface.}} comman
     \label{tab:commands}
 \end{table}
 
-\subsection{Variables and Parameters}
+\section{Variables and Parameters}
 
-A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals is seen in the \autoref{tab:ttc2-variables}.
+A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals can be seen in \autoref{tab:ttc2-variables}.
 
 \begin{longtable}[c]{cL{0.72\textwidth}lc}
     \toprule[1.5pt]
@@ -126,3 +127,71 @@ A list of all the variables of TTC with their identification number (ID) and var
     \caption{Variables and parameters of the TTC 2.0.}
     \label{tab:ttc2-variables}
 \end{longtable}
+
+Each variable can be read or written using the commands ``Read Parameter'' and/or ``Write Parameter''.
+
+\section{Development Layers}
+
+The firmware flow of development goes from the low-level implementation (far right) with HA layer being register level operation to Tasks Layer with very abstract and high level code.
+
+\subsection{HAL}
+
+The HAL layer is the API Driverlib developed by Texas Instruments, it includes register manipulating functions to accelerate development. The TTC 2.0 uses HAL mostly to handle GPIO operations and serial communications such as SPI, UART and I$^2$C.
+
+\subsection{Drivers}
+
+Driver Layer is created to have the flexibility of the HAL layer but containing only the necessary abstraction in order to still be generic enough to support all the functionalities needed in Devices or other Drivers modules.
+
+\subsection{Devices}
+
+In this level of abstraction, the devices are used to create specific configurations with the Drivers Layer to build functions used in Tasks layer. In opposition to the Drivers layer the Devices don't communicate between themselves and are only used inside Tasks.
+
+\subsection{RTOS}
+
+The TTC 2.0 uses FreeRTOS kernel. Using an RTOS based kernel enables the system to maintain regularly all the routine functions such as housekeeping, sensors reading, check for receptions and to also deal with specific delays used in hardware, such as the radio. The level of priority of a task dictates who has the most preference of execution. Initial delay and period are used to determine the delay time to execute the task initialization after a boot, the regulates the time between the task executions. The stack is the amount of memory delimited for the execution of a task.
+
+\subsection{System}
+
+The System layer is used for housekeeping and management routines, it contains the system log, clocks setup and hooks. Its executions occurs in almost all the TTC 2.0 abstraction layers (expect the Tests layer) mostly for log purposes as seen in Figure \ref{fig:log_info}.
+
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=0.65\textwidth]{figures/ttc2-terminal-log.png}
+		\caption{Example of log feedback received from TTC 2.0 during debbug.}
+		\label{fig:log_info}
+	\end{center}
+\end{figure}
+
+\subsection{Tasks}
+
+Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction layer of code inside TTC 2.0 flow of execution. For each task is designated a level of priority, initial delay, period and stack size as shown in \autoref{tab:firmware-tasks}.
+
+\begin{table}[!h]
+    \centering
+
+    \begin{tabular}{lccccc}
+        \toprule[1.5pt]
+        \textbf{Name}          & \textbf{Priority} & \textbf{Initial delay [ms]} & \textbf{Period [ms]} & \textbf{Stack [bytes]} \\
+        \midrule
+        Command Processing     & Highest & 0     & 100       & 500 \\
+        Heartbeat              & Lowest  & 0     & 500       & 160 \\
+        Housekeeping           & Medium  & 2000  & 10000     & 160 \\
+        Radio Reset            & High    & 60000 & 60000     & 128 \\
+        Startup                & Medium  & 0     & Aperiodic & 128 \\
+        System Reset           & Medium  & 0     & 36000000  & 128 \\
+        Time Control           & Medium  & 1000  & 1000      & 128 \\
+        Uplink                 & Highest & 2000  & 500       & 500 \\
+        Watchdog Reset         & Lowest  & 0     & 100       & 150 \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+    \caption{List of TTC 2.0 Tasks with configuration parameters.}
+    \label{tab:firmware-tasks}
+\end{table}
+
+\subsection{Libraries}
+
+The Libraries are used for algorithm purposes and isn't related to any hardware. It's function is to remove redundancy of creating multiple identical structures for different driver modules.
+
+\subsection{Tests}
+
+Tests are used to verify and validate the functionality of the Drivers and Devices developed. There are three types of tests: the static test uses the MISRA C: 2012 \cite{misra} guidelines to check for C safety standards, the unitary tests uses the Cmocka library \cite{cmocka} with mockups of the hardware, to validate the module in an algorithmic level, and the last test verifies the integration between hardware and firmware.
