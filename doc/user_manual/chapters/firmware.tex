@@ -37,7 +37,7 @@ The product tree of the firmware part of the TTC 2.0 module is available in \aut
     \end{center}
 \end{figure}
 
-\section{Commands}
+\section{Commands} \label{sec:commands}
 
 The SPI\nomenclature{\textbf{SPI}}{\textit{Serial Peripheral Interface.}} commands of the TTC module are available in \autoref{tab:commands}. All commands are composed by an ID field (1 byte), the content of the command and a checksum at the end of the command (2 bytes). The used checksum algorithm is the CRC16-CCITT\nomenclature{\textbf{CRC}}{\textit{Cyclic Redundancy Check.}} \nomenclature{\textbf{CCITT}}{\textit{Comité Consultatif International Téléphonique et Télégraphique.}} (initial value = 0x0000, polynomial = 0x1021) the value is calculated with the entire packet (ID field + command content).
 
@@ -58,7 +58,7 @@ The SPI\nomenclature{\textbf{SPI}}{\textit{Serial Peripheral Interface.}} comman
     \label{tab:commands}
 \end{table}
 
-\section{Variables and Parameters}
+\section{Variables and Parameters} \label{sec:variables}
 
 A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals can be seen in \autoref{tab:ttc2-variables}.
 
@@ -157,7 +157,7 @@ The System layer is used for housekeeping and management routines, it contains t
 \begin{figure}[!h]
 	\begin{center}
 		\includegraphics[width=0.65\textwidth]{figures/ttc2-terminal-log.png}
-		\caption{Example of log feedback received from TTC 2.0 during debbug.}
+		\caption{Example of log feedback received from TTC 2.0 during debug.}
 		\label{fig:log_info}
 	\end{center}
 \end{figure}
@@ -173,6 +173,7 @@ Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction laye
         \toprule[1.5pt]
         \textbf{Name}          & \textbf{Priority} & \textbf{Initial delay [ms]} & \textbf{Period [ms]} & \textbf{Stack [bytes]} \\
         \midrule
+        Automatic Beacon       & High    & 60000 & 60000     & 300 \\
         Command Processing     & Highest & 0     & 100       & 500 \\
         Heartbeat              & Lowest  & 0     & 500       & 160 \\
         Housekeeping           & Medium  & 2000  & 10000     & 160 \\
@@ -187,6 +188,21 @@ Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction laye
     \caption{List of TTC 2.0 Tasks with configuration parameters.}
     \label{tab:firmware-tasks}
 \end{table}
+
+Each of the tasks presented in \autoref{tab:firmware-tasks} are described below:
+
+\begin{itemize}
+    \item \textbf{Automatic Beacon}: Automatically transmits a beacon packet if no transmission command is received within 60 seconds.
+    \item \textbf{Command Processing}: Process incoming commands (physical interfaces).
+    \item \textbf{Heartbeat}: Blinks a status LED at a rate of 1 Hz.
+    \item \textbf{Housekeeping}: This task manages the general operation of the TTC.
+    \item \textbf{Radio Reset}: Resets the radio at 600 seconds.
+    \item \textbf{Startup}: Initializes the TTC 2.0 module.
+    \item \textbf{System Reset}: Resets the microcontroller by software at every 10 hours.
+    \item \textbf{Time Control}: Manages the system time.
+    \item \textbf{Uplink}: Monitors radio for upcoming packages and stores it in memory.
+    \item \textbf{Watchdog Reset}: Resets the watchdog timers at every 100 milliseconds.
+\end{itemize}
 
 \subsection{Libraries}
 

@@ -23,6 +23,19 @@
 
 \chapter{Operation} \label{ch:operation}
 
+This chapter describes general aspects of the TTC operation, like details of the used communication protocol, how to transmit a packet, how the telecommand reception works, and so on.
+
+\section{Packet transmission}
+
+To transmit a packet, the command ``Transmit Packet'' must be used (\autoref{sec:commands}). When this command is received by the TTC through one of its command interfaces, a new NGHam packet is generated with the command content as payload of the packet. After the NGHam packet is generated, it is transmitted immediately through the air using the respective TTC's radio.
+
+\section{Telecommand reception}
+
+When a new valid telecommand is received, it is stored in a internal queue with five positions and 300 bytes available for each position. If the queue is full and there is no available positions to store the telecommands, the new packet is discarded.
+
+A telecommand is only stored if it is a valid NGHam packet, and only the payload of the NGHam packet is stored. This way, each telecommand can be up to 220 bytes long according to the NGHam protocol definitions.
+
+The received and stored telecommand can be read with the command read packet, as described in \autored{sec:commands}. After a telecommand is read, it is deleted from the internal queue of the TTC module. The number of available telecommands and the length in bytes of the first queue position can be read using the command ``Read Parameter'', as also described in \autoref{sec:commands} and \ref{sec:variables}.
 
 \section{Communication protocol}
 
