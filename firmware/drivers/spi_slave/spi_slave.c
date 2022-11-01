@@ -111,6 +111,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                  case SPI_MODE_0:
                      clock_phase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
                      clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
+
                      break;
                  case SPI_MODE_1:
                      clock_phase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
@@ -134,6 +135,14 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
              }
             if (USCI_A_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
             {
+                switch(config.mode)
+                {
+                case SPI_MODE_1:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_1;    break;
+                case SPI_MODE_2:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;    break;
+                case SPI_MODE_3:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_3;    break;
+                default:    break;
+                }
+
                 USCI_A_SPI_enable(base_address);
             }
             else
