@@ -76,7 +76,10 @@ static uint16_t spi_read_mtu(queue_t *spi_rx_buffer);
  *
  * \return The status/error code.
  */
+
 static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
+
+static int spi_slave_setup_gpio(spi_port_t port);
 
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
@@ -103,8 +106,13 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             err = -1;   /* Invalid SPI port */
             break;
     }
-       if ((base_address == USCI_A0_BASE) || (base_address == USCI_A1_BASE) || (base_address == USCI_A2_BASE))
-       {
+
+    if (err == 0)
+    {
+        spi_slave_setup_gpio(port);
+
+        if ((base_address == USCI_A0_BASE) || (base_address == USCI_A1_BASE) || (base_address == USCI_A2_BASE))
+        {
             /* SPI mode */
             switch(config.mode)
              {
@@ -198,6 +206,42 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
            }
 
        }
+    }
+    return err;
+}
+
+static int spi_slave_setup_gpio(spi_port_t port)
+{
+    int err = 0;
+    switch(port)
+    {
+        case SPI_PORT_0:                                            //MOSI       MISO         SCLK
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN4 + GPIO_PIN5 + GPIO_PIN0);
+            break;
+        case SPI_PORT_1:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN1);
+            break;
+        case SPI_PORT_2:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN4 + GPIO_PIN2 + GPIO_PIN3);
+            break;
+        case SPI_PORT_3:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
+            break;
+        case SPI_PORT_4:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
+            break;
+        case SPI_PORT_5:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
+            break;
+        default:
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during GPIO configuration: Invalid port!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+        err = -1;   /* Invalid SPI port */
+
+        break;
+    }
 
     return err;
 }
