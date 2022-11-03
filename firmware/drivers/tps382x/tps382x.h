@@ -89,22 +89,6 @@ int tps382x_trigger(tps382x_config_t config);
  */
 int tps382x_manual_reset(tps382x_config_t config);
 
-/**
- * \brief Configures the MR GPIO pin as output and forcing to initialize in high.
- *
- * Adaptation from the hal/gpio function, this function must be used to configure the MR pin as
- * out and avoid accidental resets during configuration.
- *
- * \see SLVS165L - TPS382x Voltage Monitor With Watchdog Timer.
- *
- * \param[in] selectedPort is the port which contains the MR pin.
- *
- * \param[in] selectedPins is the MR pin.
- *
- * \return status/error code.
- */
-int tps382x_set_MR_pin_as_output(gpio_pin_t mr_pin);
-
 #endif /* TPS382X_H_ */
 
 /** \} End of tps382x group */
