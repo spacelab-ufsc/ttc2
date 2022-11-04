@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.20
+ * \version 0.2.7
  * 
  * \date 2019/11/02
  * 
@@ -62,7 +62,7 @@ void create_tasks(void)
 #endif /* CONFIG_TASK_STARTUP_ENABLED */
 
     /* Watchdog reset task */
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_WATCHDOG_RESET_ENABLED) && (CONFIG_TASK_WATCHDOG_RESET_ENABLED == 1)
     xTaskCreate(vTaskWatchdogReset, TASK_WATCHDOG_RESET_NAME, TASK_WATCHDOG_RESET_STACK_SIZE, NULL, TASK_WATCHDOG_RESET_PRIORITY, &xTaskWatchdogResetHandle);
 
     if (xTaskWatchdogResetHandle == NULL)
@@ -72,7 +72,7 @@ void create_tasks(void)
 #endif /* CONFIG_TASK_WATCHDOG_RESET_ENABLED */
 
     /* Heartbeat task */
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_HEARTBEAT_ENABLED) && (CONFIG_TASK_HEARTBEAT_ENABLED == 1)
     xTaskCreate(vTaskHeartbeat, TASK_HEARTBEAT_NAME, TASK_HEARTBEAT_STACK_SIZE, NULL, TASK_HEARTBEAT_PRIORITY, &xTaskHeartbeatHandle);
 
     if (xTaskHeartbeatHandle == NULL)
@@ -81,7 +81,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_HEARTBEAT_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_SYSTEM_RESET_ENABLED) && (CONFIG_TASK_SYSTEM_RESET_ENABLED == 1)
     xTaskCreate(vTaskSystemReset, TASK_SYSTEM_RESET_NAME, TASK_SYSTEM_RESET_STACK_SIZE, NULL, TASK_SYSTEM_RESET_PRIORITY, &xTaskSystemResetHandle);
 
     if (xTaskSystemResetHandle == NULL)
@@ -90,7 +90,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_SYSTEM_RESET_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_RADIO_RESET_ENABLED) && (CONFIG_TASK_RADIO_RESET_ENABLED == 1)
     xTaskCreate(vTaskRadioReset, TASK_RADIO_RESET_NAME, TASK_RADIO_RESET_STACK_SIZE, NULL, TASK_RADIO_RESET_PRIORITY, &xTaskRadioResetHandle);
 
     if (xTaskRadioResetHandle == NULL)
@@ -99,16 +99,16 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_RADIO_RESET_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_READ_SENSORS_ENABLED) && (CONFIG_TASK_READ_SENSORS_ENABLED == 1)
     xTaskCreate(vTaskReadSensors, TASK_READ_SENSORS_NAME, TASK_READ_SENSORS_STACK_SIZE, NULL, TASK_READ_SENSORS_PRIORITY, &xTaskReadSensorsHandle);
 
     if (xTaskReadSensorsHandle == NULL)
     {
         /* Error creating the read sensors task */
     }
-#endif /* CONFIG_TASK_READ_TEMP_ENABLED */
+#endif /* CONFIG_TASK_READ_SENSORS_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_BEACON_ENABLED) && (CONFIG_TASK_BEACON_ENABLED == 1)
     xTaskCreate(vTaskBeacon, TASK_BEACON_NAME, TASK_BEACON_STACK_SIZE, NULL, TASK_BEACON_PRIORITY, &xTaskBeaconHandle);
 
     if (xTaskBeaconHandle == NULL)
@@ -117,7 +117,7 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_UPLINK_ENABLED) && (CONFIG_TASK_UPLINK_ENABLED == 1)
     xTaskCreate(vTaskUplink, TASK_UPLINK_NAME, TASK_UPLINK_STACK_SIZE, NULL, TASK_UPLINK_PRIORITY, &xTaskUplinkHandle);
 
     if (xTaskUplinkHandle == NULL)
@@ -126,14 +126,14 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_UPLINK_ENABLED */
 
-#if defined(CONFIG_TASK_STARTUP_ENABLED) && (CONFIG_TASK_STARTUP_ENABLED == 1)
+#if defined(CONFIG_TASK_TIME_CONTROL_ENABLED) && (CONFIG_TASK_TIME_CONTROL_ENABLED == 1)
     xTaskCreate(vTaskTimeControl, TASK_TIME_CONTROL_NAME, TASK_TIME_CONTROL_STACK_SIZE, NULL, TASK_TIME_CONTROL_PRIORITY, &xTaskTimeControlHandle);
 
     if (xTaskTimeControlHandle == NULL)
     {
         /* Error creating the time control task */
     }
-#endif /* CONFIG_TASK_BEACON_ENABLED */
+#endif /* CONFIG_TASK_TIME_CONTROL_ENABLED */
 
     create_event_groups();
 }

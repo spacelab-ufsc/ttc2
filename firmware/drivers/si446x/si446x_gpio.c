@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.2.10
  * 
  * \date 2017/07/29
  * 
@@ -48,6 +48,8 @@ void si446x_gpio_init(void)
     /* SDN pin */
     if (gpio_init(GPIO_PIN_16, conf) == 0)
     {
+        si446x_gpio_set_pin(SI446X_GPIO_SDN);
+
         conf.mode = GPIO_MODE_INPUT;
 
         /* nIRQ pin */

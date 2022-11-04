@@ -1,5 +1,5 @@
 /*
- * watchdog.h
+ * tps382x_wrap.c
  * 
  * Copyright The TTC 2.0 Contributors.
  * 
@@ -21,37 +21,50 @@
  */
 
 /**
- * \brief Watchdog device definition.
+ * \brief TPS382x driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.2.6
  * 
- * \date 2019/11/01
+ * \date 2021/02/17
  * 
- * \defgroup watchdog Watchdog
- * \ingroup devices
+ * \addtogroup tps382x_wrap
  * \{
  */
 
-#ifndef WATCHDOG_H_
-#define WATCHDOG_H_
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <setjmp.h>
+#include <float.h>
+#include <cmocka.h>
 
-/**
- * \brief Watchdog initialization.
- *
- * \return The status/error code.
- */
-int watchdog_init(void);
+#include "tps382x_wrap.h"
 
-/**
- * \brief Watchdog timer reset.
- *
- * \return None.
- */
-int watchdog_reset(void);
+int __wrap_tps382x_init(tps382x_config_t config)
+{
+    check_expected(config.wdi_pin);
+    check_expected(config.mr_pin);
 
-#endif /* WATCHDOG_H_ */
+    return mock_type(int);
+}
 
-/** \} End of watchdog group */
+int __wrap_tps382x_trigger(tps382x_config_t config)
+{
+    check_expected(config.wdi_pin);
+    check_expected(config.mr_pin);
+
+    return mock_type(int);
+}
+
+int __wrap_tps382x_manual_reset(tps382x_config_t config)
+{
+    check_expected(config.wdi_pin);
+    check_expected(config.mr_pin);
+
+    return mock_type(int);
+}
+
+/** \} End of tps382x_wrap group */

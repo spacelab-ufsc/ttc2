@@ -1,5 +1,5 @@
 /*
- * watchdog.h
+ * leds_wrap.c
  * 
  * Copyright The TTC 2.0 Contributors.
  * 
@@ -21,37 +21,52 @@
  */
 
 /**
- * \brief Watchdog device definition.
+ * \brief LEDs device wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.6
+ * \version 0.2.12
  * 
- * \date 2019/11/01
+ * \date 2022/10/03
  * 
- * \defgroup watchdog Watchdog
- * \ingroup devices
+ * \addtogroup leds_wrap
  * \{
  */
 
-#ifndef WATCHDOG_H_
-#define WATCHDOG_H_
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <setjmp.h>
+#include <float.h>
+#include <cmocka.h>
 
-/**
- * \brief Watchdog initialization.
- *
- * \return The status/error code.
- */
-int watchdog_init(void);
+#include "leds_wrap.h"
 
-/**
- * \brief Watchdog timer reset.
- *
- * \return None.
- */
-int watchdog_reset(void);
+int __wrap_leds_init(void)
+{
+    return mock_type(int);
+}
 
-#endif /* WATCHDOG_H_ */
+int __wrap_led_set(led_t l)
+{
+    check_expected(l);
 
-/** \} End of watchdog group */
+    return mock_type(int);
+}
+
+int __wrap_led_clear(led_t l)
+{
+    check_expected(l);
+
+    return mock_type(int);
+}
+
+int __wrap_led_toggle(led_t l)
+{
+    check_expected(l);
+
+    return mock_type(int);
+}
+
+/** \} End of leds_wrap group */

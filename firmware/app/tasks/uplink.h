@@ -43,9 +43,9 @@
 #define TASK_UPLINK_NAME                    "Uplink"            /**< Task name. */
 #define TASK_UPLINK_STACK_SIZE              500                 /**< Stack size in bytes. */
 #define TASK_UPLINK_PRIORITY                2                   /**< Task priority. */
-#define TASK_UPLINK_PERIOD_MS               (10*1000)           /**< Task period in milliseconds. */
+#define TASK_UPLINK_PERIOD_MS               10000               /**< Task period in milliseconds. */
 #define TASK_UPLINK_INITIAL_DELAY_MS        1000                /**< Delay, in milliseconds, before the first execution. */
-#define TASK_UPLINK_INIT_TIMEOUT_MS         (10*1000)           /**< Wait time to initialize the task in milliseconds. */
+#define TASK_UPLINK_INIT_TIMEOUT_MS         10000               /**< Wait time to initialize the task in milliseconds. */
 
 /**
  * \brief Uplink handle.

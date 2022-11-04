@@ -1,5 +1,5 @@
 /*
- * watchdog.h
+ * leds_wrap.h
  * 
  * Copyright The TTC 2.0 Contributors.
  * 
@@ -21,37 +21,32 @@
  */
 
 /**
- * \brief Watchdog device definition.
+ * \brief LEDs device wrap definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.6
+ * \version 0.2.12
  * 
- * \date 2019/11/01
+ * \date 2022/10/03
  * 
- * \defgroup watchdog Watchdog
- * \ingroup devices
+ * \defgroup leds_wrap LEDs Wrap
+ * \ingroup tests
  * \{
  */
 
-#ifndef WATCHDOG_H_
-#define WATCHDOG_H_
+#ifndef LEDS_WRAP_H_
+#define LEDS_WRAP_H_
 
-/**
- * \brief Watchdog initialization.
- *
- * \return The status/error code.
- */
-int watchdog_init(void);
+#include <devices/leds/leds.h>
 
-/**
- * \brief Watchdog timer reset.
- *
- * \return None.
- */
-int watchdog_reset(void);
+int __wrap_leds_init(void);
 
-#endif /* WATCHDOG_H_ */
+int __wrap_led_set(led_t l);
 
-/** \} End of watchdog group */
+int __wrap_led_clear(led_t l);
+
+int __wrap_led_toggle(led_t l);
+
+#endif /* LEDS_WRAP_H_ */
+
+/** \} End of leds_wrap group */

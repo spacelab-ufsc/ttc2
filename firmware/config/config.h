@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.20
+ * \version 0.2.8
  * 
  * \date 2019/10/26
  * 
@@ -46,6 +46,14 @@
 #define CONFIG_TASK_BEACON_ENABLED                      1
 #define CONFIG_TASK_UPLINK_ENABLED                      1
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
+
+/* Devices */
+#define CONFIG_DEV_MEDIA_INT_ENABLED                    1
+#define CONFIG_DEV_LEDS_ENABLED                         1
+#define CONFIG_DEV_POWER_SENSOR_ENABLED                 1
+#define CONFIG_DEV_TEMP_SENSOR_ENABLED                  1
+#define CONFIG_DEV_RADIO_ENABLED                        1
+#define CONFIG_DEV_ANTENNA_ENABLED                      1
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0

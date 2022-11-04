@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.2.10
  * 
  * \date 2017/06/01
  * 
@@ -54,9 +54,9 @@ int si446x_init(void)
     sys_log_new_line();
 #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
 
-    si446x_spi_init();
-
     si446x_gpio_init();
+
+    si446x_spi_init();
 
     /* Reset the Si446x */
     si446x_power_on_reset();

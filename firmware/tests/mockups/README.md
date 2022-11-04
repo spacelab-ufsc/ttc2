@@ -9,6 +9,7 @@
 * ISIS Antenna
 * Si446x
 * SPI
+* SPI Slave
 * TPS382x
 * UART
 * Watchdog

@@ -1,7 +1,7 @@
 #
 # static-analysis-workflow.yml
 #
-# Copyright (C) 2021, SpaceLab.
+# Copyright The TTC 2.0 Contributors.
 #
 # This file is part of TTC 2.0.
 #
@@ -55,6 +55,7 @@ jobs:
         run: |
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/antenna
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/power_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
 
@@ -64,9 +65,13 @@ jobs:
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/flash
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/gpio
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/i2c
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/ina22x
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/isis_antenna
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/isr
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/spi
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/spi_slave
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/tca4311a
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/tps382x
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/uart
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/wdt
 
