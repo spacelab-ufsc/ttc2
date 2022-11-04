@@ -42,8 +42,8 @@
 </p>
 
 <p align="center">
-    <img width="45%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/figures/obdh2-pcb-top.png">
-    <img width="45%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/figures/obdh2-pcb-bottom.png">
+    <img width="45%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/user_manual/figures/obdh2-pcb-top.png">
+    <img width="45%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/user_manual/figures/obdh2-pcb-bottom.png">
 </p>
 
 

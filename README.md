@@ -33,7 +33,7 @@
 </p>
 
 <p align="center">
-    <img width="70%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/figures/ttc2_pcb_3d.png">
+    <img width="70%" src="https://github.com/spacelab-ufsc/ttc2/blob/master/doc/user_manual/figures/ttc2_pcb_3d.png">
 </p>
 
 ## Overview
