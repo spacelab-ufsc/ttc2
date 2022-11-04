@@ -628,26 +628,26 @@ int gpio_init_mr_pin(gpio_pin_t mr_pin)
 
     if (err == 0)
     {
-        uint16_t baseAddress = GPIO_PORT_TO_BASE[msp_port];
+        uint16_t base_address = GPIO_PORT_TO_BASE[msp_port];
 
     #ifndef NDEBUG
-        if (baseAddress == 0xFFFF)  // cppcheck-suppress misra-c2012-10.4
+        if (base_address == 0xFFFFU)
         {
             return; // cppcheck-suppress misra-c2012-15.5
         }
     #endif /* NDEBUG */
 
         /* Shift by 8 if port is even (upper 8-bits) */
-        if ((msp_port & 1) ^ 1) // cppcheck-suppress [misra-c2012-14.4, misra-c2012-10.4]
+        if (((msp_port & 1U) ^ 1U) > 0U)
         {
             msp_pin <<= 8;
         }
 
         /* Instruction to impose MR pin as high and avoid auto-reset. */
-        HWREG16(baseAddress + OFS_PAOUT) |= msp_pin;
+        HWREG16(base_address + OFS_PAOUT) |= msp_pin;
 
-        HWREG16(baseAddress + OFS_PASEL) &= ~msp_pin;
-        HWREG16(baseAddress + OFS_PADIR) |= msp_pin;
+        HWREG16(base_address + OFS_PASEL) &= ~msp_pin;
+        HWREG16(base_address + OFS_PADIR) |= msp_pin;
     }
 
     return err;

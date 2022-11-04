@@ -43,8 +43,8 @@
 #define GPIO_MODULE_NAME    "GPIO"
 
 /* Pin states */
-#define GPIO_STATE_LOW      0 // cppcheck-suppress misra-c2012-2.5
-#define GPIO_STATE_HIGH     1 // cppcheck-suppress misra-c2012-2.5
+#define GPIO_STATE_LOW      0
+#define GPIO_STATE_HIGH     1
 
 /**
  * \brief GPIO pins.
