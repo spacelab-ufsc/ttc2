@@ -1,7 +1,7 @@
 /*
  * gpio.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.4
+ * \version 0.3.0
  * 
  * \date 2020/01/13
  * 
@@ -630,18 +630,20 @@ int gpio_init_mr_pin(gpio_pin_t mr_pin)
     {
         uint16_t baseAddress = GPIO_PORT_TO_BASE[msp_port];
 
-        #ifndef NDEBUG
-        if(baseAddress == 0xFFFF) { // cppcheck-suppress misra-c2012-10.4
+    #ifndef NDEBUG
+        if (baseAddress == 0xFFFF)  // cppcheck-suppress misra-c2012-10.4
+        {
             return; // cppcheck-suppress misra-c2012-15.5
         }
-        #endif
+    #endif /* NDEBUG */
 
-        // Shift by 8 if port is even (upper 8-bits)
-        if((msp_port & 1) ^ 1) { // cppcheck-suppress [misra-c2012-14.4, misra-c2012-10.4]
+        /* Shift by 8 if port is even (upper 8-bits) */
+        if ((msp_port & 1) ^ 1) // cppcheck-suppress [misra-c2012-14.4, misra-c2012-10.4]
+        {
             msp_pin <<= 8;
         }
 
-        //Instruction to impose MR pin as high and avoid auto-reset.
+        /* Instruction to impose MR pin as high and avoid auto-reset. */
         HWREG16(baseAddress + OFS_PAOUT) |= msp_pin;
 
         HWREG16(baseAddress + OFS_PASEL) &= ~msp_pin;
