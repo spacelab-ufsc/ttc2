@@ -1,7 +1,7 @@
 /*
  * gpio_wrap.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.5
+ * \version 0.3.0
  * 
  * \date 2021/02/13
  * 
@@ -88,7 +88,5 @@ int __wrap_gpio_init_mr_pin(gpio_pin_t mr_pin)
 
     return mock_type(int);
 }
-
-
 
 /** \} End of gpio_wrap group */
