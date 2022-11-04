@@ -1,5 +1,16 @@
 ===========================================
 
+v0.3 - 2022/11/04
+
+- Initial SPI Slave driver
+- ina22x driver tested and working
+- Power sensor device
+- tps382x driver fixed
+- si446x driver working (TX)
+- General fixes and improvements
+
+===========================================
+
 v0.2 - 2022/05/17
 
 - Hardware v0.1.1 tested

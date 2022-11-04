@@ -1,7 +1,7 @@
 /*
  * spi.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.4
+ * \version 0.2.9
  * 
  * \date 2019/12/07
  * 
@@ -76,12 +76,6 @@ static int spi_setup_gpio(spi_port_t port)
             break;
         case SPI_PORT_1:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
-
-            gpio_init(GPIO_PIN_8, conf);
-
-            /* Set all CS pins to high */
-            gpio_set_state(GPIO_PIN_8, true);
-
             break;
         case SPI_PORT_2:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
@@ -94,6 +88,12 @@ static int spi_setup_gpio(spi_port_t port)
             break;
         case SPI_PORT_3:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
+
+            gpio_init(GPIO_PIN_8, conf);
+
+            /* Set all CS pins to high */
+            gpio_set_state(GPIO_PIN_8, true);
+
             break;
         case SPI_PORT_4:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN1 + GPIO_PIN5 + GPIO_PIN6);
@@ -124,19 +124,7 @@ int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active)
             /* TODO: Define the CS pins of port 0 */
             break;
         case SPI_PORT_1:
-            switch(cs)
-            {
-                case SPI_CS_0:      gpio_set_state(GPIO_PIN_8, !active);      break;
-                case SPI_CS_NONE:                                             break;
-                default:
-                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error selecting a slave from port 1: Invalid CS pin!");
-                    sys_log_new_line();
-                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-                    err = -1;   /* Invalid CS pin */
-
-                    break;
-            }
+            /* TODO: Define the CS pins of port 1 */
             break;
         case SPI_PORT_2:
             switch(cs)
@@ -154,7 +142,19 @@ int spi_select_slave(spi_port_t port, spi_cs_t cs, bool active)
             }
             break;
         case SPI_PORT_3:
-            /* TODO: Define the CS pins of port 3 */
+            switch(cs)
+            {
+                case SPI_CS_0:      gpio_set_state(GPIO_PIN_8, !active);      break;
+                case SPI_CS_NONE:                                             break;
+                default:
+                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error selecting a slave from port 3: Invalid CS pin!");
+                    sys_log_new_line();
+                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+                    err = -1;   /* Invalid CS pin */
+
+                    break;
+            }
             break;
         case SPI_PORT_4:
             /* TODO: Define the CS pins of port 4 */
@@ -263,25 +263,25 @@ int spi_init(spi_port_t port, spi_config_t config)
                     spi_params.selectClockSource        = USCI_B_SPI_CLOCKSOURCE_SMCLK;
                     spi_params.clockSourceFrequency     = UCS_getSMCLK();
                     spi_params.desiredSpiClock          = config.speed_hz;
-                    spi_params.msbFirst                 = USCI_B_SPI_LSB_FIRST;
+                    spi_params.msbFirst                 = USCI_B_SPI_MSB_FIRST;
 
                     /* SPI mode */
                     switch(config.mode)
                     {
                         case SPI_MODE_0:
-                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
                             spi_params.clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                             break;
                         case SPI_MODE_1:
-                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
                             spi_params.clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
                             break;
                         case SPI_MODE_2:
-                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
+                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
                             spi_params.clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                             break;
                         case SPI_MODE_3:
-                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
+                            spi_params.clockPhase       = USCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
                             spi_params.clockPolarity    = USCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH;
                             break;
                         default:

@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.25
+ * \version 0.2.12
  * 
  * \date 2021/02/16
  * 
@@ -51,8 +51,8 @@
 #define LED_UPLINK_NUM              3
 
 /* GPIO configuration */
-#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_27
-#define LED_FAULT_GPIO_PIN          GPIO_PIN_28
+#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_28
+#define LED_FAULT_GPIO_PIN          GPIO_PIN_27
 #define LED_DOWNLINK_GPIO_PIN       GPIO_PIN_30
 #define LED_UPLINK_GPIO_PIN         GPIO_PIN_29
 

@@ -46,7 +46,7 @@
 #define TASK_STARTUP_PRIORITY               5
 
 /* Status done bit position */
-#define TASK_STARTUP_DONE                   (1U << 0)
+#define TASK_STARTUP_DONE                   2
 
 /**
  * \brief Startup task handle.

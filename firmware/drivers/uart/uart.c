@@ -40,12 +40,9 @@
 #include <config/config.h>
 #include <system/sys_log/sys_log.h>
 #include <libs/containers/queue.h>
+#include <drivers/isr/isr.h>
 
 #include "uart.h"
-
-static queue_t uart_port_0_rx_buffer;
-static queue_t uart_port_1_rx_buffer;
-static queue_t uart_port_2_rx_buffer;
 
 /**
  * \brief Reads the MTU value of a given UART RX buffer.
@@ -431,38 +428,6 @@ int uart_flush(uart_port_t port)
     }
 
     return err;
-}
-
-/* Interrupt Service Routines */
-
-#pragma vector=USCI_A0_VECTOR
-__interrupt void USCI_A0_ISR(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
-    {
-        queue_push_back(&uart_port_0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
-}
-
-#pragma vector=USCI_A1_VECTOR
-__interrupt void USCI_A1_ISR(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
-    {
-        queue_push_back(&uart_port_1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
-}
-
-#pragma vector=USCI_A2_VECTOR
-__interrupt void USCI_A2_ISR(void) // cppcheck-suppress misra-c2012-8.4
-{
-    if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
-    {
-        queue_push_back(&uart_port_2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
 }
 
 /** \} End of uart group */

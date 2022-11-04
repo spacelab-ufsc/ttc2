@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.2.12
  * 
  * \date 2021/02/21
  * 
@@ -44,6 +44,7 @@
 #include <stdlib.h>
 
 #include <devices/radio/radio.h>
+#include <devices/leds/leds.h>
 #include <tests/mockups/drivers/si446x_wrap.h>
 
 #define RADIO_ID    0x4463
@@ -53,7 +54,6 @@ static void radio_init_test(void **state)
     will_return(__wrap_si446x_init, 0);
 
     will_return(__wrap_si446x_rx_init, true);
-    
 
     assert_return_code(radio_init(), 0);
 }
@@ -63,14 +63,22 @@ static void radio_send_test(void **state)
     uint8_t data[50] = {0};
     uint16_t len = 50;
 
-    
+    expect_value(__wrap_led_set, l, LED_DOWNLINK);
+    will_return(__wrap_led_set, 0);
+
     expect_value(__wrap_si446x_tx_long_packet, packet, data);
     expect_value(__wrap_si446x_tx_long_packet, len, len);
 
     will_return(__wrap_si446x_tx_long_packet, true);
+
+    expect_value(__wrap_led_clear, l, LED_DOWNLINK);
+    will_return(__wrap_led_clear, 0);
+
     will_return(__wrap_si446x_rx_init, true);
 
-    
+    expect_value(__wrap_led_clear, l, LED_DOWNLINK);
+    will_return(__wrap_led_clear, 0);
+
     assert_return_code(radio_send(data, len), 0);
 }
 
@@ -80,7 +88,6 @@ static void radio_recv_test(void **state)
     uint8_t len = 50;
     uint32_t timeout_ms = 100;
     uint16_t i;
-    
 
     will_return(__wrap_si446x_wait_nirq, true);
 
@@ -97,14 +104,12 @@ static void radio_recv_test(void **state)
 
     will_return(__wrap_si446x_rx_init, true);
 
-
     assert_return_code(radio_recv(data, len, timeout_ms), len);
 }
 
 static void radio_sleep_test(void **state)
 {
     will_return(__wrap_si446x_enter_standby_mode, 0);
-
 
     assert_return_code(radio_sleep(), 0);
 }
