@@ -23,9 +23,9 @@
 
 \chapter{Hardware} \label{ch:hardware}
 
-This chapter presents a description about the hardware project of the TTC 2.0 module. As a main reference, a block diagram can be seen in \autoref{fig:hardware-diagram}. Also, a 3D model of both sides of the PCB is available in \autoref{fig:ttc2-3d-surface}.
+This chapter presents a description of the hardware project of the TTC 2.0 module. As the primary reference, a block diagram can be seen in \autoref{fig:hardware-diagram}. Also, a 3D model of both sides of the PCB is available in \autoref{fig:ttc2-3d-surface}.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 	\begin{center}
 		\includegraphics[width=\textwidth]{figures/hardware_diagram.pdf}
 		\caption{Block diagram of the TTC 2.0 hardware.}
@@ -33,7 +33,7 @@ This chapter presents a description about the hardware project of the TTC 2.0 mo
 	\end{center}
 \end{figure}
 
-\begin{figure}[!htb]
+\begin{figure}[!ht]
     \begin{center}
         \subfigure[Upper surface of the TTC 2.0 PCB.\label{fig:ttc2-pcb-top}]{\includegraphics[width=0.48\textwidth]{figures/ttc2_pcb_top}}
         ~
@@ -43,11 +43,11 @@ This chapter presents a description about the hardware project of the TTC 2.0 mo
     \end{center}
 \end{figure}
 
-In the next sections, a further description of the hardware project is presented.
+The following sections present a further description of the hardware project.
 
 \section{Specifications}
 
-The TTC 2.0 has two microcontrollers (MSP430FR6659) that runs at a clock of 32 MHz, a RAM memory of 64 kB (SRAM), and a flash memory of 512 kB for code storage, and another one of 128 kB for data storage. The TTC 2.0 also has current, voltage and temperature sensors, and two radio modules for RF communication. A brief description of the general specifications of the TTC 2.0 module is available below:
+The TTC 2.0 has two microcontrollers (MSP430FR6659) that run at a clock of 32 MHz, a RAM of 64 kB (SRAM), a flash memory of 512 kB for code storage, and another one of 128 kB for data storage. The TTC 2.0 also has current, voltage, and temperature sensors and two radio modules for RF communication. A brief description of the general specifications of the TTC 2.0 module is available below:
 
 \begin{itemize}
     \item \textbf{Microcontroller}: MSP430F6659
@@ -60,7 +60,7 @@ The TTC 2.0 has two microcontrollers (MSP430FR6659) that runs at a clock of 32 M
     \item \textbf{Sensors}: Voltage, current and temperature
     \item \textbf{Modulation}: (G)FSK and/or (G)MSK
     \item \textbf{Baudrate}: 1200 to 9600 bps
-    \item \textbf{Frequency}: 145-146 MHz, 435-438 MHz and/or 450 MHz bands
+    \item \textbf{Frequency}: 145-146 MHz, 435-438 MHz, and/or 450 MHz bands
     \item \textbf{Protocol}: NGHam
     \item \textbf{Interfaces}: UART, I$^{2}$C and SPI
     \item \textbf{Mass}: 73 g
@@ -69,11 +69,11 @@ The TTC 2.0 has two microcontrollers (MSP430FR6659) that runs at a clock of 32 M
 
 \section{Electrical interfaces}
 
-Below, there is a description of all available electrical interfaces of the TTC 2.0 module. The interfaces can be divided in two groups: PC-104 bus and dedicated interfaces.
+Below is a description of all available electrical interfaces of the TTC 2.0 module. The interfaces can be divided into PC-104 bus and dedicated interfaces.
 
 \subsection{PC-104 bus}
 
-The connector referred as PC-104 is a junction of two double row 26 pin headers (\textit{SSW-126-04-G-D} by default). These connectors create a solid 104-pin interconnection across the different satellite modules. \autoref{tab:pc104-pinout} provides the connector pinout\footnote{This pinout is simplified since additional interfaces were omitted.} for the pins that are connected to the module. A reference of the pins' position can also be seen in \autoref{fig:pc104-ref-diagram}, a description of the signal is available in \autoref{tab:pc104-signals}.
+The connector PC-104 is a junction of two double rows 26 pin headers (\textit{SSW-126-04-G-D} by default). These connectors create a solid 104-pin interconnection across the different satellite modules. \autoref{tab:pc104-pinout} provides the connector pinout\footnote{This pinout is simplified since additional interfaces were omitted.} for the pins that are connected to the module. A reference of the pins' position can also be seen in \autoref{fig:pc104-ref-diagram}, and a description of the signal is available in \autoref{tab:pc104-signals}.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -83,7 +83,7 @@ The connector referred as PC-104 is a junction of two double row 26 pin headers 
     \end{center}
 \end{figure}
 
-\begin{table}[!h]
+\begin{table}[!ht]
     \centering
     \begin{tabular}{cllll}
         \toprule[1.5pt]
@@ -121,7 +121,7 @@ The connector referred as PC-104 is a junction of two double row 26 pin headers 
     \label{tab:pc104-pinout}
 \end{table}
 
-\begin{table}[!h]
+\begin{table}[!ht]
     \centering
     \begin{tabular}{lL{0.3\textwidth}l}
         \toprule[1.5pt]
@@ -153,11 +153,11 @@ The connector referred as PC-104 is a junction of two double row 26 pin headers 
     \label{tab:pc104-signals}
 \end{table}
 
-The distribution pattern of pins adopted in this project is a mix of multiple different patterns from CubeSat modules manufacturers, like GomSpace, ISISpace and EnduroSat. Some pins are positioned to attend specific project requirements, this way, it is possible that the adopted pattern is not totally compatible to some commercial modules or other custom projects.
+This project's distribution pattern of pins is a mix of multiple patterns from CubeSat module manufacturers, like GomSpace, ISISpace, and EnduroSat. Some pins are positioned to attend to specific project requirements; this way, it is possible that the adopted pattern is only partially compatible with some commercial modules or other custom projects.
 
 \subsection{Dedicated electrical interfaces}
 
-The module also contains other electrical interfaces through pin headers and PicoBlade connectors that are used to flash code and as debug port of microcontrollers (CN5, CN3, CN4, CN6), and serial communication for status report and log messages (CN7, CN8). The C9 connector is used to switch the TTC 2.0 power supply to the MSP-FET. The CN1 and CN2 is an antenna interface (I$^{2}$C bus and power), and Y0, Y1 are MCX connectors to be used as the RF interface with the antennas. More details of each of these connectors, like the pinout, can be seen in \autoref{tab:icd}.
+The module also contains other electrical interfaces through pin headers and PicoBlade connectors that are used to flash code and as debug port of microcontrollers (CN5, CN3, CN4, CN6) and serial communication for a status report and log messages (CN7, CN8). The C9 connector switches the TTC 2.0 power supply to the MSP-FET. The CN1 and CN2 are antenna interfaces (I$^{2}$C bus and power), and Y0, Y1 are MCX connectors to be used as the RF interface with the antennas. More details of each of these connectors, like the pinout, can be seen in \autoref{tab:icd}.
 
 \begin{longtable}[c]{lcccl}
     \toprule[1.5pt]
@@ -173,6 +173,9 @@ The module also contains other electrical interfaces through pin headers and Pic
                           &  &                           &                            & GND \\
                           &  &                           &                            &  \\
                           &  &                           &                            &  \\
+    \midrule
+    \multicolumn{5}{r}{\textit{Continues on next page}} \\
+    \pagebreak
     \midrule
     \multirow{10}{*}{CN2} & \multirow{10}{*}{\raisebox{-\totalheight}{\includegraphics[width=4cm]{figures/cn2}}} & \multirow{10}{*}{I$^{2}$C} & \multirow{10}{*}{PicoBlade} &  \\
                           &  &                           &                            &  \\
@@ -218,6 +221,9 @@ The module also contains other electrical interfaces through pin headers and Pic
                           &  &                           &                            &  \\
                           &  &                           &                            &  \\
     \midrule
+    \multicolumn{5}{r}{\textit{Continues on next page}} \\
+    \pagebreak
+    \midrule
     \multirow{10}{*}{CN8} & \multirow{10}{*}{\raisebox{-\totalheight}{\includegraphics[width=4cm]{figures/cn8}}} & \multirow{10}{*}{UART} & \multirow{10}{*}{PicoBlade} &  \\
                           &  &                           &                            &  \\
                           &  &                           &                            &  \\
@@ -254,6 +260,9 @@ The module also contains other electrical interfaces through pin headers and Pic
                           &  &                           &                            & UART\_TX \\
                           &  &                           &                            & None \\
                           &  &                           &                            & UART\_RX \\
+    \midrule
+    \multicolumn{5}{r}{\textit{Continues on next page}} \\
+    \pagebreak
     \midrule
     \multirow{14}{*}{CN4} & \multirow{14}{*}{\raisebox{-\totalheight}{\includegraphics[width=4cm]{figures/cn4}}} & \multirow{14}{*}{JTAG} & \multirow{14}{*}{Pin Header} & TDO\_TDI \\
                           &  &                           &                            & 3V3 \\
@@ -298,7 +307,7 @@ The module also contains other electrical interfaces through pin headers and Pic
 
 \section{Mechanical interfaces}
 
-The TTC 2.0 board has four mounting holes to fix the module into the CubeSat mechanical structure. These mounting holes have 3,2 mm of diameter and are positioned on each corner of the PCB. These holes can be seen in Figures \ref{fig:ttc2-pcb-top} and \ref{fig:ttc2-pcb-bottom}.
+The TTC 2.0 board has four mounting holes to fix the module into the CubeSat mechanical structure. These mounting holes are 3,2 mm in diameter and positioned on each corner of the PCB. These holes can be seen in Figures \ref{fig:ttc2-pcb-top} and \ref{fig:ttc2-pcb-bottom}.
 
 \section{Printed Circuit Board (PCB)}
 
@@ -306,11 +315,11 @@ This section presents some detailed information about the PCB of the TTC 2.0 mod
 
 \subsection{Dimensions}
 
-The TTC PCB dimensions follows the industry standards for CubeSats defined by ISISpace and GomSpace, with a size of $89,15$ mm by $92,13$ mm \cite{nasa-handout}. The outline is specific defined to improve the physic integration between the modules and payloads into the mechanical structure. A drawing with the board dimensions is available in \autoref{fig:board-dimensions}.
+The TTC PCB dimensions follow the CubeSats industry standards defined by ISISpace and GomSpace, with a size of $89,15$ mm by $92,13$ mm \cite{nasa-handout}. The outline is specifically defined to improve the physical integration of modules and payloads into the mechanical structure. A drawing with the board dimensions is available in \autoref{fig:board-dimensions}.
 
 \begin{figure}[!ht]
     \begin{center}
-        \includegraphics[width=0.6\textwidth]{figures/board-dimensions.png}
+        \includegraphics[width=0.7\textwidth]{figures/board-dimensions.png}
         \caption{Board dimensions for the TTC 2.0 module.}
         \label{fig:board-dimensions}
     \end{center}
@@ -318,7 +327,7 @@ The TTC PCB dimensions follows the industry standards for CubeSats defined by IS
 
 \subsection{Layout}
 
-The TTC 2.0 module contains only two layers: top and bottom, as presented in Figures \autoref{fig:ttc2-pcb-top} and \autoref{fig:ttc2-pcb-bottom}.
+The TTC 2.0 module contains only two layers: top and bottom, as presented in Figures \ref{fig:ttc2-pcb-top} and \ref{fig:ttc2-pcb-bottom}.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -338,7 +347,7 @@ The TTC 2.0 module contains only two layers: top and bottom, as presented in Fig
 
 To design the layout, the Altium Designer\footnote{\href{https://www.altium.com/}{https://www.altium.com/}} software was used.
 
-To test and develop the module, simple PCBs with common manufacturing specifications were used. These PCBs were defined as Engineering Models (EM\nomenclature{\textbf{EM}}{\textit{Engineering Model.}}). The Flight Model (FM\nomenclature{\textbf{FM}}{\textit{Flight Model.}}, or the boards that flights with the satellite) of the boards have the following manufacturing specifications:
+Simple PCBs with common manufacturing specifications were used to test and develop the module. These PCBs were defined as Engineering Models (EM\nomenclature{\textbf{EM}}{\textit{Engineering Model.}}). The Flight Model (FM\nomenclature{\textbf{FM}}{\textit{Flight Model.}}, or the boards that fly with the satellite) of the boards have the following manufacturing specifications:
 
 \begin{itemize}
     \item \textbf{PCB specs.}: IPC 6012 Class 3
@@ -350,19 +359,19 @@ To test and develop the module, simple PCBs with common manufacturing specificat
 
 \section{Peripherals}
 
-The TTC 2.0 have some peripherals besides the microcontrollers, like sensors, watchdog timers and radio modules. These peripherals are better described in this section.
+The TTC 2.0 have some peripherals besides the microcontrollers, like sensors, watchdog timers, and radio modules. These peripherals are better described in this section.
 
 \subsection{Power sensor}
 
-The board has power sensors (model INA226AQDGSRQ1 from Texas Instruments) that uses an I$^{2}$C interface to communicate with the microcontroller. There is four of this sensors in the module, one for each microcontroller and one for each radio module. It monitors voltage and current from a given bus through a shunt resistor (with a resistance of $0,1$ $\Omega$). The final measurement is continuous and made by an average of 128 measurements with an interval of 588 $\mu$s between each other.
+The board has power sensors (model INA226AQDGSRQ1 from Texas Instruments) that use an I$^{2}$C interface to communicate with the microcontroller. There are four of these sensors in the module, one for each microcontroller and one for each radio module. It monitors voltage and current from a given bus through a shunt resistor (with a resistance of $0,1$ $\Omega$). The final measurement is continuous and made by an average of 128 measurements with an interval of 588 $\mu$s between each other.
 
 \subsection{External watchdog timer}
 
-Besides the internal watchdog of the microcontroller, there is also a redundant external one. For that, the TPS3823 IC from Texas Instruments is used. It has an integrated voltage monitor and an watchdog timer, with a timeout of 1600 ms. The boards have two of these ICs, one for each microcontroller.
+Besides the internal watchdog of the microcontroller, there is also a redundant external one. For that, the TPS3823 IC from Texas Instruments is used. It has an integrated voltage monitor and a watchdog timer, with a timeout of 1600 ms. The boards have two of these ICs, one for each microcontroller.
 
 \subsection{Radio module}
 
-One of the main components of the board is the radio module (NiceRF RF4463F30), that uses an SPI interface to be controlled by the microcontroller. The radio has dedidatec power source of 5V directly from the PC-104 bus. The output power of the RF signal generated by the radio is 30 dBm (1 W). The radio is half-duplex, has integrated power amplifier and a RF switch, as can be seen in \autoref{fig:rf4463f30-block-diagram}.
+One of the main components of the board is the radio module (NiceRF RF4463F30), which uses an SPI interface to be controlled by the microcontroller. The radio has a dedicated power source of 5V directly from the PC-104 bus. The output power of the RF signal generated by the radio is 30 dBm (1 W). The radio is half-duplex and has an integrated power amplifier and an RF switch, as shown in \autoref{fig:rf4463f30-block-diagram}.
 
 \begin{figure}[!ht]
     \begin{center}
