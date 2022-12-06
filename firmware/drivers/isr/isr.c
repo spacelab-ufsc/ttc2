@@ -78,7 +78,6 @@ void isr_disable(void)
 
 /* Interrupt Service Routines */
 
-
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
