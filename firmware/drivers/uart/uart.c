@@ -280,7 +280,9 @@ int uart_rx_enable(uart_port_t port)
 
     if (err == 0)
     {
+        USCI_A_UART_clearInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
         USCI_A_UART_enableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
+        isr_enable();
     }
 
     return err;
