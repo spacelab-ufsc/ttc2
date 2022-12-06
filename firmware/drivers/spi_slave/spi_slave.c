@@ -304,7 +304,7 @@ int spi_slave_enable_isr(spi_port_t port)
 
         break;
     }
-
+    if (err == 0)   isr_enable();
     return err;
 }
 
