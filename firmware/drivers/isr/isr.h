@@ -58,4 +58,18 @@ extern queue_t uart_port_0_rx_buffer;
 extern queue_t uart_port_1_rx_buffer;
 extern queue_t uart_port_2_rx_buffer;
 
+/**
+ * \brief Enables the interruption service routines.
+ *
+ * \return None.
+ */
+void isr_enable(void);
+
+/**
+ * \brief Disables the interruption service routines.
+ *
+ * \return None.
+ */
+void isr_disable(void);
+
 #endif /* ISR_H_ */
