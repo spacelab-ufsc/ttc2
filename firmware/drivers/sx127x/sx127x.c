@@ -82,7 +82,22 @@ int sx127x_init(void)
 
 int sx127x_rx_init(void)
 {
-    return -1;
+    int err = -1;
+    if(header_mode == SX127X_IMPLICIT_HEADER_MODE)   sx127x_set_payload_len(payload_length);
+
+    /*Enable RxDoneIrq */
+    sx127x_set_rx_interrupt();
+
+    /* Clear IRQ Flag */
+    sx127x_clear_interrupt();
+
+    /* Set FIFO address */
+    sx127x_set_fifo_addr_ptr(SX127X_REG_FIFO_RX_BASE_ADDR);
+
+    /* Start RX */
+    err = sx127x_enter_rx_mode();
+
+    return err;
 }
 
 int sx127x_tx_packet(uint8_t *data, uint16_t len)
