@@ -38,25 +38,42 @@
 #define ISR_H_
 #include <libs/containers/queue.h>
 
-/* SPI Slave buffers */
-extern queue_t spi_port_0_rx_buffer;
-extern queue_t spi_port_1_rx_buffer;
-extern queue_t spi_port_2_rx_buffer;
-extern queue_t spi_port_3_rx_buffer;
-extern queue_t spi_port_4_rx_buffer;
-extern queue_t spi_port_5_rx_buffer;
+typedef enum
+{
+    ISR_NO_CONFIG=0,           /**< Port not configured. */
+    ISR_UART_CONFIG,            /**< Port configured as UART. */
+    ISR_SPI_CONFIG,            /**< Port configured as SPI. */
+    ISR_I2C_CONFIG             /**< Port configured as I2C. */
+} isr_ports_e;
 
-extern queue_t spi_port_0_tx_buffer;
-extern queue_t spi_port_1_tx_buffer;
-extern queue_t spi_port_2_tx_buffer;
-extern queue_t spi_port_3_tx_buffer;
-extern queue_t spi_port_4_tx_buffer;
-extern queue_t spi_port_5_tx_buffer;
+/* Ports config */
+isr_ports_e isr_a0_bus;
+isr_ports_e isr_a1_bus;
+isr_ports_e isr_a2_bus;
 
-/* UART buffers */
-extern queue_t uart_port_0_rx_buffer;
-extern queue_t uart_port_1_rx_buffer;
-extern queue_t uart_port_2_rx_buffer;
+isr_ports_e isr_b0_bus;
+isr_ports_e isr_b1_bus;
+isr_ports_e isr_b2_bus;
+
+/* Queue UART Buffers */
+queue_t uart_port_0_rx_buffer;
+queue_t uart_port_1_rx_buffer;
+queue_t uart_port_2_rx_buffer;
+
+/* Queue SPI Slave Buffers */
+queue_t spi_port_0_rx_buffer;
+queue_t spi_port_1_rx_buffer;
+queue_t spi_port_2_rx_buffer;
+queue_t spi_port_3_rx_buffer;
+queue_t spi_port_4_rx_buffer;
+queue_t spi_port_5_rx_buffer;
+
+queue_t spi_port_0_tx_buffer;
+queue_t spi_port_1_tx_buffer;
+queue_t spi_port_2_tx_buffer;
+queue_t spi_port_3_tx_buffer;
+queue_t spi_port_4_tx_buffer;
+queue_t spi_port_5_tx_buffer;
 
 /**
  * \brief Enables the interruption service routines.
