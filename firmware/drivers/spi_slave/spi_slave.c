@@ -133,9 +133,9 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
     if (err == 0)
     {
-        spi_slave_setup_gpio(port);
+        err = spi_slave_setup_gpio(port);
 
-        if ((base_address == USCI_A0_BASE) || (base_address == USCI_A1_BASE) || (base_address == USCI_A2_BASE))
+        if ((err == 0) && (((base_address == USCI_A0_BASE) || (base_address == USCI_A1_BASE) || (base_address == USCI_A2_BASE))))
         {
 
             /* SPI mode */
@@ -188,7 +188,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             }
        }
 
-       else
+       else if ((err == 0) && (((base_address == USCI_B0_BASE) || (base_address == USCI_B1_BASE) || (base_address == USCI_B2_BASE))))
        {
            /* SPI mode */
            switch(config.mode)
@@ -239,18 +239,25 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
            err = -1;   /* Error initialising the SPI port */
            }
        }
-     if (err == 0)
-     {
-         switch(base_address)
-         {
-         case USCI_A0_BASE:   isr_a0_bus = ISR_SPI_CONFIG;   break;
-         case USCI_A1_BASE:   isr_a1_bus = ISR_SPI_CONFIG;   break;
-         case USCI_A2_BASE:   isr_a2_bus = ISR_SPI_CONFIG;   break;
-         case USCI_B0_BASE:   isr_b0_bus = ISR_SPI_CONFIG;   break;
-         case USCI_B1_BASE:   isr_b1_bus = ISR_SPI_CONFIG;   break;
-         case USCI_B2_BASE:   isr_b2_bus = ISR_SPI_CONFIG;   break;
-         }
-     }
+       else
+       {
+       }
+        if (err == 0)
+        {
+            switch(base_address)
+            {
+            case USCI_A0_BASE:   isr_a0_bus = ISR_SPI_CONFIG;   break;
+            case USCI_A1_BASE:   isr_a1_bus = ISR_SPI_CONFIG;   break;
+            case USCI_A2_BASE:   isr_a2_bus = ISR_SPI_CONFIG;   break;
+            case USCI_B0_BASE:   isr_b0_bus = ISR_SPI_CONFIG;   break;
+            case USCI_B1_BASE:   isr_b1_bus = ISR_SPI_CONFIG;   break;
+            case USCI_B2_BASE:   isr_b2_bus = ISR_SPI_CONFIG;   break;
+            default:   break;
+            }
+        }
+        else
+        {
+        }
     }
     return err;
 }
@@ -336,7 +343,10 @@ int spi_slave_enable_isr(spi_port_t port)
 
         break;
     }
-    if (err == 0)   isr_enable();
+    if (err == 0)
+    {
+        isr_enable();
+    }
     return err;
 }
 
@@ -520,7 +530,7 @@ int spi_slave_read(spi_port_t port, uint8_t *data,uint16_t len)
 {
     int err = 0;
 
-    if (port == SPI_PORT_0 || port == SPI_PORT_1 || port == SPI_PORT_2 || port == SPI_PORT_3 || port == SPI_PORT_4 || port == SPI_PORT_5)
+    if ((port == SPI_PORT_0) || (port == SPI_PORT_1) || (port == SPI_PORT_2) || (port == SPI_PORT_3) || (port == SPI_PORT_4) || (port == SPI_PORT_5))
     {
         err = spi_read_isr_rx_buffer(port, data, len);
     }
