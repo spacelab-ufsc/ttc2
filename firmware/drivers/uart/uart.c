@@ -153,6 +153,8 @@ int uart_init(uart_port_t port, uart_config_t config)
         case UART_PORT_0:
             base_address = USCI_A0_BASE;
 
+            isr_a0_bus = ISR_UART_CONFIG;
+
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN4 + GPIO_PIN5);
 
             queue_init(&uart_port_0_rx_buffer);
@@ -161,6 +163,8 @@ int uart_init(uart_port_t port, uart_config_t config)
         case UART_PORT_1:
             base_address = USCI_A1_BASE;
 
+            isr_a1_bus = ISR_UART_CONFIG;
+
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN2 + GPIO_PIN3);
 
             queue_init(&uart_port_1_rx_buffer);
@@ -168,6 +172,8 @@ int uart_init(uart_port_t port, uart_config_t config)
             break;
         case UART_PORT_2:
             base_address = USCI_A2_BASE;
+
+            isr_a2_bus = ISR_UART_CONFIG;
 
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN2 + GPIO_PIN3);
 
