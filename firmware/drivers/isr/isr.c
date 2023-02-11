@@ -33,7 +33,6 @@
  * \{
  */
 
-
 #include <hal/usci_a_uart.h>
 #include <hal/usci_a_spi.h>
 #include <hal/usci_b_spi.h>
@@ -45,26 +44,18 @@
 #include "drivers/uart/uart.h"
 #include "libs/containers/queue.h"
 
+#include "isr.h"
 
-/* Queue UART Buffers */
-queue_t uart_port_0_rx_buffer;
-queue_t uart_port_1_rx_buffer;
-queue_t uart_port_2_rx_buffer;
+void isr_init(void)
+{
+    isr_a0_bus = ISR_NO_CONFIG;
+    isr_a1_bus = ISR_NO_CONFIG;
+    isr_a2_bus = ISR_NO_CONFIG;
 
-/* Queue SPI Slave Buffers */
-queue_t spi_port_0_rx_buffer;
-queue_t spi_port_1_rx_buffer;
-queue_t spi_port_2_rx_buffer;
-queue_t spi_port_3_rx_buffer;
-queue_t spi_port_4_rx_buffer;
-queue_t spi_port_5_rx_buffer;
-
-queue_t spi_port_0_tx_buffer;
-queue_t spi_port_1_tx_buffer;
-queue_t spi_port_2_tx_buffer;
-queue_t spi_port_3_tx_buffer;
-queue_t spi_port_4_tx_buffer;
-queue_t spi_port_5_tx_buffer;
+    isr_b0_bus = ISR_NO_CONFIG;
+    isr_b1_bus = ISR_NO_CONFIG;
+    isr_b2_bus = ISR_NO_CONFIG;
+}
 
 void isr_enable(void)
 {
@@ -81,122 +72,184 @@ void isr_disable(void)
 #pragma vector=USCI_A0_VECTOR
 __interrupt void USCI_A0_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+    switch(isr_a0_bus)
     {
-        queue_push_back(&uart_port_0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_0_rx_buffer, USCI_A_SPI_receiveData(USCI_A0_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_UART_CONFIG:
+        if (USCI_A_UART_getInterruptStatus(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+            {
+                queue_push_back(&uart_port_0_rx_buffer, USCI_A_UART_receiveData(USCI_A0_BASE));
+                USCI_A_UART_clearInterrupt(USCI_A0_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
+            }
+        break;
+
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_A_SPI_transmitData(USCI_A0_BASE, queue_pop_front(&spi_port_0_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_0_rx_buffer, USCI_A_SPI_receiveData(USCI_A0_BASE));
+        break;
+
+    default:   break;
     }
 }
 
 #pragma vector=USCI_A1_VECTOR
 __interrupt void USCI_A1_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+    switch(isr_a1_bus)
     {
-        queue_push_back(&uart_port_1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_1_rx_buffer, USCI_A_SPI_receiveData(USCI_A1_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_UART_CONFIG:
+        if (USCI_A_UART_getInterruptStatus(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+            {
+                queue_push_back(&uart_port_1_rx_buffer, USCI_A_UART_receiveData(USCI_A1_BASE));
+                USCI_A_UART_clearInterrupt(USCI_A1_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
+            }
+        break;
+
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_A_SPI_transmitData(USCI_A1_BASE, queue_pop_front(&spi_port_1_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_1_rx_buffer, USCI_A_SPI_receiveData(USCI_A1_BASE));
+        break;
+
+    default:   break;
     }
 }
+
 
 #pragma vector=USCI_A2_VECTOR
 __interrupt void USCI_A2_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+    switch(isr_a2_bus)
     {
-        queue_push_back(&uart_port_2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
-        USCI_A_UART_clearInterrupt(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT) == USCI_A_SPI_RECEIVE_INTERRUPT)
-    {
-        queue_push_back(&spi_port_2_rx_buffer, USCI_A_SPI_receiveData(USCI_A2_BASE));
-        USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT) == USCI_A_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_UART_CONFIG:
+        if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
+            {
+                queue_push_back(&uart_port_2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
+                USCI_A_UART_clearInterrupt(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
+            }
+        break;
+
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_A_SPI_transmitData(USCI_A2_BASE, queue_pop_front(&spi_port_2_tx_buffer));
-        USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_2_rx_buffer, USCI_A_SPI_receiveData(USCI_A2_BASE));
+        break;
+
+    default:   break;
     }
 }
 
 #pragma vector=USCI_B0_VECTOR
 __interrupt void USCI_B0_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
+    switch(isr_b0_bus)
     {
-        queue_push_back(&spi_port_3_rx_buffer, USCI_B_SPI_receiveData(USCI_B0_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_B_SPI_transmitData(USCI_B0_BASE, queue_pop_front(&spi_port_3_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_3_rx_buffer, USCI_B_SPI_receiveData(USCI_B0_BASE));
+        break;
+
+    default:   break;
     }
 }
-
 #pragma vector=USCI_B1_VECTOR
 __interrupt void USCI_B1_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
+    switch(isr_b1_bus)
     {
-        queue_push_back(&spi_port_4_rx_buffer, USCI_B_SPI_receiveData(USCI_B1_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_B_SPI_transmitData(USCI_B1_BASE, queue_pop_front(&spi_port_4_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_4_rx_buffer, USCI_B_SPI_receiveData(USCI_B1_BASE));
+        break;
+
+    default:   break;
     }
 }
-
 __interrupt void USCI_B2_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
-    if (USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT) == USCI_B_SPI_RECEIVE_INTERRUPT)
+    switch(isr_b2_bus)
     {
-        queue_push_back(&spi_port_5_rx_buffer, USCI_B_SPI_receiveData(USCI_B1_BASE));
-        USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-    }
-    else if (USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT) == USCI_B_SPI_TRANSMIT_INTERRUPT)
-    {
+    case ISR_NO_CONFIG:   break;
+    case ISR_SPI_CONFIG:
+        /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
+         * for different frequencies beyond 100 kHz*/
+        __delay_cycles(420);
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT))
+        {
+        }
+
         USCI_B_SPI_transmitData(USCI_B2_BASE, queue_pop_front(&spi_port_5_tx_buffer));
-        USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_TRANSMIT_INTERRUPT);
-    }
-    else
-    {
+
+        while (!USCI_B_SPI_getInterruptStatus(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT))
+        {
+        }
+
+        queue_push_back(&spi_port_5_rx_buffer, USCI_B_SPI_receiveData(USCI_B2_BASE));
+        break;
+
+    default:   break;
     }
 }
 
