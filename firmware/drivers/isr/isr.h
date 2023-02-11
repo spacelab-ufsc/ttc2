@@ -47,33 +47,40 @@ typedef enum
 } isr_ports_e;
 
 /* Ports config */
-isr_ports_e isr_a0_bus;
-isr_ports_e isr_a1_bus;
-isr_ports_e isr_a2_bus;
+isr_ports_e isr_a0_bus; // cppcheck-suppress misra-c2012-8.4
+isr_ports_e isr_a1_bus; // cppcheck-suppress misra-c2012-8.4
+isr_ports_e isr_a2_bus; // cppcheck-suppress misra-c2012-8.4
 
-isr_ports_e isr_b0_bus;
-isr_ports_e isr_b1_bus;
-isr_ports_e isr_b2_bus;
+isr_ports_e isr_b0_bus; // cppcheck-suppress misra-c2012-8.4
+isr_ports_e isr_b1_bus; // cppcheck-suppress misra-c2012-8.4
+isr_ports_e isr_b2_bus; // cppcheck-suppress misra-c2012-8.4
 
 /* Queue UART Buffers */
-queue_t uart_port_0_rx_buffer;
-queue_t uart_port_1_rx_buffer;
-queue_t uart_port_2_rx_buffer;
+queue_t uart_port_0_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t uart_port_1_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t uart_port_2_rx_buffer; // cppcheck-suppress misra-c2012-8.4
 
 /* Queue SPI Slave Buffers */
-queue_t spi_port_0_rx_buffer;
-queue_t spi_port_1_rx_buffer;
-queue_t spi_port_2_rx_buffer;
-queue_t spi_port_3_rx_buffer;
-queue_t spi_port_4_rx_buffer;
-queue_t spi_port_5_rx_buffer;
+queue_t spi_port_0_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_1_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_2_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_3_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_4_rx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_5_rx_buffer; // cppcheck-suppress misra-c2012-8.4
 
-queue_t spi_port_0_tx_buffer;
-queue_t spi_port_1_tx_buffer;
-queue_t spi_port_2_tx_buffer;
-queue_t spi_port_3_tx_buffer;
-queue_t spi_port_4_tx_buffer;
-queue_t spi_port_5_tx_buffer;
+queue_t spi_port_0_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_1_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_2_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_3_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_4_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+queue_t spi_port_5_tx_buffer; // cppcheck-suppress misra-c2012-8.4
+
+/**
+ * \brief Starts isr buffers with no configuration.
+ *
+ * \return None.
+ */
+void isr_init(void);
 
 /**
  * \brief Enables the interruption service routines.
