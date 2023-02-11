@@ -92,15 +92,39 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
     switch(port)
     {
-        case SPI_PORT_0:    base_address = USCI_A0_BASE;    break;
-        case SPI_PORT_1:    base_address = USCI_A1_BASE;    break;
-        case SPI_PORT_2:    base_address = USCI_A2_BASE;    break;
-        case SPI_PORT_3:    base_address = USCI_B0_BASE;    break;
-        case SPI_PORT_4:    base_address = USCI_B1_BASE;    break;
-        case SPI_PORT_5:    base_address = USCI_B2_BASE;    break;
+        case SPI_PORT_0:
+            base_address = USCI_A0_BASE;
+            queue_init(&spi_port_0_rx_buffer);
+            queue_init(&spi_port_0_tx_buffer);
+            break;
+        case SPI_PORT_1:
+            base_address = USCI_A1_BASE;
+            queue_init(&spi_port_1_rx_buffer);
+            queue_init(&spi_port_1_tx_buffer);
+            break;
+        case SPI_PORT_2:
+            base_address = USCI_A2_BASE;
+            queue_init(&spi_port_2_rx_buffer);
+            queue_init(&spi_port_2_tx_buffer);
+            break;
+        case SPI_PORT_3:
+            base_address = USCI_B0_BASE;
+            queue_init(&spi_port_3_rx_buffer);
+            queue_init(&spi_port_3_tx_buffer);
+            break;
+        case SPI_PORT_4:
+            base_address = USCI_B1_BASE;
+            queue_init(&spi_port_4_rx_buffer);
+            queue_init(&spi_port_4_tx_buffer);
+            break;
+        case SPI_PORT_5:
+            base_address = USCI_B2_BASE;
+            queue_init(&spi_port_5_rx_buffer);
+            queue_init(&spi_port_5_tx_buffer);
+            break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid port!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid port!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;   /* Invalid SPI port */
@@ -136,7 +160,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                      break;
                  default:
                  #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                     sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid mode!");
+                     sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid mode!");
                      sys_log_new_line();
                 #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                      err = -1;   /* Invalid SPI mode */
@@ -160,7 +184,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                 sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error configuring as slave!");
                 sys_log_new_line();
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-            err = -1;   /* Error initializing the SPI port */
+            err = -1;   /* Error initialising the SPI port */
             }
        }
 
@@ -193,6 +217,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                     err = -1;   /* Invalid SPI mode */
                     break;
             }
+
            if (USCI_B_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
            {
                switch(config.mode)
@@ -211,10 +236,21 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error configuring as slave!");
                sys_log_new_line();
            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-           err = -1;   /* Error initializing the SPI port */
+           err = -1;   /* Error initialising the SPI port */
            }
-
        }
+     if (err == 0)
+     {
+         switch(base_address)
+         {
+         case USCI_A0_BASE:   isr_a0_bus = ISR_SPI_CONFIG;   break;
+         case USCI_A1_BASE:   isr_a1_bus = ISR_SPI_CONFIG;   break;
+         case USCI_A2_BASE:   isr_a2_bus = ISR_SPI_CONFIG;   break;
+         case USCI_B0_BASE:   isr_b0_bus = ISR_SPI_CONFIG;   break;
+         case USCI_B1_BASE:   isr_b1_bus = ISR_SPI_CONFIG;   break;
+         case USCI_B2_BASE:   isr_b2_bus = ISR_SPI_CONFIG;   break;
+         }
+     }
     }
     return err;
 }
@@ -224,23 +260,23 @@ static int spi_slave_setup_gpio(spi_port_t port)
     int err = 0;
     switch(port)
     {
-        case SPI_PORT_0:                                            //MOSI       MISO         SCLK
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN4 + GPIO_PIN5 + GPIO_PIN0);
+        case SPI_PORT_0:
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN3 + GPIO_PIN4 + GPIO_PIN5 + GPIO_PIN0);
             break;
         case SPI_PORT_1:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN1);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN4 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN1);
             break;
         case SPI_PORT_2:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN4 + GPIO_PIN2 + GPIO_PIN3);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN4);
             break;
         case SPI_PORT_3:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
             break;
         case SPI_PORT_4:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN1 + GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
             break;
         case SPI_PORT_5:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN9 + GPIO_PIN5 + GPIO_PIN6 + GPIO_PIN4);
             break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -262,39 +298,35 @@ int spi_slave_enable_isr(spi_port_t port)
     switch(port)
     {
         case SPI_PORT_0:
-            {
                 USCI_A_SPI_clearInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-                USCI_A_SPI_enableInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);
+                USCI_A_SPI_enableInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
                 break;
-            }
+
         case SPI_PORT_1:
-            {
                 USCI_A_SPI_clearInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-                USCI_A_SPI_enableInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);
+                USCI_A_SPI_enableInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
                 break;
-            }
+
         case SPI_PORT_2:
-            {
                 USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-                USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);
+                USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
                 break;
-            }
+
         case SPI_PORT_3:
-            {
                 USCI_B_SPI_clearInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-                USCI_B_SPI_enableInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);
+                USCI_B_SPI_enableInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
                 break;
-            }
+
         case SPI_PORT_4:
-            {
                 USCI_B_SPI_clearInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-                USCI_B_SPI_enableInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);
+                USCI_B_SPI_enableInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
                 break;
-            }
+
         case SPI_PORT_5:
             USCI_B_SPI_clearInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
-            USCI_B_SPI_enableInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);
+            USCI_B_SPI_enableInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);
             break;
+
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
             sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during enabling interruption: Invalid port!");
@@ -314,12 +346,12 @@ int spi_slave_disable_isr(spi_port_t port)
 
     switch(port)
     {
-        case SPI_PORT_0:    USCI_A_SPI_disableInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);    break;
-        case SPI_PORT_1:    USCI_A_SPI_disableInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);    break;
-        case SPI_PORT_2:    USCI_A_SPI_disableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT | USCI_A_SPI_TRANSMIT_INTERRUPT);    break;
-        case SPI_PORT_3:    USCI_B_SPI_disableInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);    break;
-        case SPI_PORT_4:    USCI_B_SPI_disableInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);    break;
-        case SPI_PORT_5:    USCI_B_SPI_disableInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT | USCI_B_SPI_TRANSMIT_INTERRUPT);    break;
+        case SPI_PORT_0:    USCI_A_SPI_disableInterrupt(USCI_A0_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);    break;
+        case SPI_PORT_1:    USCI_A_SPI_disableInterrupt(USCI_A1_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);    break;
+        case SPI_PORT_2:    USCI_A_SPI_disableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);    break;
+        case SPI_PORT_3:    USCI_B_SPI_disableInterrupt(USCI_B0_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);    break;
+        case SPI_PORT_4:    USCI_B_SPI_disableInterrupt(USCI_B1_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);    break;
+        case SPI_PORT_5:    USCI_B_SPI_disableInterrupt(USCI_B2_BASE, USCI_B_SPI_RECEIVE_INTERRUPT);    break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
             sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during disabling interruption: Invalid port!");
@@ -519,7 +551,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
             case SPI_PORT_5:    queue = &spi_port_5_tx_buffer;   break;
             default:
             #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid port!");
+                sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid port!");
                 sys_log_new_line();
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                 err = -1;   /* Invalid SPI port */
@@ -572,7 +604,7 @@ uint16_t spi_slave_bytes_not_sent(spi_port_t port)
         case SPI_PORT_5:   bytes_not_sent = queue_size(&spi_port_5_tx_buffer);  break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during reading tx buffer unsent bytes: Invalid port!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during reading TX buffer unsent bytes: Invalid port!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             break;
