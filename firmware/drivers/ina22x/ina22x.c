@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.2
+ * \version 0.3.1
  * 
  * \date 2022/07/19
  * 
@@ -114,7 +114,7 @@ int ina22x_init(ina22x_config_t config)
     if (i2c_init(config.i2c_port, config.i2c_conf) == 0)
     {
         /* Sets ina22x to default */
-        if (ina22x_write_reg(config, INA22X_REG_CONFIGURATION, 0x8000) == 0)
+        if (ina22x_write_reg(config, INA22X_REG_CONFIGURATION, 0x8000U) == 0)
         {
             err = 0;
         }
@@ -278,7 +278,7 @@ static int ina22x_get_voltage_raw(ina22x_config_t config, ina22x_voltage_device_
 
         if (ina22x_read_reg(config, target_reg, &voltage_reg) == 0)
         {
-            *volt = (ina22x_voltage_t)voltage_reg;
+            *volt = voltage_reg;
         }
         else
         {

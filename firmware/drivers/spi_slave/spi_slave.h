@@ -1,7 +1,7 @@
 /*
  * spi_slave.h
  *
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  *
  * This file is part of TTC 2.0.
  *
@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.0.1
+ * \version 0.3.1
  *
  * \date 2022/05/21
  *
@@ -39,6 +39,8 @@
 #define DRIVERS_SPI_SLAVE_SPI_SLAVE_H_
 
 #define SPI_SLAVE_MODULE_NAME         "SPI_SLAVE"
+
+#include <drivers/spi/spi.h>
 
 /**
  * \brief SPI Slave port initialization.
@@ -76,7 +78,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config);
  *
  * \return The status/error code.
  */
-int spi_slave_enable(spi_port_t port);
+int spi_slave_enable_isr(spi_port_t port);
 
 /**
  * \brief Disables SPI Slave port interruption.
@@ -94,7 +96,7 @@ int spi_slave_enable(spi_port_t port);
  *
  * \return The status/error code.
  */
-int spi_slave_disable(spi_port_t port);
+int spi_slave_disable_isr(spi_port_t port);
 
 /**
  * \brief Reads the number of data bytes available to be read from the buffer.
