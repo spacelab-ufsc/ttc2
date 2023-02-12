@@ -1,5 +1,5 @@
 /*
- * uart.h
+ * isr.h
  *
  * Copyright The TTC 2.0 Contributors.
  *
@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.0.1
+ * \version 0.3.1
  *
  * \date 2022/05/26
  *
@@ -36,14 +36,15 @@
 
 #ifndef ISR_H_
 #define ISR_H_
+
 #include <libs/containers/queue.h>
 
 typedef enum
 {
-    ISR_NO_CONFIG=0,           /**< Port not configured. */
-    ISR_UART_CONFIG,            /**< Port configured as UART. */
-    ISR_SPI_CONFIG,            /**< Port configured as SPI. */
-    ISR_I2C_CONFIG             /**< Port configured as I2C. */
+    ISR_NO_CONFIG=0,    /**< Port not configured. */
+    ISR_UART_CONFIG,    /**< Port configured as UART. */
+    ISR_SPI_CONFIG,     /**< Port configured as SPI. */
+    ISR_I2C_CONFIG      /**< Port configured as I2C. */
 } isr_ports_e;
 
 /* Ports config */
