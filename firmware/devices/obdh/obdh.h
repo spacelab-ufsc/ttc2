@@ -89,8 +89,6 @@ typedef struct
  */
 int obdh_init(void);
 
-int obdh_read_instruction(void);
-
-int obdh_send_data(void);
+int obdh_read_request(obdh_request_t *obdh_request);
 
 #endif /* DEVICES_OBDH_H_ */
