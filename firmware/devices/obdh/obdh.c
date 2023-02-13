@@ -87,10 +87,9 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                 break;
             case OBDH_CMD_TRANSMIT_PACKET:
-                //TODO
+                //TODO: Implement code to receive the packet to be transmitted.
                 break;
             case OBDH_CMD_READ_FIRST_PACKET:
-                //TODO
                 break;
             default:
             #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -112,6 +111,15 @@ int obdh_read_request(obdh_request_t *obdh_request)
     else
     {
     }
+
+    return err;
+}
+
+int obdh_send_packet(uint8_t *packet, uint16_t len)
+{
+    int err = -1;
+
+    err = spi_slave_write(SPI_PORT_2, packet, len);
 
     return err;
 }

@@ -89,6 +89,24 @@ typedef struct
  */
 int obdh_init(void);
 
+/**
+ * \brief OBDH read request from SPI RX buffer.
+ *
+ * \param[in] *obdh_request is the structure to store the received information.
+ *
+ * \return The status/error code.
+ */
 int obdh_read_request(obdh_request_t *obdh_request);
+
+/**
+ * \brief Sends packets to OBDH.
+ *
+ * \param[in] *packet is a pointer to the packet array.
+ *
+ * \param[in] *len is the size of the packet array.
+ *
+ * \return The status/error code.
+ */
+int obdh_send_packet(uint8_t *packet, uint16_t len);
 
 #endif /* DEVICES_OBDH_H_ */
