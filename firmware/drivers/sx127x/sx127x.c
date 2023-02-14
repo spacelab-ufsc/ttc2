@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.21
+ * \version 0.3.2
  * 
  * \date 2021/12/14
  * 
@@ -38,8 +38,8 @@
 
 #include "sx127x.h"
 
-uint8_t header_mode;
-uint8_t payload_length = 0;
+static uint8_t header_mode;
+static uint8_t payload_length = 0;
 
 int sx127x_init(void)
 {
@@ -82,7 +82,22 @@ int sx127x_init(void)
 
 int sx127x_rx_init(void)
 {
-    return -1;
+    int err = -1;
+    if(header_mode == SX127X_IMPLICIT_HEADER_MODE)   sx127x_set_payload_len(payload_length);
+
+    /*Enable RxDoneIrq */
+    sx127x_set_rx_interrupt();
+
+    /* Clear IRQ Flag */
+    sx127x_clear_interrupt();
+
+    /* Set FIFO address */
+    sx127x_set_fifo_addr_ptr(SX127X_REG_FIFO_RX_BASE_ADDR);
+
+    /* Start RX */
+    err = sx127x_enter_rx_mode();
+
+    return err;
 }
 
 int sx127x_tx_packet(uint8_t *data, uint16_t len)
@@ -415,7 +430,7 @@ int sx127x_set_payload_len(uint8_t len)
     return sx127x_write_reg(SX127X_REG_PAYLOAD_LENGTH, len);
 }
 
-int sx127x_tx_power(uint8_t pwr)
+int sx127x_set_tx_power(uint8_t pwr)
 {
     int err = -1;
 
@@ -536,7 +551,58 @@ int sx127x_power_on_reset(void)
 
 int sx127x_config(void)
 {
-    return -1;
+    /* Sleep mode */
+    sx127x_write_reg(SX127X_REG_OP_MODE, SX127X_OP_MODE_SLEEP | SX127X_FREQUENCY_BAND);
+    sx127x_delay_ms(5);
+
+    /* External Crystal */
+    sx127x_write_reg(SX127X_REG_TCXO, SX127X_TCXO_EXT_CRYSTAL | SX127X_TCXO_REGTCXO_RESERVED);
+
+    /* LoRa Mode */
+    sx127x_write_reg(SX127X_REG_OP_MODE, SX127X_LONG_RANGE_MODE_LORA | SX127X_FREQUENCY_BAND);
+
+    /* Setting Frequency */
+    sx127x_set_frequency(433500000);
+
+    /* Maximum Power, 20 dB */
+    sx127x_set_tx_power(0x0f);
+
+    /* Close OCP */
+    sx127x_write_reg(SX127X_REG_OCP, SX127X_OCPON_OFF| 0x0B);
+    //sx127x_write_reg(adr, val)
+
+    /* Enable LNA */
+    sx127x_write_reg(SX127X_REG_LNA, SX127X_LNA_GAIN_G1 | SX127X_LNA_BOOSTHF_1);
+
+    /* RF Params */
+    /*BW = 62.5 Hz, spreading factor = 9, coding rate = 4/5, explicit header mode */
+    header_mode = SX127X_EXPLICIT_HEADER_MODE;
+    sx127x_set_header_mode(header_mode);
+    sx127x_set_rf_param(SX127X_BW_62P5K, SX127X_CODING_RATE_1P25, SX127X_SPREADING_FACTOR_9, SX127X_PAYLOAD_CRC_ON);
+
+    /* LNA */
+    sx127x_write_reg(SX127X_REG_MODEM_CONFIG_3, SX127X_LOWDATARATEOPTIMIZE_DSBLD);
+
+    /* Maximum RX time out */
+    sx127x_set_rx_timeout(0x3ff);
+
+    // Preamble 12+ 4.25 bytes
+    sx127x_set_preamble_len(12);
+
+    /* 20 dBm on PA_BOOST pin */
+    sx127x_write_reg(SX127X_REG_PA_DAC, SX127X_REGPADAC_RESERVED | SX127X_20DB_OUTPUT_ON);
+
+    /* No hopping */
+    sx127x_write_reg(SX127X_REG_HOP_PERIOD, 0x00);
+
+    /*DIO5 = ModeReady, DIO4=CadDetected */
+    sx127x_write_reg(SX127X_REG_DIO_MAPPING_2, SX127X_DIO4_CADDETECTED | SX127X_DIO5_MODEREADY);
+
+    /* Standby mode */
+    sx127x_write_reg(SX127X_REG_OP_MODE, SX127X_OP_MODE_STBY | SX127X_FREQUENCY_BAND);
+
+    /* Set Payload Length 10 bytes in explicit mode */
+    return sx127x_set_payload_len(10);
 }
 
 int sx127x_set_ant_switch(sx127x_mode_t mode)
