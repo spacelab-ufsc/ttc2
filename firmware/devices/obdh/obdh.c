@@ -33,7 +33,9 @@
  * \{
  */
 
+#include <system/cmdpr.h>
 #include <drivers/spi_slave/spi_slave.h>
+
 
 #include "obdh.h"
 
@@ -72,10 +74,10 @@ int obdh_read_request(obdh_request_t *obdh_request)
         {
             switch(obdh_request->obdh_command)
             {
-            case OBDH_CMD_READ_PARAM:
+            case CMDPR_CMD_READ_PARAM:
                 err = spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1);
                 break;
-            case OBDH_CMD_WRITE_PARAM:
+            case CMDPR_CMD_WRITE_PARAM:
                 if (spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1) == 0)
                 {
                     err = obdh_read_parameter(obdh_request->obdh_parameter, &(obdh_request->obdh_data));
@@ -86,10 +88,10 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 }
 
                 break;
-            case OBDH_CMD_TRANSMIT_PACKET:
+            case CMDPR_CMD_TRANSMIT_PACKET:
                 //TODO: Implement code to receive the packet to be transmitted.
                 break;
-            case OBDH_CMD_READ_FIRST_PACKET:
+            case CMDPR_CMD_READ_FIRST_PACKET:
                 break;
             default:
             #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -129,23 +131,23 @@ static int obdh_read_parameter(uint8_t param, uint32_t *param_value)
     int err = 0;
     uint8_t read_buffer[4] = {0};
     /* Read uint8_t param */
-    if ((param == OBDH_PARAM_HW_VER) || (param == OBDH_PARAM_LAST_RST_CAUSE) || (param == OBDH_PARAM_LAST_UP_COMMAND) ||
-       (param == OBDH_PARAM_ANT_DEP_STATUS) || (param == OBDH_PARAM_ANT_DEP_HIB) || (param == OBDH_PARAM_TX_ENABLE) ||
-       (param == OBDH_PARAM_PACKETS_AV_FIFO_RX) || (param == OBDH_PARAM_PACKETS_AV_FIFO_TX))
+    if ((param == CMDPR_PARAM_HW_VER) || (param == CMDPR_PARAM_LAST_RST_CAUSE) || (param == CMDPR_PARAM_LAST_UP_COMMAND) ||
+       (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
+       (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX))
     {
         err = spi_slave_read(SPI_PORT_2, read_buffer, 1);
     }
     /* Read uint16_t param */
-    else if ((param == OBDH_PARAM_DEVICE_ID) || (param == OBDH_PARAM_RST_COUNTER) || (param == OBDH_PARAM_UC_VOLTAGE) ||
-            (param == OBDH_PARAM_UC_CURRENT) || (param == OBDH_PARAM_UC_TEMP) || (param == OBDH_PARAM_RADIO_VOLTAGE) ||
-            (param == OBDH_PARAM_RADIO_CURRENT) || (param == OBDH_PARAM_RADIO_TEMP) || (param == OBDH_PARAM_LAST_COMMAND_RSSI) ||
-            (param == OBDH_PARAM_ANT_TEMP) || (param == OBDH_PARAM_ANT_MOD_STATUS_BITS) || (param == OBDH_PARAM_N_BYTES_FIRST_AV_RX))
+    else if ((param == CMDPR_PARAM_DEVICE_ID) || (param == CMDPR_PARAM_RST_COUNTER) || (param == CMDPR_PARAM_UC_VOLTAGE) ||
+            (param == CMDPR_PARAM_UC_CURRENT) || (param == CMDPR_PARAM_UC_TEMP) || (param == CMDPR_PARAM_RADIO_VOLTAGE) ||
+            (param == CMDPR_PARAM_RADIO_CURRENT) || (param == CMDPR_PARAM_RADIO_TEMP) || (param == CMDPR_PARAM_LAST_COMMAND_RSSI) ||
+            (param == CMDPR_PARAM_ANT_TEMP) || (param == CMDPR_PARAM_ANT_MOD_STATUS_BITS) || (param == CMDPR_PARAM_N_BYTES_FIRST_AV_RX))
     {
         err = spi_slave_read(SPI_PORT_2, read_buffer, 2);
     }
     /* Read uint32_t param */
-    else if ((param == OBDH_PARAM_FW_VER) || (param == OBDH_PARAM_COUNTER) ||
-            (param == OBDH_PARAM_TX_PACKET_COUNTER) || (param == OBDH_PARAM_RX_VAL_PACKET_COUNTER))
+    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_COUNTER) ||
+            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER))
     {
         err = spi_slave_read(SPI_PORT_2, read_buffer, 4);
     }
