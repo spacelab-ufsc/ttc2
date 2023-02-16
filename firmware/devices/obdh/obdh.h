@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.0.3
+ * \version 0.3.3
  *
  * \date 2023/02/12
  *
@@ -37,32 +37,44 @@
 #ifndef DEVICES_OBDH_H_
 #define DEVICES_OBDH_H_
 
+/**
+ * \brief OBDH data packet.
+ */
 typedef struct
 {
-    uint8_t packet[220];
-    uint16_t len;
-}obdh_data_packet;
+    uint8_t packet[220];            /**< Data. */
+    uint16_t len;                   /**< Number of bytes of the packet. */
+} obdh_data_packet_t;
 
+/**
+ * \brief OBDH data.
+ */
 typedef union
 {
-    uint8_t param_8;
-    uint16_t param_16;
-    uint32_t param_32;
-    obdh_data_packet data_packet;
-}obdh_data;
+    uint8_t param_8;                /**< 8-bit parameter. */
+    uint16_t param_16;              /**< 16-bit parameter. */
+    uint32_t param_32;              /**< 32-bit parameter. */
+    obdh_data_packet_t data_packet; /**< Packet. */
+} obdh_data_t;
 
+/**
+ * \brief Request packet.
+ */
 typedef struct
 {
-    uint8_t obdh_command;
-    uint8_t obdh_parameter;
-    obdh_data data;
+    uint8_t obdh_command;           /**< Command ID. */
+    uint8_t obdh_parameter;         /**< Parameter ID. */
+    obdh_data_t data;               /**< Parameter value. */
 } obdh_request_t;
 
+/**
+ * \brief Response packet.
+ */
 typedef struct
 {
-    uint8_t obdh_answer_command;
-    uint8_t obdh_parameter;
-    obdh_data data;
+    uint8_t obdh_answer_command;    /**< Command ID. */
+    uint8_t obdh_parameter;         /**< Parameter ID. */
+    obdh_data_t data;               /**< Parameter value. */
 } obdh_response_t;
 
 /**

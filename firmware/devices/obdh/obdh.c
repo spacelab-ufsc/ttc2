@@ -25,21 +25,22 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.0.3
+ * \version 0.3.3
  *
  * \date 2023/02/12
  *
  * \addtogroup obdh
  * \{
  */
+
 #include <system/cmdpr.h>
 #include <drivers/spi_slave/spi_slave.h>
 
 #include "obdh.h"
 
-static int obdh_read_parameter(uint8_t param, obdh_data *data);
+static int obdh_read_parameter(uint8_t param, obdh_data_t *data);
 
-static int obdh_write_parameter(uint8_t param, obdh_data data);
+static int obdh_write_parameter(uint8_t param, obdh_data_t data);
 
 static int obdh_write_packet(uint8_t *packet, uint16_t len);
 
@@ -76,33 +77,33 @@ int obdh_read_request(obdh_request_t *obdh_request)
         {
             switch(obdh_request->obdh_command)
             {
-            case CMDPR_CMD_READ_PARAM:
-                err = spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1);
-                break;
-            case CMDPR_CMD_WRITE_PARAM:
-                if (spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1) == 0)
-                {
-                    err = obdh_read_parameter(obdh_request->obdh_parameter, &(obdh_request->data));
-                }
-                else
-                {
+                case CMDPR_CMD_READ_PARAM:
+                    err = spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1);
+                    break;
+                case CMDPR_CMD_WRITE_PARAM:
+                    if (spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1) == 0)
+                    {
+                        err = obdh_read_parameter(obdh_request->obdh_parameter, &(obdh_request->data));
+                    }
+                    else
+                    {
+                        err = -1;
+                    }
+                    break;
+                case CMDPR_CMD_TRANSMIT_PACKET:
+                    obdh_request->data.data_packet.len = spi_slave_read_available(SPI_PORT_2);
+                    err = spi_slave_read(SPI_PORT_2, obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len);
+                    break;
+                case CMDPR_CMD_READ_FIRST_PACKET:
+                    /* Nothing more to do */
+                    break;
+                default:
+                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH command: unknown command!");
+                    sys_log_new_line();
+                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                     err = -1;
-                }
-                break;
-            case CMDPR_CMD_TRANSMIT_PACKET:
-                obdh_request->data.data_packet.len = spi_slave_read_available(SPI_PORT_2);
-                err = spi_slave_read(SPI_PORT_2, obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len);
-                break;
-            case CMDPR_CMD_READ_FIRST_PACKET:
-                /* Nothing more to do */
-                break;
-            default:
-            #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH command: unknown command!");
-                sys_log_new_line();
-            #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-                err = -1;
-                break;
+                    break;
             }
         }
         else
@@ -112,9 +113,6 @@ int obdh_read_request(obdh_request_t *obdh_request)
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
         }
-    }
-    else
-    {
     }
 
     return err;
@@ -157,10 +155,11 @@ int obdh_send_response(obdh_response_t obdh_response)
     return err;
 }
 
-static int obdh_read_parameter(uint8_t param, obdh_data *data)
+static int obdh_read_parameter(uint8_t param, obdh_data_t *data)
 {
     int err = 0;
     uint8_t read_buffer[4] = {0};
+
     /* Read uint8_t param */
     if ((param == CMDPR_PARAM_HW_VER) || (param == CMDPR_PARAM_LAST_RST_CAUSE) || (param == CMDPR_PARAM_LAST_UP_COMMAND) ||
        (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
@@ -191,8 +190,9 @@ static int obdh_read_parameter(uint8_t param, obdh_data *data)
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH parameter: unknown parameter!");
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-    err = -1;
+        err = -1;
     }
+
     if (err == -1)
     {
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -200,14 +200,11 @@ static int obdh_read_parameter(uint8_t param, obdh_data *data)
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
-    else
-    {
-    }
 
     return err;
 }
 
-static int obdh_write_parameter(uint8_t param, obdh_data data)
+static int obdh_write_parameter(uint8_t param, obdh_data_t data)
 {
     int err = 0;
     uint8_t write_buffer[4] = {0};
@@ -248,17 +245,15 @@ static int obdh_write_parameter(uint8_t param, obdh_data data)
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unknown parameter!");
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-    err = -1;
+        err = -1;
     }
+
     if (err == -1)
     {
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unable to write parameter!");
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-    }
-    else
-    {
     }
 
     return err;
