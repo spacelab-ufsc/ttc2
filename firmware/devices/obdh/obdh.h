@@ -39,15 +39,30 @@
 
 typedef struct
 {
+    uint8_t packet[220];
+    uint16_t len;
+}obdh_data_packet;
+
+typedef union
+{
+    uint8_t param_8;
+    uint16_t param_16;
+    uint32_t param_32;
+    obdh_data_packet data_packet;
+}obdh_data;
+
+typedef struct
+{
     uint8_t obdh_command;
     uint8_t obdh_parameter;
-    uint32_t obdh_data;
+    obdh_data data;
 } obdh_request_t;
 
 typedef struct
 {
+    uint8_t obdh_answer_command;
     uint8_t obdh_parameter;
-    uint32_t obdh_data;
+    obdh_data data;
 } obdh_response_t;
 
 /**
@@ -67,14 +82,12 @@ int obdh_init(void);
 int obdh_read_request(obdh_request_t *obdh_request);
 
 /**
- * \brief Sends packets to OBDH.
+ * \brief Sends response to OBDH.
  *
- * \param[in] *packet is a pointer to the packet array.
- *
- * \param[in] *len is the size of the packet array.
+ * \param[in] *obdh_response is the structure for a response to OBDH.
  *
  * \return The status/error code.
  */
-int obdh_send_packet(uint8_t *packet, uint16_t len);
+int obdh_send_response(obdh_response_t obdh_response);
 
 #endif /* DEVICES_OBDH_H_ */
