@@ -199,3 +199,5 @@ int spi_slave_flush(spi_port_t port);
 uint16_t spi_slave_bytes_not_sent(spi_port_t port);
 
 #endif /* DRIVERS_SPI_SLAVE_SPI_SLAVE_H_ */
+
+/** \} End of spi_slave group */

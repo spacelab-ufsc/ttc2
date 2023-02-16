@@ -322,7 +322,7 @@ int uart_rx_disable(uart_port_t port)
     return err;
 }
 
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
+static int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
 {
     int err = 0;
 
