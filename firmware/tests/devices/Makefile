@@ -5,6 +5,7 @@ TARGET_RADIO=radio_unit_test
 TARGET_POWER_SENSOR=power_sensor_unit_test
 TARGET_LEDS=leds_unit_test
 TARGET_MEDIA=media_unit_test
+TARGET_OBDH=obdh_unit_test
 
 ifndef BUILD_DIR
 	BUILD_DIR=$(CURDIR)
@@ -28,8 +29,10 @@ LEDS_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_
 
 MEDIA_TEST_FLAGS=$(FLAGS),--wrap=flash_init,--wrap=flash_write,--wrap=flash_write_single,--wrap=flash_read_single,--wrap=flash_write_long,--wrap=flash_read_long,--wrap=flash_erase
 
+OBDH_TEST_FLAGS=$(FLAGS),--wrap=spi_slave_init,--wrap=spi_slave_enable_isr,--wrap=spi_slave_disable_isr,--wrap=spi_slave_read_available,--wrap=spi_slave_read,--wrap=spi_slave_write,--wrap=spi_slave_flush,--wrap=spi_slave_bytes_not_sent
+
 .PHONY: all
-all: watchdog_test temp_sensor_test antenna_test radio_test power_sensor_test leds_test media_test
+all: watchdog_test temp_sensor_test antenna_test radio_test power_sensor_test leds_test media_test obdh_test
 
 .PHONY: watchdog_test
 watchdog_test: $(BUILD_DIR)/watchdog.o $(BUILD_DIR)/watchdog_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/wdt_wrap.o $(BUILD_DIR)/tps382x_wrap.o
@@ -59,6 +62,10 @@ leds_test: $(BUILD_DIR)/leds.o $(BUILD_DIR)/leds_test.o $(BUILD_DIR)/sys_log_wra
 media_test: $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o
 	$(CC) $(MEDIA_TEST_FLAGS) $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o -o $(BUILD_DIR)/$(TARGET_MEDIA) -lcmocka
 
+.PHONY: obdh_test
+obdh_test: $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o
+	$(CC) $(OBDH_TEST_FLAGS) $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o -o $(BUILD_DIR)/$(TARGET_OBDH) -lcmocka
+
 # Devices
 $(BUILD_DIR)/watchdog.o: ../../devices/watchdog/watchdog.c
 	$(CC) $(WATCHDOG_TEST_FLAGS) -c $< -o $@
@@ -80,6 +87,9 @@ $(BUILD_DIR)/leds.o: ../../devices/leds/leds.c
 
 $(BUILD_DIR)/media.o: ../../devices/media/media.c
 	$(CC) $(MEDIA_TEST_FLAGS) -c $< -o $@
+
+$(BUILD_DIR)/obdh.o: ../../devices/obdh/obdh.c
+	$(CC) $(OBDH_TEST_FLAGS) -c $< -o $@
 
 # Tests
 $(BUILD_DIR)/watchdog_test.o: watchdog_test.c
@@ -103,6 +113,9 @@ $(BUILD_DIR)/leds_test.o: leds_test.c
 $(BUILD_DIR)/media_test.o: media_test.c
 	$(CC) $(MEDIA_TEST_FLAGS) -c $< -o $@
 
+$(BUILD_DIR)/obdh_test.o: obdh_test.c
+	$(CC) $(OBDH_TEST_FLAGS) -c $< -o $@
+
 # Mockups
 $(BUILD_DIR)/sys_log_wrap.o: ../mockups/system/sys_log_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
@@ -112,7 +125,6 @@ $(BUILD_DIR)/wdt_wrap.o: ../mockups/drivers/wdt_wrap.c
 
 $(BUILD_DIR)/tps382x_wrap.o: ../mockups/drivers/tps382x_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
-
 
 $(BUILD_DIR)/adc_wrap.o: ../mockups/drivers/adc_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
@@ -138,6 +150,9 @@ $(BUILD_DIR)/leds_wrap.o: ../mockups/devices/leds_wrap.c
 $(BUILD_DIR)/task.o: ../freertos_sim/task.c
 	$(CC) $(RADIO_TEST_FLAGS) -c $< -o $@
 
+$(BUILD_DIR)/spi_slave_wrap.o: ../mockups/drivers/spi_slave_wrap.c
+	$(CC) $(OBDH_TEST_FLAGS) -c $< -o $@
+
 .PHONY: clean
 clean:
-	rm $(BUILD_DIR)/$(TARGET_WATCHDOG) $(BUILD_DIR)/$(TARGET_TEMP_SENSOR) $(BUILD_DIR)/$(TARGET_ANTENNA) $(BUILD_DIR)/$(TARGET_RADIO) $(BUILD_DIR)/$(TARGET_POWER_SENSOR) $(BUILD_DIR)/$(TARGET_LEDS) $(BUILD_DIR)/$(TARGET_MEDIA) $(BUILD_DIR)/*.o
+	rm $(BUILD_DIR)/$(TARGET_WATCHDOG) $(BUILD_DIR)/$(TARGET_TEMP_SENSOR) $(BUILD_DIR)/$(TARGET_ANTENNA) $(BUILD_DIR)/$(TARGET_RADIO) $(BUILD_DIR)/$(TARGET_POWER_SENSOR) $(BUILD_DIR)/$(TARGET_LEDS) $(BUILD_DIR)/$(TARGET_MEDIA) $(BUILD_DIR)/$(TARGET_OBDH) $(BUILD_DIR)/*.o

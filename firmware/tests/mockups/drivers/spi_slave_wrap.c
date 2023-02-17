@@ -41,7 +41,7 @@
 #include <float.h>
 #include <cmocka.h>
 
-#include "spi_wrap.h"
+#include "spi_slave_wrap.h"
 
 int __wrap_spi_slave_init(spi_port_t port, spi_config_t config)
 {
@@ -110,7 +110,7 @@ uint16_t spi_slave_bytes_not_sent(spi_port_t port)
 {
     check_expected(port);
 
-    return mock_type(uint16_t)
+    return mock_type(uint16_t);
 }
 
 /** \} End of spi_slave_wrap group */

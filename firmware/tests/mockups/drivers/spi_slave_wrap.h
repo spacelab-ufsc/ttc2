@@ -40,9 +40,6 @@
 #include <stdint.h>
 #include <drivers/spi/spi.h>
 
-
-#include <drivers/spi/spi_slave.h>
-
 int __wrap_spi_slave_init(spi_port_t port, spi_config_t config);
 
 int __wrap_spi_slave_enable_isr(spi_port_t port);
