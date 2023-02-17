@@ -52,14 +52,14 @@ int __wrap_spi_slave_init(spi_port_t port, spi_config_t config)
     return mock_type(int);
 }
 
-int __wrap_spi_slave_enable(spi_port_t port)
+int __wrap_spi_slave_enable_isr(spi_port_t port)
 {
     check_expected(port);
 
     return mock_type(int);
 }
 
-int __wrap_spi_slave_disable(spi_port_t port)
+int __wrap_spi_slave_disable_isr(spi_port_t port)
 {
     check_expected(port);
 
@@ -99,7 +99,7 @@ int __wrap_spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
     return mock_type(int);
 }
 
-int __wrap_spi_flush(spi_port_t port)
+int __wrap_spi_slave_flush(spi_port_t port)
 {
     check_expected(port);
 
