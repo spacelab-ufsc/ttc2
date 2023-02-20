@@ -124,7 +124,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid port!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid port!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;   /* Invalid SPI port */
@@ -159,7 +159,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                     break;
                 default:
                 #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid mode!");
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid mode!");
                     sys_log_new_line();
                 #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                     err = -1;   /* Invalid SPI mode */
@@ -184,7 +184,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                 sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error configuring as slave!");
                 sys_log_new_line();
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-                err = -1;   /* Error initialising the SPI port */
+                err = -1;   /* Error initializing the SPI port */
             }
         }
         else if ((err == 0) && (((base_address == USCI_B0_BASE) || (base_address == USCI_B1_BASE) || (base_address == USCI_B2_BASE))))
@@ -235,7 +235,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                 sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error configuring as slave!");
                 sys_log_new_line();
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-                err = -1;    /* Error initialising the SPI port */
+                err = -1;    /* Error initializing the SPI port */
             }
         }
         else
@@ -520,7 +520,7 @@ int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len)
 
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during reading isr rx buffer: Invalid port!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during reading ISR RX buffer: Invalid port!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;
@@ -567,7 +567,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
         case SPI_PORT_5:    queue = &spi_port_5_tx_buffer;   break;
         default:
         #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialisation: Invalid port!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, SPI_MODULE_NAME, "Error during initialization: Invalid port!");
             sys_log_new_line();
         #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             err = -1;   /* Invalid SPI port */
