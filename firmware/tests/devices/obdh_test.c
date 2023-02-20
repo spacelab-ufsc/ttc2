@@ -41,21 +41,52 @@
 #include <float.h>
 #include <cmocka.h>
 
+#include <stdlib.h>
+
 #include <devices/obdh/obdh.h>
 #include <drivers/spi_slave/spi_slave.h>
 
+uint16_t generate_random_len(int max_value);
+
+/* OBDH Configuration */
+spi_config_t spi_config = {0U, SPI_MODE_0};
+spi_port_t spi_port = SPI_PORT_2;
 
 static void obdh_init_test(void **state)
+{
+  expect_value(__wrap_spi_slave_init, port, spi_port);
+  expect_value(__wrap_spi_slave_init, config.speed_hz, spi_config.speed_hz);
+  expect_value(__wrap_spi_slave_init, config.mode, spi_config.mode);
+  will_return(__wrap_spi_slave_init, 0);
+  
+  expect_value(__wrap_spi_slave_enable_isr, port, spi_port);
+  will_return(__wrap_spi_slave_enable_isr, 0);
+
+  assert_return_code(obdh_init(), 0); 
+}
+
+static void obdh_read_request_test(void **state)
+{
+}
+
+static void obdh_send_response_test(void **state)
 {
 }
 
 int main(void)
-{
+{ 
   const struct CMUnitTest obdh_tests[] = {
     cmocka_unit_test(obdh_init_test),
-  };
+    cmocka_unit_test(obdh_read_request_test),
+    cmocka_unit_test(obdh_send_response_test),
+};
 
   return cmocka_run_group_tests(obdh_tests, NULL, NULL);
+}
+
+uint16_t generate_random_len(int max_value)
+{
+  return (uint16_t)(rand()%max_value);
 }
 
 /** \} End of obdh_test group */
