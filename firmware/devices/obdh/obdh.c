@@ -159,40 +159,27 @@ static int obdh_read_parameter(uint8_t param, obdh_data_t *data)
 {
     int err = 0;
     uint8_t read_buffer[4] = {0};
-
-    /* Read uint8_t param */
-    if ((param == CMDPR_PARAM_HW_VER) || (param == CMDPR_PARAM_LAST_RST_CAUSE) || (param == CMDPR_PARAM_LAST_UP_COMMAND) ||
-       (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
-       (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX))
+    switch(cmdpr_param_size(param))
     {
-        err = spi_slave_read(SPI_PORT_2, &(data->param_8), 1);
+        case 1:
+            err = spi_slave_read(SPI_PORT_2, &(data->param_8), 1);
+            break;
+        case 2:
+            err = spi_slave_read(SPI_PORT_2, read_buffer, 2);
+            data->param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
+            break;
+        case 4:
+            err = spi_slave_read(SPI_PORT_2, read_buffer, 4);
+            data->param_32 = ((uint32_t)read_buffer[0]) | ((uint32_t)(read_buffer[1])<<8) | ((uint32_t)(read_buffer[2])<<16) | ((uint32_t)(read_buffer[3])<<24);
+            break;
+        default:
+            err = -1;
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH parameter: unknown parameter!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            break;
     }
-    /* Read uint16_t param */
-    else if ((param == CMDPR_PARAM_DEVICE_ID) || (param == CMDPR_PARAM_RST_COUNTER) || (param == CMDPR_PARAM_UC_VOLTAGE) ||
-            (param == CMDPR_PARAM_UC_CURRENT) || (param == CMDPR_PARAM_UC_TEMP) || (param == CMDPR_PARAM_RADIO_VOLTAGE) ||
-            (param == CMDPR_PARAM_RADIO_CURRENT) || (param == CMDPR_PARAM_RADIO_TEMP) || (param == CMDPR_PARAM_LAST_COMMAND_RSSI) ||
-            (param == CMDPR_PARAM_ANT_TEMP) || (param == CMDPR_PARAM_ANT_MOD_STATUS_BITS) || (param == CMDPR_PARAM_N_BYTES_FIRST_AV_RX))
-    {
-        err = spi_slave_read(SPI_PORT_2, read_buffer, 2);
-        data->param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
-    }
-    /* Read uint32_t param */
-    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_COUNTER) ||
-            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER))
-    {
-        err = spi_slave_read(SPI_PORT_2, read_buffer, 4);
-        data->param_32 = ((uint32_t)read_buffer[0]) | ((uint32_t)(read_buffer[1])<<8) | ((uint32_t)(read_buffer[2])<<16) | ((uint32_t)(read_buffer[3])<<24);
-    }
-    /* Unknown param */
-    else
-    {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH parameter: unknown parameter!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-        err = -1;
-    }
-
     if (err == -1)
     {
     #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
@@ -208,44 +195,30 @@ static int obdh_write_parameter(uint8_t param, obdh_data_t data)
 {
     int err = 0;
     uint8_t write_buffer[4] = {0};
-
-    /* Read uint8_t param */
-    if ((param == CMDPR_PARAM_HW_VER) || (param == CMDPR_PARAM_LAST_RST_CAUSE) || (param == CMDPR_PARAM_LAST_UP_COMMAND) ||
-       (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
-       (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX))
+    switch(cmdpr_param_size(param))
     {
-        err = spi_slave_write(SPI_PORT_2, &(data.param_8), 1);
-    }
-    /* Read uint16_t param */
-    else if ((param == CMDPR_PARAM_DEVICE_ID) || (param == CMDPR_PARAM_RST_COUNTER) || (param == CMDPR_PARAM_UC_VOLTAGE) ||
-            (param == CMDPR_PARAM_UC_CURRENT) || (param == CMDPR_PARAM_UC_TEMP) || (param == CMDPR_PARAM_RADIO_VOLTAGE) ||
-            (param == CMDPR_PARAM_RADIO_CURRENT) || (param == CMDPR_PARAM_RADIO_TEMP) || (param == CMDPR_PARAM_LAST_COMMAND_RSSI) ||
-            (param == CMDPR_PARAM_ANT_TEMP) || (param == CMDPR_PARAM_ANT_MOD_STATUS_BITS) || (param == CMDPR_PARAM_N_BYTES_FIRST_AV_RX))
-    {
-        write_buffer[0] = (uint8_t)(data.param_16 & 0xFFU);
-        write_buffer[1] = (uint8_t)((data.param_16 >> 8) & 0xFFU);
-
-        err = spi_slave_write(SPI_PORT_2, write_buffer, 2);
-    }
-    /* Read uint32_t param */
-    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_COUNTER) ||
-            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER))
-    {
-        write_buffer[0] = (uint8_t)(data.param_32 & 0xFFU);
-        write_buffer[1] = (uint8_t)((data.param_32 >> 8) & 0xFFU);
-        write_buffer[2] = (uint8_t)((data.param_32 >> 16) & 0xFFU);
-        write_buffer[3] = (uint8_t)((data.param_32 >> 24) & 0xFFU);
-
-        err = spi_slave_write(SPI_PORT_2, write_buffer, 4);
-    }
-    /* Unknown param */
-    else
-    {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unknown parameter!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-        err = -1;
+        case 1:
+            err = spi_slave_write(SPI_PORT_2, &(data.param_8), 1);
+            break;
+        case 2:
+            write_buffer[0] = (uint8_t)(data.param_16 & 0xFFU);
+            write_buffer[1] = (uint8_t)((data.param_16 >> 8) & 0xFFU);
+            err = spi_slave_write(SPI_PORT_2, write_buffer, 2);
+            break;
+        case 4:
+            write_buffer[0] = (uint8_t)(data.param_32 & 0xFFU);
+            write_buffer[1] = (uint8_t)((data.param_32 >> 8) & 0xFFU);
+            write_buffer[2] = (uint8_t)((data.param_32 >> 16) & 0xFFU);
+            write_buffer[3] = (uint8_t)((data.param_32 >> 24) & 0xFFU);
+            err = spi_slave_write(SPI_PORT_2, write_buffer, 4);
+            break;
+        default:
+            err = -1;
+        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unknown parameter!");
+            sys_log_new_line();
+        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+            break;
     }
 
     if (err == -1)
