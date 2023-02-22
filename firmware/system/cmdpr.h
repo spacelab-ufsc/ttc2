@@ -27,7 +27,7 @@
  *
  * \version 0.3.3
  *
- * \date 2023/02/15
+ * \date 2023/02/22
  *
  * \defgroup cmdpr CMDPR
  * \ingroup system
@@ -36,6 +36,8 @@
 
 #ifndef SYSTEM_CMDPR_H_
 #define SYSTEM_CMDPR_H_
+
+#include <stdint.h>
 
 /* CMDPR Commands */
 #define CMDPR_CMD_READ_PARAM                 0x01U       /**< Read parameter */
@@ -68,5 +70,14 @@
 #define CMDPR_PARAM_PACKETS_AV_FIFO_TX       0x15U       /**< TX packets available in the FIFO buffer */
 #define CMDPR_PARAM_PACKETS_AV_FIFO_RX       0x16U       /**< RX packets available in the FIFO buffer */
 #define CMDPR_PARAM_N_BYTES_FIRST_AV_RX      0x17U       /**< Number of bytes of the first available packet in the RX buffer */
+
+/**
+ * \brief Select the number o bytes (accordingly to parameter) to be read from the serial bus.
+ *
+ * \param[in] param is the parameter to be evaluated.
+ *
+ * \return The size (number of bytes) of the parameter.
+ */
+uint16_t cmdpr_param_size(uint8_t param);
 
 #endif /* SYSTEM_CMDPR_H_ */
