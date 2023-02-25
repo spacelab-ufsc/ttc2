@@ -38,13 +38,13 @@
 
 #include "obdh.h"
 
-static int obdh_read_parameter(uint8_t param, obdh_data_t *data);
+static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data);
 
-static int obdh_write_parameter(uint8_t param, obdh_data_t data);
+static int obdh_write_parameter(uint8_t param, cmdpr_data_t data);
 
 static int obdh_write_packet(uint8_t *packet, uint16_t len);
 
-static spi_port_t obdh_spi_port = SPI_PORT_2;
+static const spi_port_t obdh_spi_port = SPI_PORT_2;
 
 int obdh_init(void)
 {
@@ -75,17 +75,17 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
     if (spi_slave_read_available(obdh_spi_port) > 0)
     {
-        if (spi_slave_read(obdh_spi_port, &(obdh_request->obdh_command), 1) == 0)
+        if (spi_slave_read(obdh_spi_port, &(obdh_request->command), 1) == 0)
         {
-            switch(obdh_request->obdh_command)
+            switch(obdh_request->command)
             {
                 case CMDPR_CMD_READ_PARAM:
-                    err = spi_slave_read(obdh_spi_port, &(obdh_request->obdh_parameter), 1);
+                    err = spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1);
                     break;
                 case CMDPR_CMD_WRITE_PARAM:
-                    if (spi_slave_read(obdh_spi_port, &(obdh_request->obdh_parameter), 1) == 0)
+                    if (spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1) == 0)
                     {
-                        err = obdh_read_parameter(obdh_request->obdh_parameter, &(obdh_request->data));
+                        err = obdh_read_parameter(obdh_request->parameter, &(obdh_request->data));
                     }
                     else
                     {
@@ -124,30 +124,35 @@ int obdh_send_response(obdh_response_t obdh_response)
 {
     int err = 0;
 
-    if (spi_slave_write(obdh_spi_port, &(obdh_response.obdh_answer_command), 1) == 0)
+    if (spi_slave_write(obdh_spi_port, &(obdh_response.command), 1) == 0)
     {
-      if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_PARAM)
-      {
-	    /* Send the response parameter */
-            if ((spi_slave_write(obdh_spi_port, &(obdh_response.obdh_parameter), 1) == 0) &&
-               (obdh_write_parameter(obdh_response.obdh_parameter, obdh_response.data) == 0))
-            {
-                err = 0;
-            }
-            else
-            {
-                err = -1;
-            }
-        }
-        else if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_FIRST_PACKET)
-        {
-            /* Send the response packet */
-            err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
-        }
-        else
-        {
-            err = -1;
-        }
+       switch(obdh_response.command)
+       {
+          case CMDPR_CMD_READ_PARAM:
+              /* Send the response parameter */
+              if ((spi_slave_write(obdh_spi_port, &(obdh_response.parameter), 1) == 0) &&
+              (obdh_write_parameter(obdh_response.parameter, obdh_response.data) == 0))
+              {
+                  err = 0;
+              }
+              else
+              {
+                  err = -1;
+              }
+
+              break;
+
+          case CMDPR_CMD_READ_FIRST_PACKET:
+              /* Send the response packet */
+              err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
+
+              break;
+
+          default:
+              err = -1;
+
+              break;
+       }
     }
     else
     {
@@ -157,7 +162,7 @@ int obdh_send_response(obdh_response_t obdh_response)
     return err;
 }
 
-static int obdh_read_parameter(uint8_t param, obdh_data_t *data)
+static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
 {
     int err = 0;
     uint8_t read_buffer[4] = {0};
@@ -193,7 +198,7 @@ static int obdh_read_parameter(uint8_t param, obdh_data_t *data)
     return err;
 }
 
-static int obdh_write_parameter(uint8_t param, obdh_data_t data)
+static int obdh_write_parameter(uint8_t param, cmdpr_data_t data)
 {
     int err = 0;
     uint8_t write_buffer[4] = {0};
