@@ -47,6 +47,7 @@ uint16_t cmdpr_param_size(uint8_t param)
        (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
        (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX))
     {
+        param_size = 1;
 
     }
     /*uint16_t param */

@@ -124,9 +124,9 @@ int obdh_send_response(obdh_response_t obdh_response)
 
     if (spi_slave_write(SPI_PORT_2, &(obdh_response.obdh_answer_command), 1) == 0)
     {
-        if ((obdh_response.obdh_answer_command  == 0x01U) || (obdh_response.obdh_answer_command  == 0x02U))
-        {
-            /* Send the response parameter */
+      if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_PARAM)
+      {
+	    /* Send the response parameter */
             if ((spi_slave_write(SPI_PORT_2, &(obdh_response.obdh_parameter), 1) == 0) &&
                (obdh_write_parameter(obdh_response.obdh_parameter, obdh_response.data) == 0))
             {
@@ -137,7 +137,7 @@ int obdh_send_response(obdh_response_t obdh_response)
                 err = -1;
             }
         }
-        else if (obdh_response.obdh_answer_command == 0x04U)
+        else if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_FIRST_PACKET)
         {
             /* Send the response packet */
             err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
