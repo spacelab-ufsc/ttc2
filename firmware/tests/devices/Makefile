@@ -63,8 +63,8 @@ media_test: $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_
 	$(CC) $(MEDIA_TEST_FLAGS) $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o -o $(BUILD_DIR)/$(TARGET_MEDIA) -lcmocka
 
 .PHONY: obdh_test
-obdh_test: $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o
-	$(CC) $(OBDH_TEST_FLAGS) $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o -o $(BUILD_DIR)/$(TARGET_OBDH) -lcmocka
+obdh_test: $(BUILD_DIR)/cmdpr.o $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o
+	$(CC) $(OBDH_TEST_FLAGS) $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o -o $(BUILD_DIR)/$(TARGET_OBDH) $(BUILD_DIR)/cmdpr.o -lcmocka
 
 # Devices
 $(BUILD_DIR)/watchdog.o: ../../devices/watchdog/watchdog.c
@@ -90,6 +90,10 @@ $(BUILD_DIR)/media.o: ../../devices/media/media.c
 
 $(BUILD_DIR)/obdh.o: ../../devices/obdh/obdh.c
 	$(CC) $(OBDH_TEST_FLAGS) -c $< -o $@
+
+# System
+$(BUILD_DIR)/cmdpr.o: ../../system/cmdpr.c
+	$(CC) $(FLAGS) -c $< -o $@
 
 # Tests
 $(BUILD_DIR)/watchdog_test.o: watchdog_test.c
