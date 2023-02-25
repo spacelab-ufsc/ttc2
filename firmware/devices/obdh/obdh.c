@@ -44,6 +44,8 @@ static int obdh_write_parameter(uint8_t param, obdh_data_t data);
 
 static int obdh_write_packet(uint8_t *packet, uint16_t len);
 
+static spi_port_t obdh_spi_port = SPI_PORT_2;
+
 int obdh_init(void)
 {
     int err = -1;
@@ -52,9 +54,9 @@ int obdh_init(void)
     spi_slave_config.mode = SPI_MODE_0;
     spi_slave_config.speed_hz = 0U; /* Parameter not used in slave mode */
 
-    if (spi_slave_init(SPI_PORT_2, spi_slave_config) == 0)
+    if (spi_slave_init(obdh_spi_port, spi_slave_config) == 0)
     {
-        err = spi_slave_enable_isr(SPI_PORT_2);
+        err = spi_slave_enable_isr(obdh_spi_port);
     }
     else
     {
@@ -71,17 +73,17 @@ int obdh_read_request(obdh_request_t *obdh_request)
 {
     int err = 0;
 
-    if (spi_slave_read_available(SPI_PORT_2) > 0)
+    if (spi_slave_read_available(obdh_spi_port) > 0)
     {
-        if (spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_command), 1) == 0)
+        if (spi_slave_read(obdh_spi_port, &(obdh_request->obdh_command), 1) == 0)
         {
             switch(obdh_request->obdh_command)
             {
                 case CMDPR_CMD_READ_PARAM:
-                    err = spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1);
+                    err = spi_slave_read(obdh_spi_port, &(obdh_request->obdh_parameter), 1);
                     break;
                 case CMDPR_CMD_WRITE_PARAM:
-                    if (spi_slave_read(SPI_PORT_2, &(obdh_request->obdh_parameter), 1) == 0)
+                    if (spi_slave_read(obdh_spi_port, &(obdh_request->obdh_parameter), 1) == 0)
                     {
                         err = obdh_read_parameter(obdh_request->obdh_parameter, &(obdh_request->data));
                     }
@@ -91,8 +93,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     }
                     break;
                 case CMDPR_CMD_TRANSMIT_PACKET:
-                    obdh_request->data.data_packet.len = spi_slave_read_available(SPI_PORT_2);
-                    err = spi_slave_read(SPI_PORT_2, obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len);
+                    obdh_request->data.data_packet.len = spi_slave_read_available(obdh_spi_port);
+                    err = spi_slave_read(obdh_spi_port, obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len);
                     break;
                 case CMDPR_CMD_READ_FIRST_PACKET:
                     /* Nothing more to do */
@@ -122,12 +124,12 @@ int obdh_send_response(obdh_response_t obdh_response)
 {
     int err = 0;
 
-    if (spi_slave_write(SPI_PORT_2, &(obdh_response.obdh_answer_command), 1) == 0)
+    if (spi_slave_write(obdh_spi_port, &(obdh_response.obdh_answer_command), 1) == 0)
     {
       if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_PARAM)
       {
 	    /* Send the response parameter */
-            if ((spi_slave_write(SPI_PORT_2, &(obdh_response.obdh_parameter), 1) == 0) &&
+            if ((spi_slave_write(obdh_spi_port, &(obdh_response.obdh_parameter), 1) == 0) &&
                (obdh_write_parameter(obdh_response.obdh_parameter, obdh_response.data) == 0))
             {
                 err = 0;
@@ -162,14 +164,14 @@ static int obdh_read_parameter(uint8_t param, obdh_data_t *data)
     switch(cmdpr_param_size(param))
     {
         case 1:
-            err = spi_slave_read(SPI_PORT_2, &(data->param_8), 1);
+            err = spi_slave_read(obdh_spi_port, &(data->param_8), 1);
             break;
         case 2:
-            err = spi_slave_read(SPI_PORT_2, read_buffer, 2);
+            err = spi_slave_read(obdh_spi_port, read_buffer, 2);
             data->param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
             break;
         case 4:
-            err = spi_slave_read(SPI_PORT_2, read_buffer, 4);
+            err = spi_slave_read(obdh_spi_port, read_buffer, 4);
             data->param_32 = ((uint32_t)read_buffer[0]) | ((uint32_t)(read_buffer[1])<<8) | ((uint32_t)(read_buffer[2])<<16) | ((uint32_t)(read_buffer[3])<<24);
             break;
         default:
@@ -198,19 +200,19 @@ static int obdh_write_parameter(uint8_t param, obdh_data_t data)
     switch(cmdpr_param_size(param))
     {
         case 1:
-            err = spi_slave_write(SPI_PORT_2, &(data.param_8), 1);
+            err = spi_slave_write(obdh_spi_port, &(data.param_8), 1);
             break;
         case 2:
             write_buffer[0] = (uint8_t)(data.param_16 & 0xFFU);
             write_buffer[1] = (uint8_t)((data.param_16 >> 8) & 0xFFU);
-            err = spi_slave_write(SPI_PORT_2, write_buffer, 2);
+            err = spi_slave_write(obdh_spi_port, write_buffer, 2);
             break;
         case 4:
             write_buffer[0] = (uint8_t)(data.param_32 & 0xFFU);
             write_buffer[1] = (uint8_t)((data.param_32 >> 8) & 0xFFU);
             write_buffer[2] = (uint8_t)((data.param_32 >> 16) & 0xFFU);
             write_buffer[3] = (uint8_t)((data.param_32 >> 24) & 0xFFU);
-            err = spi_slave_write(SPI_PORT_2, write_buffer, 4);
+            err = spi_slave_write(obdh_spi_port, write_buffer, 4);
             break;
         default:
             err = -1;
@@ -236,7 +238,7 @@ static int obdh_write_packet(uint8_t *packet, uint16_t len)
 {
     int err = -1;
 
-    err = spi_slave_write(SPI_PORT_2, packet, len);
+    err = spi_slave_write(obdh_spi_port, packet, len);
 
     return err;
 }
