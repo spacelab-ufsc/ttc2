@@ -1,5 +1,5 @@
 /*
- * cmds_parameters.c
+ * cmdpr.c
  *
  * Copyright The TTC 2.0 Contributors.
  *

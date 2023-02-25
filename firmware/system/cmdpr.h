@@ -1,5 +1,5 @@
 /*
- * cmds_parameters.h
+ * cmdpr.h
  *
  * Copyright The TTC 2.0 Contributors.
  *
@@ -70,6 +70,36 @@
 #define CMDPR_PARAM_PACKETS_AV_FIFO_TX       0x15U       /**< TX packets available in the FIFO buffer */
 #define CMDPR_PARAM_PACKETS_AV_FIFO_RX       0x16U       /**< RX packets available in the FIFO buffer */
 #define CMDPR_PARAM_N_BYTES_FIRST_AV_RX      0x17U       /**< Number of bytes of the first available packet in the RX buffer */
+
+/**
+ * \brief CMDPR data packet.
+ */
+typedef struct
+{
+    uint8_t packet[220];            /**< Data. */
+    uint16_t len;                   /**< Number of bytes of the packet. */
+} cmdpr_data_packet_t;
+
+/**
+ * \brief OBDH data.
+ */
+typedef union
+{
+    uint8_t param_8;                /**< 8-bit parameter. */
+    uint16_t param_16;              /**< 16-bit parameter. */
+    uint32_t param_32;              /**< 32-bit parameter. */
+    cmdpr_data_packet_t data_packet;/**< Packet. */
+} cmdpr_data_t;
+
+/**
+ * \brief Request/Response packet.
+ */
+typedef struct
+{
+    uint8_t command;                /**< Command ID. */
+    uint8_t parameter;              /**< Parameter ID. */
+    cmdpr_data_t data;               /**< Parameter value. */
+} cmdpr_package_t;
 
 /**
  * \brief Select the number o bytes (accordingly to parameter) to be read from the serial bus.
