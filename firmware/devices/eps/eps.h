@@ -38,8 +38,6 @@
 #define DEVICES_EPS_H_
 
 typedef cmdpr_package_t eps_request_t;
-typedef cmdpr_package_t eps_response_t;
-
 
 /**
  * \brief EPS initialization.
