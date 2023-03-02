@@ -57,15 +57,4 @@ int eps_init(void);
  */
 int eps_read_request(eps_request_t *eps_request);
 
-/**
- * \brief Sends response to EPS.
- *
- * \param[in] *eps_response is the structure for a response to EPS.
- *
- * \return The status/error code.
- */
-int eps_send_response(eps_response_t eps_response);
-
-
-
 #endif /* DEVICES_EPS_H_ */

@@ -40,10 +40,6 @@
 
 static int eps_read_parameter(uint8_t param, cmdpr_data_t *data);
 
-static int eps_write_parameter(uint8_t param, cmdpr_data_t data);
-
-static int eps_write_packet(uint8_t *packet, uint16_t len);
-
 static const uart_ports_e eps_uart_port = UART_PORT_0;
 
 int eps_init(void)
@@ -124,48 +120,6 @@ int eps_read_request(eps_request_t *eps_request)
     return err;
 }
 
-int eps_send_response(eps_response_t eps_response)
-{
-    int err = 0;
-
-    if (uart_write(eps_uart_port, &(eps_response.command), 1) == 0)
-    {
-       switch(eps_response.command)
-       {
-          case CMDPR_CMD_READ_PARAM:
-              /* Send the response parameter */
-              if ((uart_write(eps_uart_port, &(eps_response.parameter), 1) == 0) &&
-              (eps_write_parameter(eps_response.parameter, eps_response.data) == 0))
-              {
-                  err = 0;
-              }
-              else
-              {
-                  err = -1;
-              }
-
-              break;
-
-          case CMDPR_CMD_READ_FIRST_PACKET:
-              /* Send the response packet */
-              err = eps_write_packet(eps_response.data.data_packet.packet, eps_response.data.data_packet.len);
-
-              break;
-
-          default:
-              err = -1;
-
-              break;
-       }
-    }
-    else
-    {
-        err = -1;
-    }
-
-    return err;
-}
-
 static int eps_read_parameter(uint8_t param, cmdpr_data_t *data)
 {
     int err = 0;
@@ -198,56 +152,6 @@ static int eps_read_parameter(uint8_t param, cmdpr_data_t *data)
         sys_log_new_line();
     #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
-
-    return err;
-}
-
-static int eps_write_parameter(uint8_t param, cmdpr_data_t data)
-{
-    int err = 0;
-    uint8_t write_buffer[4] = {0};
-    switch(cmdpr_param_size(param))
-    {
-        case 1:
-            err = uart_write(eps_uart_port, &(data.param_8), 1);
-            break;
-        case 2:
-            write_buffer[0] = (uint8_t)(data.param_16 & 0xFFU);
-            write_buffer[1] = (uint8_t)((data.param_16 >> 8) & 0xFFU);
-            err = uart_write(eps_uart_port, write_buffer, 2);
-            break;
-        case 4:
-            write_buffer[0] = (uint8_t)(data.param_32 & 0xFFU);
-            write_buffer[1] = (uint8_t)((data.param_32 >> 8) & 0xFFU);
-            write_buffer[2] = (uint8_t)((data.param_32 >> 16) & 0xFFU);
-            write_buffer[3] = (uint8_t)((data.param_32 >> 24) & 0xFFU);
-            err = uart_write(eps_uart_port, write_buffer, 4);
-            break;
-        default:
-            err = -1;
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_ERROR, "Error writing EPS parameter: unknown parameter!");
-            sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-            break;
-    }
-
-    if (err == -1)
-    {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_ERROR, "Error writing EPS parameter: unable to write parameter!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-    }
-
-    return err;
-}
-
-static int eps_write_packet(uint8_t *packet, uint16_t len)
-{
-    int err = -1;
-
-    err = uart_write(eps_uart_port, packet, len);
 
     return err;
 }
