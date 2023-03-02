@@ -85,63 +85,58 @@ static void obdh_read_request_test(void **state)
   obdh_request_t obdh_request = generate_random_request();
   obdh_request.data.data_packet.len = packet_size;
 
-  
-  /*printf("\nRequest info:\n");
-  printf("packet_size: %i", packet_size);
-  printf("\ncommand: %i", obdh_request.obdh_command);
-  printf("\nparameter: %i\n", obdh_request.obdh_parameter);
-  */
   expect_value(__wrap_spi_slave_read_available, port, spi_port);
   will_return(__wrap_spi_slave_read_available, packet_size);
 
   expect_value(__wrap_spi_slave_read, port, spi_port);
   expect_value(__wrap_spi_slave_read, len, 1);
-  will_return(__wrap_spi_slave_read, obdh_request.obdh_command);
+  will_return(__wrap_spi_slave_read, obdh_request.command);
   will_return(__wrap_spi_slave_read, 0);
 
-  switch(obdh_request.obdh_command)
+  
+  switch(obdh_request.command)
   {
   case CMDPR_CMD_READ_PARAM:
     expect_value(__wrap_spi_slave_read, port, spi_port);
     expect_value(__wrap_spi_slave_read, len, 1);
-    will_return(__wrap_spi_slave_read, obdh_request.obdh_parameter);
+    will_return(__wrap_spi_slave_read, obdh_request.parameter);
     will_return(__wrap_spi_slave_read, 0);
     break;
 
   case CMDPR_CMD_WRITE_PARAM:
     expect_value(__wrap_spi_slave_read, port, spi_port);
     expect_value(__wrap_spi_slave_read, len, 1);
-    will_return(__wrap_spi_slave_read, obdh_request.obdh_parameter);
+    will_return(__wrap_spi_slave_read, obdh_request.parameter);
     will_return(__wrap_spi_slave_read, 0);
 
-    switch(cmdpr_param_size(obdh_request.obdh_parameter))
+    switch(cmdpr_param_size(obdh_request.parameter))
     {
       case 1:
-	expect_value(__wrap_spi_slave_read, port, spi_port);
-	expect_value(__wrap_spi_slave_read, len, 1);
-	will_return(__wrap_spi_slave_read, obdh_request.data.param_8);
-	will_return(__wrap_spi_slave_read, 0);
+	      expect_value(__wrap_spi_slave_read, port, spi_port);
+	      expect_value(__wrap_spi_slave_read, len, 1);
+	      will_return(__wrap_spi_slave_read, obdh_request.data.param_8);
+	      will_return(__wrap_spi_slave_read, 0);
       
         break;
 
       case 2:
-	expect_value(__wrap_spi_slave_read, port, spi_port);
-	expect_value(__wrap_spi_slave_read, len, 2);
-	for(int i=0;i<2;i++)
-	{
-	  will_return(__wrap_spi_slave_read, read_buffer[i]);
-	}
-	obdh_request.data.param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
-	will_return(__wrap_spi_slave_read, 0);
+	      expect_value(__wrap_spi_slave_read, port, spi_port);
+	      expect_value(__wrap_spi_slave_read, len, 2);
+	      for(int i=0;i<2;i++)
+	      {
+	        will_return(__wrap_spi_slave_read, read_buffer[i]);
+	      }
+      	obdh_request.data.param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
+      	will_return(__wrap_spi_slave_read, 0);
 	
-	break;
+      	break;
 
     case 4:
       expect_value(__wrap_spi_slave_read, port, spi_port);
       expect_value(__wrap_spi_slave_read, len, 4);
       for(int i=0;i<4;i++)
       {
-	will_return(__wrap_spi_slave_read, read_buffer[i]);
+	      will_return(__wrap_spi_slave_read, read_buffer[i]);
       }
       obdh_request.data.param_32 = ((uint32_t)read_buffer[0]) | ((uint32_t)(read_buffer[1])<<8) | ((uint32_t)(read_buffer[2])<<16) | ((uint32_t)(read_buffer[3])<<24);
       will_return(__wrap_spi_slave_read, 0);
@@ -181,76 +176,70 @@ static void obdh_read_request_test(void **state)
 static void obdh_send_response_test(void **state)
 {
   uint8_t write_buffer[4] = {0};
-
   obdh_response_t obdh_response = generate_random_response();
-  obdh_response.obdh_answer_command = CMDPR_CMD_READ_FIRST_PACKET;
-  obdh_response.data.data_packet.len = 30;
 
-  printf("\nRequest info:\n");
-  printf("packet_size: %i", obdh_response.data.data_packet.len);
-  printf("\ncommand: %i", obdh_response.obdh_answer_command);
-  printf("\nparameter: %i\n", obdh_response.obdh_parameter);
-  
   expect_value(__wrap_spi_slave_write, port, spi_port);
-  expect_memory(__wrap_spi_slave_write, data, (void*)&(obdh_response.obdh_answer_command), 1);
+  expect_memory(__wrap_spi_slave_write, data, &obdh_response.command, 1);
   expect_value(__wrap_spi_slave_write, len, 1);
   will_return(__wrap_spi_slave_write, 0);
 
-  if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_PARAM)
+  if (obdh_response.command == CMDPR_CMD_READ_PARAM)
   {
     expect_value(__wrap_spi_slave_write, port, spi_port);
-    expect_value(__wrap_spi_slave_write, data, obdh_response.obdh_parameter);
+    expect_memory(__wrap_spi_slave_write, data, &obdh_response.parameter, 1);
     expect_value(__wrap_spi_slave_write, len, 1);
     will_return(__wrap_spi_slave_write, 0);
     
-    switch(cmdpr_param_size(obdh_response.obdh_parameter))
+    switch(cmdpr_param_size(obdh_response.parameter))
     {
       case 1:
-	obdh_response.data.param_8 = (uint8_t)(rand()%50);
+	      obdh_response.data.param_8 = (uint8_t)(rand()%50);
+
+	      expect_value(__wrap_spi_slave_write, port, spi_port);
+        expect_memory(__wrap_spi_slave_write, data, &obdh_response.data.param_8, 1);
+	     expect_value(__wrap_spi_slave_write, len, 1);
+	      will_return(__wrap_spi_slave_write, 0);
 	
-	expect_value(__wrap_spi_slave_write, port, spi_port);
-	expect_value(__wrap_spi_slave_write, data, obdh_response.data.param_8);
-	expect_value(__wrap_spi_slave_write, len, 1);
-	will_return(__wrap_spi_slave_write, 0);
-	
-	break;
+	      break;
 	
       case 2:
-	obdh_response.data.param_16 = (uint16_t)(rand()%50);
+	      obdh_response.data.param_16 = (uint16_t)(rand()%50);
 	
-	write_buffer[0] = (uint8_t)(obdh_response.data.param_16 & 0xFFU);
-	write_buffer[1] = (uint8_t)((obdh_response.data.param_16 >> 8) & 0xFFU);
+	      write_buffer[0] = (uint8_t)(obdh_response.data.param_16 & 0xFFU);
+	      write_buffer[1] = (uint8_t)((obdh_response.data.param_16 >> 8) & 0xFFU);
       
-	expect_value(__wrap_spi_slave_write, port, spi_port);
-	expect_value(__wrap_spi_slave_write, data, write_buffer);
-	expect_value(__wrap_spi_slave_write, len, 2);
-	will_return(__wrap_spi_slave_write, 0);
+	      expect_value(__wrap_spi_slave_write, port, spi_port);
+	      expect_memory(__wrap_spi_slave_write, data, write_buffer, 2);
+	      expect_value(__wrap_spi_slave_write, len, 2);
+	      will_return(__wrap_spi_slave_write, 0);
 	
-	break;
+	      break;
 	
       case 4:
-	obdh_response.data.param_32 = (uint32_t)(rand()%50);
+	      obdh_response.data.param_32 = (uint32_t)(rand()%50);
 	
-	write_buffer[0] = (uint8_t)(obdh_response.data.param_32 & 0xFFU);
-	write_buffer[1] = (uint8_t)((obdh_response.data.param_32 >> 8) & 0xFFU);
-	write_buffer[2] = (uint8_t)((obdh_response.data.param_32 >> 16) & 0xFFU);
-	write_buffer[3] = (uint8_t)((obdh_response.data.param_32 >> 24) & 0xFFU);
+	      write_buffer[0] = (uint8_t)(obdh_response.data.param_32 & 0xFFU);
+	      write_buffer[1] = (uint8_t)((obdh_response.data.param_32 >> 8) & 0xFFU);
+	      write_buffer[2] = (uint8_t)((obdh_response.data.param_32 >> 16) & 0xFFU);
+	      write_buffer[3] = (uint8_t)((obdh_response.data.param_32 >> 24) & 0xFFU);
 
-	expect_value(__wrap_spi_slave_write, port, spi_port);
-	expect_value(__wrap_spi_slave_write, data, write_buffer);
-	expect_value(__wrap_spi_slave_write, len, 4);
-	will_return(__wrap_spi_slave_write, 0);
+	      expect_value(__wrap_spi_slave_write, port, spi_port);
+	      expect_memory(__wrap_spi_slave_write, data, write_buffer, 4);
+	      expect_value(__wrap_spi_slave_write, len, 4);
+	      will_return(__wrap_spi_slave_write, 0);
 
-	break;
+	      break;
     }
   }
-  else if (obdh_response.obdh_answer_command == CMDPR_CMD_READ_FIRST_PACKET)
+  else if (obdh_response.command == CMDPR_CMD_READ_FIRST_PACKET)
   {
     expect_value(__wrap_spi_slave_write, port, spi_port);
-    expect_value(__wrap_spi_slave_write, data, obdh_response.data.data_packet.packet);
+    expect_memory(__wrap_spi_slave_write, data, obdh_response.data.data_packet.packet, (int)obdh_response.data.data_packet.len);
     expect_value(__wrap_spi_slave_write, len, obdh_response.data.data_packet.len);
     will_return(__wrap_spi_slave_write, 0); 
   }
+
+  assert_return_code(obdh_send_response(obdh_response), 0);
 }
 
 int main(void)
@@ -274,10 +263,10 @@ uint16_t generate_random_len(int max_value)
 obdh_request_t generate_random_request(void)
 {
   obdh_request_t rand_request;
-  rand_request.obdh_command = (uint8_t)(rand()%4+1);
-  if ((rand_request.obdh_command == CMDPR_CMD_READ_PARAM) || (rand_request.obdh_command == CMDPR_CMD_WRITE_PARAM))
+  rand_request.command = (uint8_t)(rand()%4+1);
+  if ((rand_request.command == CMDPR_CMD_READ_PARAM) || (rand_request.command == CMDPR_CMD_WRITE_PARAM))
   {
-    rand_request.obdh_parameter = (uint8_t)(rand()%24); 
+    rand_request.parameter = (uint8_t)(rand()%24); 
   }
 
   return rand_request;
@@ -287,11 +276,20 @@ obdh_response_t generate_random_response(void)
 {
   uint8_t answer_commands[] = {CMDPR_CMD_READ_PARAM, CMDPR_CMD_READ_FIRST_PACKET};
   obdh_response_t rand_response;
-  rand_response.obdh_answer_command = answer_commands[rand()%2];
 
-  if (rand_response.obdh_answer_command == CMDPR_CMD_READ_PARAM)
+  rand_response.command = answer_commands[rand()%2];
+
+  if (rand_response.command == CMDPR_CMD_READ_PARAM)
   {
-    rand_response.obdh_parameter = (uint8_t)(rand()%24);
+    rand_response.parameter = (uint8_t)(rand()%24);
+  }
+  else if(rand_response.command == CMDPR_CMD_READ_FIRST_PACKET)
+  {
+    rand_response.data.data_packet.len = ((uint16_t)(rand()%max_packet_size));
+    for (uint16_t i = 0; i<rand_response.data.data_packet.len; i++)
+    {
+      rand_response.data.data_packet.packet[i] = i;
+    }
   }
 
   return rand_response; 
