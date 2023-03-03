@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  *
  */
 
@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.4
  *
  * \date 2023/02/22
  *
@@ -33,6 +33,7 @@
  * \ingroup system
  * \{
  */
+
 #include <stdint.h>
 
 #include "cmdpr.h"
@@ -85,4 +86,4 @@ uint16_t cmdpr_param_size(uint8_t param)
     return param_size;
 }
 
-
+/** \} End of cmdpr group */
