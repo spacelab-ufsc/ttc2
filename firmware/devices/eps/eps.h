@@ -1,5 +1,5 @@
 /*
- * obdh.h
+ * eps.h
  *
  * Copyright The TTC 2.0 Contributors.
  *
@@ -27,42 +27,32 @@
  *
  * \version 0.3.3
  *
- * \date 2023/02/12
+ * \date 2023/02/25
  *
- * \defgroup obdh OBDH
+ * \defgroup eps EPS
  * \ingroup devices
  * \{
  */
 
-#ifndef DEVICES_OBDH_H_
-#define DEVICES_OBDH_H_
+#ifndef DEVICES_EPS_H_
+#define DEVICES_EPS_H_
 
-typedef cmdpr_package_t obdh_request_t;
-typedef cmdpr_package_t obdh_response_t;
+typedef cmdpr_package_t eps_request_t;
 
 /**
- * \brief OBDH initialization.
+ * \brief EPS initialization.
  *
  * \return The status/error code.
  */
-int obdh_init(void);
+int eps_init(void);
 
 /**
- * \brief OBDH read request from SPI RX buffer.
+ * \brief EPS read request from UART RX buffer.
  *
- * \param[in] *obdh_request is the structure to store the received information.
+ * \param[in] *eps_request is the structure to store the received information.
  *
  * \return The status/error code.
  */
-int obdh_read_request(obdh_request_t *obdh_request);
+int eps_read_request(eps_request_t *eps_request);
 
-/**
- * \brief Sends response to OBDH.
- *
- * \param[in] *obdh_response is the structure for a response to OBDH.
- *
- * \return The status/error code.
- */
-int obdh_send_response(obdh_response_t obdh_response);
-
-#endif /* DEVICES_OBDH_H_ */
+#endif /* DEVICES_EPS_H_ */

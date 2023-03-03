@@ -1,5 +1,5 @@
 /*
- * cmds_parameters.h
+ * cmdpr.h
  *
  * Copyright The TTC 2.0 Contributors.
  *
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+ * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
  *
  */
 
@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.4
  *
- * \date 2023/02/15
+ * \date 2023/02/22
  *
  * \defgroup cmdpr CMDPR
  * \ingroup system
@@ -36,6 +36,8 @@
 
 #ifndef SYSTEM_CMDPR_H_
 #define SYSTEM_CMDPR_H_
+
+#include <stdint.h>
 
 /* CMDPR Commands */
 #define CMDPR_CMD_READ_PARAM                 0x01U       /**< Read parameter */
@@ -69,4 +71,45 @@
 #define CMDPR_PARAM_PACKETS_AV_FIFO_RX       0x16U       /**< RX packets available in the FIFO buffer */
 #define CMDPR_PARAM_N_BYTES_FIRST_AV_RX      0x17U       /**< Number of bytes of the first available packet in the RX buffer */
 
+/**
+ * \brief CMDPR data packet.
+ */
+typedef struct
+{
+    uint8_t packet[220];            /**< Data. */
+    uint16_t len;                   /**< Number of bytes of the packet. */
+} cmdpr_data_packet_t;
+
+/**
+ * \brief OBDH data.
+ */
+typedef union                       // cppcheck-suppress misra-c2012-19.2
+{
+    uint8_t param_8;                /**< 8-bit parameter. */
+    uint16_t param_16;              /**< 16-bit parameter. */
+    uint32_t param_32;              /**< 32-bit parameter. */
+    cmdpr_data_packet_t data_packet;/**< Packet. */
+} cmdpr_data_t;
+
+/**
+ * \brief Request/Response packet.
+ */
+typedef struct
+{
+    uint8_t command;                /**< Command ID. */
+    uint8_t parameter;              /**< Parameter ID. */
+    cmdpr_data_t data;              // cppcheck-suppress misra-c2012-19.2
+} cmdpr_package_t;
+
+/**
+ * \brief Select the number o bytes (accordingly to parameter) to be read from the serial bus.
+ *
+ * \param[in] param is the parameter to be evaluated.
+ *
+ * \return The size (number of bytes) of the parameter.
+ */
+uint16_t cmdpr_param_size(uint8_t param);
+
 #endif /* SYSTEM_CMDPR_H_ */
+
+/** \} End of cmdpr group */
