@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.4
  *
  * \date 2023/02/12
  *
@@ -44,7 +44,8 @@ int eps_init(void)
 {
     int err = -1;
 
-    uart_config_t config;
+    uart_config_t config = {0};
+
     config.clock = 1000000;
     config.baudrate = 115200;
     config.data_bits = 8;
@@ -104,4 +105,3 @@ int eps_read_request(eps_request_t *eps_request)
 }
 
 /** \} End of eps group */
-

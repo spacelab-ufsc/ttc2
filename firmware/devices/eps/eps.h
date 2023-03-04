@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.4
  *
  * \date 2023/02/25
  *
@@ -56,3 +56,5 @@ int eps_init(void);
 int eps_read_request(eps_request_t *eps_request);
 
 #endif /* DEVICES_EPS_H_ */
+
+/** \} End of eps group */
