@@ -45,6 +45,7 @@
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
+#include <devices/eps/eps.h>
 
 #include <ngham/ngham.h>
 
@@ -156,6 +157,12 @@ void vTaskStartup(void)
         led_clear(LED_FAULT);
     }
 
+#if defined(CONFIG_DEV_EPS_ENABLED) && (CONFIG_TASK_EPS_ENABLED)
+    if (eps_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_EPS_ENABLED */
     /* Startup task status = Done */
     xEventGroupSetBits(task_startup_status, TASK_STARTUP_DONE);
 
