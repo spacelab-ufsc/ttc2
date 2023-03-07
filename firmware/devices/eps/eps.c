@@ -103,5 +103,11 @@ int eps_read_request(eps_request_t *eps_request)
     return err;
 }
 
+int eps_flush_request(eps_request_t *eps_request)
+{
+    eps_request->data.data_packet.len = 0;
+
+    return uart_flush(eps_uart_port);
+}
 /** \} End of eps group */
 

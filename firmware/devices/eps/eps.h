@@ -57,4 +57,13 @@ int eps_init(void);
  */
 int eps_read_request(eps_request_t *eps_request);
 
+/**
+ * \brief EPS flush UART RX buffer.
+ *
+ * \param[in] *eps_request is the structure to store the received information.
+ *
+ * \return The status/error code.
+ */
+int eps_flush_request(eps_request_t *eps_request);
+
 #endif /* DEVICES_EPS_H_ */
