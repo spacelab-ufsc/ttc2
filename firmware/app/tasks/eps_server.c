@@ -38,6 +38,7 @@
 #include <devices/radio/radio.h>
 #include <devices/eps/eps.h>
 #include <system/cmdpr.h>
+#include <drivers/uart/uart.h>
 
 #include "eps_server.h"
 #include "startup.h"
@@ -46,17 +47,20 @@ xTaskHandle xTaskEpsServerHandle;
 
 void vTaskEpsServer(void)
 {
-    eps_request_t eps_request;
-    eps_request.command = 0x00; /* No command */
-
     /* Wait startup task to finish */
      xEventGroupWaitBits(task_startup_status, TASK_STARTUP_DONE, pdFALSE, pdTRUE, pdMS_TO_TICKS(TASK_EPS_SERVER_INIT_TIMEOUT_MS));
 
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_EPS_SERVER_INITIAL_DELAY_MS));
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server");
+    sys_log_new_line();
+    eps_request_t eps_request;
+    eps_request.command = 0x00; /* No command */
 
     while(1)
     {
+        TickType_t last_cycle = xTaskGetTickCount();
+
         /* Receiving data from eps */
         eps_read_request(&eps_request);
 
@@ -64,12 +68,16 @@ void vTaskEpsServer(void)
         {
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
             sys_log_print_uint(eps_request.data.data_packet.len);
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, " bytes!");
+            sys_log_print_msg(" bytes!");
             sys_log_new_line();
 
+
+            //TODO: Implement data processing and radio link
+            sys_log_print_str("Packet: ");
             for (int i = 0; i < eps_request.data.data_packet.len; i++)
             {
-                sys_log_print_uint(eps_request.data.data_packet.packet[i]);
+                sys_log_print_hex(eps_request.data.data_packet.packet[i]);
+                sys_log_print_str("|");
             }
             sys_log_new_line();
         }
@@ -77,19 +85,21 @@ void vTaskEpsServer(void)
         else if (eps_request.command == 0x00)
         {
             /* No request */
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "No command received for transmit from EPS.");
-            sys_log_new_line();
         }
         else
         {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command from EPS!");
-            sys_log_print_msg("Command: ");
-            sys_log_print_uint(eps_request.command);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command (");
+            sys_log_print_hex(eps_request.command);
+            sys_log_print_str(").");
             sys_log_new_line();
+
+            eps_flush_request(&eps_request);
         }
 
         /* Resetting command */
         eps_request.command = 0x00;
+
+        vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_EPS_SERVER_PERIOD_MS));
     }
 }
 
