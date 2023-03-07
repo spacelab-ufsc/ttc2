@@ -21,7 +21,7 @@
  */
 
 /**
- * \brief OBDH device definition.
+ * \brief EPS device definition.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
@@ -36,6 +36,8 @@
 
 #ifndef DEVICES_EPS_H_
 #define DEVICES_EPS_H_
+
+#include <system/cmdpr.h>
 
 typedef cmdpr_package_t eps_request_t;
 
