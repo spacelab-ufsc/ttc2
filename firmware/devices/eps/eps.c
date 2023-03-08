@@ -44,7 +44,8 @@ int eps_init(void)
 {
     int err = -1;
 
-    uart_config_t config;
+    uart_config_t config = {0};
+
     config.clock = 1000000;
     config.baudrate = 115200;
     config.data_bits = 8;
@@ -110,4 +111,3 @@ int eps_flush_request(eps_request_t *eps_request)
     return uart_flush(eps_uart_port);
 }
 /** \} End of eps group */
-

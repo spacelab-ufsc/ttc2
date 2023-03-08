@@ -67,3 +67,5 @@ int eps_read_request(eps_request_t *eps_request);
 int eps_flush_request(eps_request_t *eps_request);
 
 #endif /* DEVICES_EPS_H_ */
+
+/** \} End of eps group */

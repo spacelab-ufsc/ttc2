@@ -23,7 +23,7 @@
 /**
  * \brief Unit test of the eps device.
  *
- *  * \author Miguel Boing <miguelboing13@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  *
  * \version 0.3.4
  *
@@ -61,75 +61,77 @@ int max_packet_size = 220;
 
 static void eps_init_test(void **state)
 {
-  expect_value(__wrap_uart_init, port, uart_port);
-  expect_value(__wrap_uart_init, config.clock, uart_config.clock);
-  expect_value(__wrap_uart_init, config.baudrate, uart_config.baudrate);
-  expect_value(__wrap_uart_init, config.data_bits, uart_config.data_bits);
-  expect_value(__wrap_uart_init, config.parity, uart_config.parity);
-  expect_value(__wrap_uart_init, config.stop_bits, uart_config.stop_bits);
-  will_return(__wrap_uart_init, 0);
+    expect_value(__wrap_uart_init, port, uart_port);
+    expect_value(__wrap_uart_init, config.clock, uart_config.clock);
+    expect_value(__wrap_uart_init, config.baudrate, uart_config.baudrate);
+    expect_value(__wrap_uart_init, config.data_bits, uart_config.data_bits);
+    expect_value(__wrap_uart_init, config.parity, uart_config.parity);
+    expect_value(__wrap_uart_init, config.stop_bits, uart_config.stop_bits);
+    will_return(__wrap_uart_init, 0);
 
-  expect_value(__wrap_uart_rx_enable, port, uart_port);
-  will_return(__wrap_uart_rx_enable, 0);
+    expect_value(__wrap_uart_rx_enable, port, uart_port);
+    will_return(__wrap_uart_rx_enable, 0);
 
-  assert_return_code(eps_init(), 0);
+    assert_return_code(eps_init(), 0);
 }
 
 static void eps_read_request_test(void **state)
 {
-  eps_request_t eps_request = generate_random_request();
+    eps_request_t eps_request = generate_random_request();
 
-  expect_value(__wrap_uart_read_available, port, uart_port);
-  will_return(__wrap_uart_read_available, eps_request.data.data_packet.len + 1); /* Packet len + 1 byte for command) */
+    expect_value(__wrap_uart_read_available, port, uart_port);
+    will_return(__wrap_uart_read_available, eps_request.data.data_packet.len + 1); /* Packet len + 1 byte for command) */
 
-  expect_value(__wrap_uart_read, port, uart_port);
-  expect_value(__wrap_uart_read, len, 1);
-  will_return(__wrap_uart_read, eps_request.command);
-  will_return(__wrap_uart_read, 0);
+    expect_value(__wrap_uart_read, port, uart_port);
+    expect_value(__wrap_uart_read, len, 1);
+    will_return(__wrap_uart_read, eps_request.command);
+    will_return(__wrap_uart_read, 0);
 
-  expect_value(__wrap_uart_read_available, port, uart_port);
-  will_return(__wrap_uart_read_available, eps_request.data.data_packet.len);
+    expect_value(__wrap_uart_read_available, port, uart_port);
+    will_return(__wrap_uart_read_available, eps_request.data.data_packet.len);
   
-  expect_value(__wrap_uart_read, port, uart_port);
-  expect_value(__wrap_uart_read, len, eps_request.data.data_packet.len);
-  for (int i = 0; i < eps_request.data.data_packet.len; i++)
-  {
-    will_return(__wrap_uart_read, eps_request.data.data_packet.packet[i]);
-  }
-  will_return(__wrap_uart_read, 0);
+    expect_value(__wrap_uart_read, port, uart_port);
+    expect_value(__wrap_uart_read, len, eps_request.data.data_packet.len);
 
-  assert_return_code(eps_read_request(&eps_request), 0);
+    for (int i = 0; i < eps_request.data.data_packet.len; i++)
+    {
+        will_return(__wrap_uart_read, eps_request.data.data_packet.packet[i]);
+    }
+
+    will_return(__wrap_uart_read, 0);
+
+    assert_return_code(eps_read_request(&eps_request), 0);
 }
 
 int main(void)
 {
-  srand(time(NULL));
+    srand(time(NULL));
   
-  const struct CMUnitTest eps_tests[] = {
-    cmocka_unit_test(eps_init_test),
-    cmocka_unit_test(eps_read_request_test),
-};
+    const struct CMUnitTest eps_tests[] = {
+        cmocka_unit_test(eps_init_test),
+        cmocka_unit_test(eps_read_request_test),
+    };
 
-  return cmocka_run_group_tests(eps_tests, NULL, NULL);
+    return cmocka_run_group_tests(eps_tests, NULL, NULL);
 }
 
 uint16_t generate_random_len(int max_value)
 {
-  return (uint16_t)(rand()%max_value+1);
+    return (uint16_t)(rand()%max_value+1);
 }
 
 eps_request_t generate_random_request(void)
 {
-  eps_request_t rand_request;
-  rand_request.command = CMDPR_CMD_TRANSMIT_PACKET;
-  rand_request.data.data_packet.len = generate_random_len(max_packet_size);
-  
-  for (int i = 0; i < rand_request.data.data_packet.len; i++)
-  {
-    rand_request.data.data_packet.packet[i] = (uint8_t)i;
-  }
+    eps_request_t rand_request;
+    rand_request.command = CMDPR_CMD_TRANSMIT_PACKET;
+    rand_request.data.data_packet.len = generate_random_len(max_packet_size);
 
-  return rand_request;
+    for (int i = 0; i < rand_request.data.data_packet.len; i++)
+    {
+        rand_request.data.data_packet.packet[i] = (uint8_t)i;
+    }
+
+    return rand_request;
 }
 
 /** \} End of eps_test group */

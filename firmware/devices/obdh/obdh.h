@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.4
  *
  * \date 2023/02/12
  *
@@ -66,3 +66,5 @@ int obdh_read_request(obdh_request_t *obdh_request);
 int obdh_send_response(obdh_response_t obdh_response);
 
 #endif /* DEVICES_OBDH_H_ */
+
+/** \} End of obdh group */
