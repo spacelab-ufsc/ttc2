@@ -21,11 +21,11 @@
  */
 
 /**
- * \brief OBDH device definition.
+ * \brief EPS device definition.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.3.5
  *
  * \date 2023/02/25
  *
@@ -36,6 +36,8 @@
 
 #ifndef DEVICES_EPS_H_
 #define DEVICES_EPS_H_
+
+#include <system/cmdpr.h>
 
 typedef cmdpr_package_t eps_request_t;
 
@@ -54,6 +56,15 @@ int eps_init(void);
  * \return The status/error code.
  */
 int eps_read_request(eps_request_t *eps_request);
+
+/**
+ * \brief EPS flush UART RX buffer.
+ *
+ * \param[in] eps_request is the structure to store the received information.
+ *
+ * \return The status/error code.
+ */
+int eps_flush_request(eps_request_t *eps_request);
 
 #endif /* DEVICES_EPS_H_ */
 
