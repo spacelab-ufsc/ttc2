@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.8
+ * \version 0.3.5
  * 
  * \date 2019/12/04
  * 
@@ -140,6 +140,13 @@ void vTaskStartup(void)
     }
 #endif /* CONFIG_DEV_ANTENNA_ENABLED */
 
+#if defined(CONFIG_DEV_EPS_ENABLED) && (CONFIG_DEV_EPS_ENABLED == 1)
+    if (eps_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_EPS_ENABLED */
+
     if (error_counter > 0U)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "Boot completed with ");
@@ -156,14 +163,6 @@ void vTaskStartup(void)
 
         led_clear(LED_FAULT);
     }
-
-#if defined(CONFIG_DEV_EPS_ENABLED) && (CONFIG_DEV_EPS_ENABLED == 1)
-
-    if (eps_init() != 0)
-    {
-        error_counter++;
-    }
-#endif /* CONFIG_DEV_EPS_ENABLED */
 
     /* Startup task status = Done */
     xEventGroupSetBits(task_startup_status, TASK_STARTUP_DONE);

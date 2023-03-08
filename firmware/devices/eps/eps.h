@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.3
+ * \version 0.3.5
  *
  * \date 2023/02/25
  *
@@ -60,7 +60,7 @@ int eps_read_request(eps_request_t *eps_request);
 /**
  * \brief EPS flush UART RX buffer.
  *
- * \param[in] *eps_request is the structure to store the received information.
+ * \param[in] eps_request is the structure to store the received information.
  *
  * \return The status/error code.
  */

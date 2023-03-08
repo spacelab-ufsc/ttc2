@@ -21,11 +21,11 @@
  */
 
 /**
- * \brief Eps Server task implementation.
+ * \brief EPS Server task implementation.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.3.5
  *
  * \date 2023/03/03
  *
@@ -52,9 +52,11 @@ void vTaskEpsServer(void)
 
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_EPS_SERVER_INITIAL_DELAY_MS));
+
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server");
     sys_log_new_line();
-    eps_request_t eps_request;
+
+    eps_request_t eps_request = {0};
     eps_request.command = 0x00; /* No command */
 
     while(1)
@@ -71,8 +73,7 @@ void vTaskEpsServer(void)
             sys_log_print_msg(" bytes!");
             sys_log_new_line();
 
-
-            //TODO: Implement data processing and radio link
+            /* TODO: Implement data processing and radio link */
             sys_log_print_str("Packet: ");
             for (int i = 0; i < eps_request.data.data_packet.len; i++)
             {
@@ -81,7 +82,6 @@ void vTaskEpsServer(void)
             }
             sys_log_new_line();
         }
-
         else if (eps_request.command == 0x00)
         {
             /* No request */

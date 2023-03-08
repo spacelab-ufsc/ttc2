@@ -1,7 +1,7 @@
 /*
  * eps_server.h
  *
- * Copyright (C) 2023, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  *
  * This file is part of TTC 2.0.
  *
@@ -21,7 +21,7 @@
  */
 
 /**
- * \brief EPS task definition.
+ * \brief EPS Server task definition.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
@@ -33,6 +33,7 @@
  * \ingroup tasks
  * \{
  */
+
 #ifndef TASK_EPS_SERVER_H_
 #define TASK_EPS_SERVER_H_
 
