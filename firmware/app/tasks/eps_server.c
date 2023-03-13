@@ -36,9 +36,7 @@
 #include <system/sys_log/sys_log.h>
 #include <devices/eps/eps.h>
 #include <devices/radio/radio.h>
-#include <devices/eps/eps.h>
 #include <system/cmdpr.h>
-#include <drivers/uart/uart.h>
 
 #include "eps_server.h"
 #include "startup.h"
@@ -66,34 +64,36 @@ void vTaskEpsServer(void)
         /* Receiving data from eps */
         eps_read_request(&eps_request);
 
-        if (eps_request.command == CMDPR_CMD_TRANSMIT_PACKET)
+        switch(eps_request.command == CMDPR_CMD_TRANSMIT_PACKET)
         {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
-            sys_log_print_uint(eps_request.data.data_packet.len);
-            sys_log_print_msg(" bytes!");
-            sys_log_new_line();
+            case CMDPR_CMD_TRANSMIT_PACKET:
 
-            /* TODO: Implement data processing and radio link */
-            sys_log_print_str("Packet: ");
-            for (int i = 0; i < eps_request.data.data_packet.len; i++)
-            {
-                sys_log_print_hex(eps_request.data.data_packet.packet[i]);
-                sys_log_print_str("|");
-            }
-            sys_log_new_line();
-        }
-        else if (eps_request.command == 0x00)
-        {
-            /* No request */
-        }
-        else
-        {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command (");
-            sys_log_print_hex(eps_request.command);
-            sys_log_print_str(").");
-            sys_log_new_line();
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
+                sys_log_print_uint(eps_request.data.data_packet.len);
+                sys_log_print_msg(" bytes!");
+                sys_log_new_line();
 
-            eps_flush_request(&eps_request);
+                /* TODO: Implement data processing and radio link */
+                sys_log_print_str("Packet: ");
+                for (int i = 0; i < eps_request.data.data_packet.len; i++)
+                {
+                    sys_log_print_hex(eps_request.data.data_packet.packet[i]);
+                    sys_log_print_str("|");
+                }
+                sys_log_new_line();
+                break;
+
+            case 0x00:
+                /* No request */
+                break;
+
+            default:
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command (");
+                sys_log_print_hex(eps_request.command);
+                sys_log_print_str(").");
+                sys_log_new_line();
+
+                eps_flush_request(&eps_request);
         }
 
         /* Resetting command */
