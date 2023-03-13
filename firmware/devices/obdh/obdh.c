@@ -35,6 +35,7 @@
 
 #include <system/cmdpr.h>
 #include <drivers/spi_slave/spi_slave.h>
+#include <app/structs/ttc_data.h>
 
 #include "obdh.h"
 
@@ -160,6 +161,126 @@ int obdh_send_response(obdh_response_t obdh_response)
     }
 
     return err;
+}
+
+int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_response)
+{
+    int err = 0;
+
+    if (obdh_response->command == CMDPR_CMD_READ_PARAM)
+    {
+        switch(obdh_response->parameter)
+        {
+            case CMDPR_PARAM_HW_VER:
+                obdh_response->data.param_8 = ttc_data_buf.hw_version;
+                break;
+
+            case CMDPR_PARAM_FW_VER:
+                obdh_response->data.param_32 = ttc_data_buf.fw_version;
+                break;
+
+            case CMDPR_PARAM_COUNTER:
+                obdh_response->data.param_32 = ttc_data_buf.timestamp;
+                break;
+
+            case CMDPR_PARAM_RST_COUNTER:
+                obdh_response->data.param_16 = ttc_data_buf.reset_counter;
+                break;
+
+            case CMDPR_PARAM_DEVICE_ID:
+                //TODO Add to struct device ID
+                break;
+
+            case CMDPR_PARAM_LAST_RST_CAUSE:
+                obdh_response->data.param_8 = ttc_data_buf.last_reset_cause;
+                break;
+
+            case CMDPR_PARAM_UC_VOLTAGE:
+                obdh_response->data.param_16 = ttc_data_buf.voltage;
+                break;
+
+            case CMDPR_PARAM_UC_CURRENT:
+                obdh_response->data.param_16 = ttc_data_buf.current;
+                break;
+
+            case CMDPR_PARAM_UC_TEMP:
+                obdh_response->data.param_16 = ttc_data_buf.temperature;
+                break;
+
+            case CMDPR_PARAM_RADIO_VOLTAGE:
+                obdh_response->data.param_16 = ttc_data_buf.radio.voltage;
+                break;
+
+            case CMDPR_PARAM_RADIO_CURRENT:
+                obdh_response->data.param_16 = ttc_data_buf.radio.current;
+                break;
+
+            case CMDPR_PARAM_RADIO_TEMP:
+                obdh_response->data.param_16 = ttc_data_buf.radio.temperature;
+                break;
+
+            case CMDPR_PARAM_LAST_UP_COMMAND:
+                obdh_response->data.param_8 = ttc_data_buf.radio.last_valid_tm;
+                break;
+
+            case CMDPR_PARAM_LAST_COMMAND_RSSI:
+                obdh_response->data.param_16 = ttc_data_buf.radio.rssi;
+                break;
+
+            case CMDPR_PARAM_ANT_TEMP:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_ANT_DEP_STATUS:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_ANT_DEP_HIB:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_TX_ENABLE:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_TX_PACKET_COUNTER:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_RX_VAL_PACKET_COUNTER:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_PACKETS_AV_FIFO_TX:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_PACKETS_AV_FIFO_RX:
+                //TODO
+                break;
+
+            case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
+                //TODO
+                break;
+        }
+    }
+    else
+    {
+        err = -1;
+    }
+
+    return err;
+}
+
+int obdh_flush_request(obdh_request_t *obdh_request)
+{
+    obdh_request->data.data_packet.len = 0;
+
+    return spi_slave_flush(obdh_spi_port);
 }
 
 static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
