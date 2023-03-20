@@ -1,5 +1,16 @@
 ===========================================
 
+v0.4 - 2023/03/20
+
+- Improving SPI slave driver
+- Improving ISR driver
+- Improving INA22x driver
+- OBDH and EPS devices
+- Adding system parameters
+- General fixes and improvements
+
+===========================================
+
 v0.3 - 2022/11/04
 
 - Initial SPI Slave driver

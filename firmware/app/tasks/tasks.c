@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.7
+ * \version 0.3.5
  * 
  * \date 2019/11/02
  * 
@@ -48,6 +48,7 @@
 #include "beacon.h"
 #include "uplink.h"
 #include "time_control.h"
+#include "eps_server.h"
 
 void create_tasks(void)
 {
@@ -134,6 +135,15 @@ void create_tasks(void)
         /* Error creating the time control task */
     }
 #endif /* CONFIG_TASK_TIME_CONTROL_ENABLED */
+
+#if defined(CONFIG_TASK_EPS_ENABLED) && (CONFIG_TASK_EPS_ENABLED == 1)
+    xTaskCreate(vTaskEpsServer, TASK_EPS_SERVER_NAME, TASK_EPS_SERVER_STACK_SIZE, NULL, TASK_EPS_SERVER_PRIORITY, &xTaskEpsServerHandle);
+
+    if (xTaskEpsServerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_EPS_ENABLED */
 
     create_event_groups();
 }

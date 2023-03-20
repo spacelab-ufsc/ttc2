@@ -58,6 +58,8 @@ jobs:
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/power_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/obdh
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/eps
 
       - name: Execute CppCheck on drivers files
         run: |
@@ -76,7 +78,7 @@ jobs:
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/wdt
 
       - name: Execute CppCheck on system files
-        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/
+        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/ --suppress=misra-c2012-19.2
 
       - name: Execute CppCheck on libraries files
         run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/libs/

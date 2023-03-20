@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.1.16
+ * \version 0.3.1
  * 
  * \date 2019/12/07
  * 
@@ -153,6 +153,8 @@ int uart_init(uart_port_t port, uart_config_t config)
         case UART_PORT_0:
             base_address = USCI_A0_BASE;
 
+            isr_a0_bus = ISR_UART_CONFIG;
+
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN4 + GPIO_PIN5);
 
             queue_init(&uart_port_0_rx_buffer);
@@ -161,6 +163,8 @@ int uart_init(uart_port_t port, uart_config_t config)
         case UART_PORT_1:
             base_address = USCI_A1_BASE;
 
+            isr_a1_bus = ISR_UART_CONFIG;
+
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN2 + GPIO_PIN3);
 
             queue_init(&uart_port_1_rx_buffer);
@@ -168,6 +172,8 @@ int uart_init(uart_port_t port, uart_config_t config)
             break;
         case UART_PORT_2:
             base_address = USCI_A2_BASE;
+
+            isr_a2_bus = ISR_UART_CONFIG;
 
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN2 + GPIO_PIN3);
 
@@ -280,7 +286,9 @@ int uart_rx_enable(uart_port_t port)
 
     if (err == 0)
     {
+        USCI_A_UART_clearInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
         USCI_A_UART_enableInterrupt(base_address, USCI_A_UART_RECEIVE_INTERRUPT);
+        isr_enable();
     }
 
     return err;
@@ -314,7 +322,7 @@ int uart_rx_disable(uart_port_t port)
     return err;
 }
 
-int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
+static int uart_read_isr_rx_buffer(uart_port_t port, uint8_t *data, uint16_t len)
 {
     int err = 0;
 

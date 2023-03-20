@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.8
+ * \version 0.3.5
  * 
  * \date 2019/12/04
  * 
@@ -45,6 +45,7 @@
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
+#include <devices/eps/eps.h>
 
 #include <ngham/ngham.h>
 
@@ -96,7 +97,7 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_MEDIA_INT_ENABLED */
 
     /* LEDs device initialization */
-#if defined(CONFIG_DEV_LEDS_ENABLED) && (CONFIG_DEV_LEDS_ENABLED)
+#if defined(CONFIG_DEV_LEDS_ENABLED) && (CONFIG_DEV_LEDS_ENABLED == 1)
     if (leds_init() != 0)
     {
         error_counter++;
@@ -104,7 +105,7 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_LEDS_ENABLED */
 
     /* Power sensor device initialization */
-#if defined(CONFIG_DEV_POWER_SENSOR_ENABLED) && (CONFIG_DEV_POWER_SENSOR_ENABLED)
+#if defined(CONFIG_DEV_POWER_SENSOR_ENABLED) && (CONFIG_DEV_POWER_SENSOR_ENABLED == 1)
     if (power_sensor_init() != 0)
     {
         error_counter++;
@@ -112,7 +113,7 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_POWER_SENSOR_ENABLED */
 
     /* Temperature sensor device initialization */
-#if defined(CONFIG_DEV_TEMP_SENSOR_ENABLED) && (CONFIG_DEV_TEMP_SENSOR_ENABLED)
+#if defined(CONFIG_DEV_TEMP_SENSOR_ENABLED) && (CONFIG_DEV_TEMP_SENSOR_ENABLED == 1)
     if (temp_sensor_init() != 0)
     {
         error_counter++;
@@ -120,7 +121,7 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_TEMP_SENSOR_ENABLED */
 
     /* Radio device initialization */
-#if defined(CONFIG_DEV_RADIO_ENABLED) && (CONFIG_DEV_RADIO_ENABLED)
+#if defined(CONFIG_DEV_RADIO_ENABLED) && (CONFIG_DEV_RADIO_ENABLED == 1)
     if (radio_init() != 0)
     {
         error_counter++;
@@ -132,12 +133,19 @@ void vTaskStartup(void)
     ngham_init();
 
     /* Antenna device initialization */
-#if defined(CONFIG_DEV_ANTENNA_ENABLED) && (CONFIG_DEV_ANTENNA_ENABLED)
+#if defined(CONFIG_DEV_ANTENNA_ENABLED) && (CONFIG_DEV_ANTENNA_ENABLED == 1)
     if (antenna_init() != 0)
     {
         error_counter++;
     }
 #endif /* CONFIG_DEV_ANTENNA_ENABLED */
+
+#if defined(CONFIG_DEV_EPS_ENABLED) && (CONFIG_DEV_EPS_ENABLED == 1)
+    if (eps_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_EPS_ENABLED */
 
     if (error_counter > 0U)
     {
