@@ -188,7 +188,7 @@ int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_res
                 break;
 
             case CMDPR_PARAM_DEVICE_ID:
-                //TODO Add to struct device ID
+                obdh_response->data.param_16 = ttc_data_buf.device_id;
                 break;
 
             case CMDPR_PARAM_LAST_RST_CAUSE:
@@ -228,43 +228,43 @@ int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_res
                 break;
 
             case CMDPR_PARAM_ANT_TEMP:
-                //TODO
+                obdh_response->data.param_16 = ttc_data_buf.antenna.temperature;
                 break;
 
             case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
-                //TODO
+                obdh_response->data.param_16 = ttc_data_buf.antenna.status.code;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_STATUS:
-                //TODO
+                obdh_response->data.param_8 = ttc_data_buf.antenna.status.armed; //Is this the right parameter?
                 break;
 
             case CMDPR_PARAM_ANT_DEP_HIB:
-                //TODO
+                obdh_response->data.param_8 = ttc_data_buf.antenna.status.independent_burn; //Is this the right parameter?
                 break;
 
             case CMDPR_PARAM_TX_ENABLE:
-                //TODO
+                obdh_response->data.param_8 = ttc_data_buf.radio.tx_enable;
                 break;
 
             case CMDPR_PARAM_TX_PACKET_COUNTER:
-                //TODO
+                obdh_response->data.param_32 = ttc_data_buf.radio.tx_packet_counter;
                 break;
 
             case CMDPR_PARAM_RX_VAL_PACKET_COUNTER:
-                //TODO
+                obdh_response->data.param_32 = ttc_data_buf.radio.rx_packet_counter;
                 break;
 
             case CMDPR_PARAM_PACKETS_AV_FIFO_TX:
-                //TODO
+                obdh_response->data.param_8 = ttc_data_buf.radio.tx_fifo_counter;
                 break;
 
             case CMDPR_PARAM_PACKETS_AV_FIFO_RX:
-                //TODO
+                obdh_response->data.param_8 = ttc_data_buf.radio.rx_fifo_counter;
                 break;
 
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
-                //TODO
+                obdh_response->data.param_16 = ttc_data_buf.radio.last_rx_packet_bytes;
                 break;
         }
     }
