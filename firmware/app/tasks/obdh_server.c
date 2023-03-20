@@ -56,7 +56,7 @@ void vTaskObdhServer(void)
     sys_log_new_line();
 
     obdh_request_t obdh_request = {0};
-    //obdh_request_t obdh_response = {0};
+    obdh_request_t obdh_response = {0};
     obdh_request.command = 0x00; /* No command */
 
     while(1)
@@ -72,10 +72,14 @@ void vTaskObdhServer(void)
                 obdh_response.command = CMDPR_CMD_READ_PARAM;
                 obdh_response.parameter = obdh_request.parameter;
 
+                obdh_write_response_param(ttc_data_buf, &obdh_response);
+                obdh_send_response(obdh_response);
+
                 break;
 
             case CMDPR_CMD_WRITE_PARAM:
-                 break;
+                //TODO: Only TX ENABLE;
+                break;
 
             case CMDPR_CMD_TRANSMIT_PACKET:
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit ");
