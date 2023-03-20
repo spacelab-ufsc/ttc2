@@ -64,7 +64,7 @@ void vTaskEpsServer(void)
         /* Receiving data from eps */
         eps_read_request(&eps_request);
 
-        switch(eps_request.command == CMDPR_CMD_TRANSMIT_PACKET)
+        switch(eps_request.command)
         {
             case CMDPR_CMD_TRANSMIT_PACKET:
 
