@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.3
+ * \version 0.3.2
  * 
  * \date 2021/12/14
  * 
@@ -166,7 +166,7 @@
 #define SX127X_REG_HIGH_BW_OPTIMIZE_2       0x3AU       /**< Sensitivity optimisation for 500 kHz bandwidth. */
 #define SX127X_REG_INVERT_IQ_2              0x3BU       /**< Optimize for inverted IQ. */
 
-/* Register Op Mode */
+/* Register Op Mode values*/
 #define SX127X_LONG_RANGE_MODE_FSK          0x00U
 #define SX127X_LONG_RANGE_MODE_LORA         0x80U
 #define SX127X_MODULATION_TYPE_FSK          0x00U
@@ -182,7 +182,7 @@
 #define SX127X_OP_MODE_RX_SINGLE            0x06U
 #define SX127X_OP_MODE_CAD                  0x07U
 
-/* Register Modem Config 1 */
+/* Register Modem Config 1 values*/
 #define SX127X_BW_7P8K                      0x00U
 #define SX127X_BW_10p4K                     0x10U
 #define SX127X_BW_15P6K                     0x20U
@@ -200,7 +200,7 @@
 #define SX127X_IMPLICIT_HEADER_MODE         0x01U
 #define SX127X_EXPLICIT_HEADER_MODE         0x00U
 
-/* Register Modem Config 2 */
+/* Register Modem Config 2 values*/
 #define SX127X_SPREADING_FACTOR_6           0x60U
 #define SX127X_SPREADING_FACTOR_7           0x70U
 #define SX127X_SPREADING_FACTOR_8           0x80U
@@ -213,9 +213,44 @@
 #define SX127X_PAYLOAD_CRC_ON               0x04U
 #define SX127X_PAYLOAD_CRC_OFF              0x00U
 
-/* Regisgter PA Config values */
+/* Register Modem Config 3 values */
+#define SX127X_LOWDATARATEOPTIMIZE_DSBLD    0x00U
+#define SX127X_LOWDATARATEOPTIMIZE_ENBLD    0x08U
+#define SX127X_AGC_AUTO_ON                  0x04U
+
+/* Register PA Config values */
 #define SX127X_PA_SELECT_RFO                0x00U
 #define SX127X_PA_SELECT_PA_BOOST           0x80U
+
+/* Register OCP values */
+#define SX127X_OCPON_ON                     0x20U
+#define SX127X_OCPON_OFF                    0x00U
+
+/* Register TCXO values */
+#define SX127X_TCXO_EXT_CRYSTAL             0x00U
+#define SX127X_TCXO_INPUT_ON                0x10U
+#define SX127X_TCXO_REGTCXO_RESERVED        0x09U
+
+/* Register LNA values */
+#define SX127X_LNA_GAIN_G1                   0x20U
+#define SX127X_LNA_GAIN_G2                   0x40U
+#define SX127X_LNA_GAIN_G3                   0x60U
+#define SX127X_LNA_GAIN_G4                   0x80U
+#define SX127X_LNA_GAIN_G5                   0xA0U
+#define SX127X_LNA_GAIN_G6                   0xC0U
+#define SX127X_LNA_BOOSTHF_0                 0x00U
+#define SX127X_LNA_BOOSTHF_1                 0x03U
+
+/* Register PA DAC values */
+#define SX127X_REGPADAC_RESERVED             0x80U
+#define SX127X_20DB_OUTPUT_ON                0x07U
+#define SX127X_20DB_OUTPUT_OFF               0x04U
+
+/* Register DIOMAPPING2 values */
+#define SX127X_DIO4_CADDETECTED              0x00U
+#define SX127X_DIO4_PLLLOCK                  0x40U
+#define SX127X_DIO5_MODEREADY                0x00U
+#define SX127X_DIO5_CLKOUT                   0x10U
 
 /* The first bit in SPI address byte is a wnr bit, 1 for write access , 0 for read access */
 #define SX127X_SPI_WNR                      0x80U
@@ -378,7 +413,7 @@ int sx127x_set_payload_len(uint8_t len);
  *
  * \return The status/error code.
  */
-int sx127x_tx_power(uint8_t pwr);
+int sx127x_set_tx_power(uint8_t pwr);
 
 /**
  * \brief Sets RX timeout.
