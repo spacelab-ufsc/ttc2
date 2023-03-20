@@ -48,10 +48,10 @@ To externally control and access the TTC module, some commands are available thr
         \textbf{ID} & \textbf{Name} & \textbf{Content} & \textbf{Interface}\\
         \midrule
         0   & NOP               & None                                           & SPI \\
-        1   & Read parameter    & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI/UART \\
-        2   & Write parameter   & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI/UART \\
+        1   & Read parameter    & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI \\
+        2   & Write parameter   & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI \\
         3   & Transmit packet   & Packet data (1-220B) + Checksum (2B)           & SPI/UART \\
-        4   & Receive packet    & Packet data (1-220B) + Checksum (2B)           & SPI/UART \\
+        4   & Receive packet    & Packet data (1-220B) + Checksum (2B)           & SPI \\
         \bottomrule[1.5pt]
     \end{tabular}
     \caption{List of commands.}
@@ -228,7 +228,10 @@ Each of the tasks presented in \autoref{tab:firmware-tasks} is described below:
     \item \textbf{Startup}: Initializes all the devices and peripherals, and variables of the TTC 2.0 module (boot sequence).
     \item \textbf{System Reset}: Resets the microcontroller by software every 10 hours.
     \item \textbf{Time Control}: Manages the system time by loading the saving the time counter from/to the FRAM memory.
-    \item \textbf{Uplink}: Monitors the radio module for upcoming packages and stores it in memory.
+    \item \textbf{Uplink Manager}: Monitors the radio module for upcoming packages and stores it in memory.
+    \item \textbf{Downlink Manager}: Monitors for radio request from other tasks and manages downlink FIFO.
+    \item \textbf{OBDH Server}: Read requests and send response from the SPI bus.
+    \item \textbf{EPS Server}: Read only transmit requests from UART bus.
     \item \textbf{Watchdog Reset}: Resets both watchdog timers (internal and external) at every 100 milliseconds.
 \end{itemize}
 
