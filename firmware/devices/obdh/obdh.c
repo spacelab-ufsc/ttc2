@@ -236,11 +236,11 @@ int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_res
                 break;
 
             case CMDPR_PARAM_ANT_DEP_STATUS:
-                obdh_response->data.param_8 = ttc_data_buf.antenna.status.armed; //Is this the right parameter?
+                obdh_response->data.param_8 = ttc_data_buf.ant_deploy;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_HIB:
-                obdh_response->data.param_8 = ttc_data_buf.antenna.status.independent_burn; //Is this the right parameter?
+                obdh_response->data.param_8 = ttc_data_buf.ant_deploy_hib;
                 break;
 
             case CMDPR_PARAM_TX_ENABLE:
