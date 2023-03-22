@@ -55,7 +55,9 @@ typedef struct
     uint16_t reset_counter;         /**< uC reset counter. */
     uint8_t hw_version;             /**< Hardware version. */
     uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
-    uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO:*/
+    uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
+    uint8_t ant_deploy;             /**<  Number of antenna deployment tries TODO: */
+    uint8_t ant_deploy_hib;         /**<  Hibernation time completed */
     radio_data_t radio;             /**< Radio data. */
     antenna_data_t antenna;         /**< Antenna data. */
 } ttc_data_t;
