@@ -41,6 +41,8 @@
 
 typedef cmdpr_package_t eps_request_t;
 
+#define EPS_MODULE_NAME         "EPS"
+
 /**
  * \brief EPS initialization.
  *
