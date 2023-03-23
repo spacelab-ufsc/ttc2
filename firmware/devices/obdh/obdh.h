@@ -77,7 +77,7 @@ int obdh_send_response(obdh_response_t obdh_response);
  *
  * \return The status/error code.
  */
-int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_response);
+int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_response);
 
 /**
  * \brief OBDH flush SPI RX buffer.

@@ -163,7 +163,7 @@ int obdh_send_response(obdh_response_t obdh_response)
     return err;
 }
 
-int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_response)
+int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_response)
 {
     int err = 0;
 
@@ -172,99 +172,99 @@ int obdh_write_response_param(ttc_data_t ttc_data_buf, obdh_response_t *obdh_res
         switch(obdh_response->parameter)
         {
             case CMDPR_PARAM_HW_VER:
-                obdh_response->data.param_8 = ttc_data_buf.hw_version;
+                obdh_response->data.param_8 = ttc_data_buf->hw_version;
                 break;
 
             case CMDPR_PARAM_FW_VER:
-                obdh_response->data.param_32 = ttc_data_buf.fw_version;
+                obdh_response->data.param_32 = ttc_data_buf->fw_version;
                 break;
 
             case CMDPR_PARAM_COUNTER:
-                obdh_response->data.param_32 = ttc_data_buf.timestamp;
+                obdh_response->data.param_32 = ttc_data_buf->timestamp;
                 break;
 
             case CMDPR_PARAM_RST_COUNTER:
-                obdh_response->data.param_16 = ttc_data_buf.reset_counter;
+                obdh_response->data.param_16 = ttc_data_buf->reset_counter;
                 break;
 
             case CMDPR_PARAM_DEVICE_ID:
-                obdh_response->data.param_16 = ttc_data_buf.device_id;
+                obdh_response->data.param_16 = ttc_data_buf->device_id;
                 break;
 
             case CMDPR_PARAM_LAST_RST_CAUSE:
-                obdh_response->data.param_8 = ttc_data_buf.last_reset_cause;
+                obdh_response->data.param_8 = ttc_data_buf->last_reset_cause;
                 break;
 
             case CMDPR_PARAM_UC_VOLTAGE:
-                obdh_response->data.param_16 = ttc_data_buf.voltage;
+                obdh_response->data.param_16 = ttc_data_buf->voltage;
                 break;
 
             case CMDPR_PARAM_UC_CURRENT:
-                obdh_response->data.param_16 = ttc_data_buf.current;
+                obdh_response->data.param_16 = ttc_data_buf->current;
                 break;
 
             case CMDPR_PARAM_UC_TEMP:
-                obdh_response->data.param_16 = ttc_data_buf.temperature;
+                obdh_response->data.param_16 = ttc_data_buf->temperature;
                 break;
 
             case CMDPR_PARAM_RADIO_VOLTAGE:
-                obdh_response->data.param_16 = ttc_data_buf.radio.voltage;
+                obdh_response->data.param_16 = ttc_data_buf->radio.voltage;
                 break;
 
             case CMDPR_PARAM_RADIO_CURRENT:
-                obdh_response->data.param_16 = ttc_data_buf.radio.current;
+                obdh_response->data.param_16 = ttc_data_buf->radio.current;
                 break;
 
             case CMDPR_PARAM_RADIO_TEMP:
-                obdh_response->data.param_16 = ttc_data_buf.radio.temperature;
+                obdh_response->data.param_16 = ttc_data_buf->radio.temperature;
                 break;
 
             case CMDPR_PARAM_LAST_UP_COMMAND:
-                obdh_response->data.param_8 = ttc_data_buf.radio.last_valid_tm;
+                obdh_response->data.param_8 = ttc_data_buf->radio.last_valid_tm;
                 break;
 
             case CMDPR_PARAM_LAST_COMMAND_RSSI:
-                obdh_response->data.param_16 = ttc_data_buf.radio.rssi;
+                obdh_response->data.param_16 = ttc_data_buf->radio.rssi;
                 break;
 
             case CMDPR_PARAM_ANT_TEMP:
-                obdh_response->data.param_16 = ttc_data_buf.antenna.temperature;
+                obdh_response->data.param_16 = ttc_data_buf->antenna.temperature;
                 break;
 
             case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
-                obdh_response->data.param_16 = ttc_data_buf.antenna.status.code;
+                obdh_response->data.param_16 = ttc_data_buf->antenna.status.code;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_STATUS:
-                obdh_response->data.param_8 = ttc_data_buf.ant_deploy;
+                obdh_response->data.param_8 = ttc_data_buf->ant_deploy;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_HIB:
-                obdh_response->data.param_8 = ttc_data_buf.ant_deploy_hib;
+                obdh_response->data.param_8 = ttc_data_buf->ant_deploy_hib;
                 break;
 
             case CMDPR_PARAM_TX_ENABLE:
-                obdh_response->data.param_8 = ttc_data_buf.radio.tx_enable;
+                obdh_response->data.param_8 = ttc_data_buf->radio.tx_enable;
                 break;
 
             case CMDPR_PARAM_TX_PACKET_COUNTER:
-                obdh_response->data.param_32 = ttc_data_buf.radio.tx_packet_counter;
+                obdh_response->data.param_32 = ttc_data_buf->radio.tx_packet_counter;
                 break;
 
             case CMDPR_PARAM_RX_VAL_PACKET_COUNTER:
-                obdh_response->data.param_32 = ttc_data_buf.radio.rx_packet_counter;
+                obdh_response->data.param_32 = ttc_data_buf->radio.rx_packet_counter;
                 break;
 
             case CMDPR_PARAM_PACKETS_AV_FIFO_TX:
-                obdh_response->data.param_8 = ttc_data_buf.radio.tx_fifo_counter;
+                obdh_response->data.param_8 = ttc_data_buf->radio.tx_fifo_counter;
                 break;
 
             case CMDPR_PARAM_PACKETS_AV_FIFO_RX:
-                obdh_response->data.param_8 = ttc_data_buf.radio.rx_fifo_counter;
+                obdh_response->data.param_8 = ttc_data_buf->radio.rx_fifo_counter;
                 break;
 
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
-                obdh_response->data.param_16 = ttc_data_buf.radio.last_rx_packet_bytes;
+                obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
                 break;
         }
     }
