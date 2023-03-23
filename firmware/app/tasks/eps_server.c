@@ -67,7 +67,6 @@ void vTaskEpsServer(void)
         switch(eps_request.command)
         {
             case CMDPR_CMD_TRANSMIT_PACKET:
-
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
                 sys_log_print_uint(eps_request.data.data_packet.len);
                 sys_log_print_msg(" bytes!");
@@ -75,7 +74,7 @@ void vTaskEpsServer(void)
 
                 /* TODO: Implement data processing and radio link */
                 sys_log_print_str("Packet: ");
-                for (int i = 0; i < eps_request.data.data_packet.len; i++)
+                for (uint16_t i = 0; i < eps_request.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(eps_request.data.data_packet.packet[i]);
                     sys_log_print_str("|");

@@ -72,7 +72,7 @@ void vTaskObdhServer(void)
                 obdh_response.command = CMDPR_CMD_READ_PARAM;
                 obdh_response.parameter = obdh_request.parameter;
 
-                obdh_write_response_param(ttc_data_buf, &obdh_response);
+                obdh_write_response_param(&ttc_data_buf, &obdh_response);
                 obdh_send_response(obdh_response);
 
                 break;
@@ -99,7 +99,7 @@ void vTaskObdhServer(void)
 
                 /* TODO: Implement data processing and radio link */
                 sys_log_print_str("Packet: ");
-                for (int i = 0; i < obdh_request.data.data_packet.len; i++)
+                for (uint16_t i = 0; i < obdh_request.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(obdh_request.data.data_packet.packet[i]);
                     sys_log_print_str("|");
