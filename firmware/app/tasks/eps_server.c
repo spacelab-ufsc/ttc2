@@ -93,6 +93,8 @@ void vTaskEpsServer(void)
                 sys_log_new_line();
 
                 eps_flush_request(&eps_request);
+
+                break;
         }
 
         /* Resetting command */
