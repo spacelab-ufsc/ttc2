@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 0.4.1
  *
  * \date 2023/03/03
  *

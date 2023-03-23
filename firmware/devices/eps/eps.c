@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 0.4.1
  *
  * \date 2023/02/12
  *
@@ -106,4 +106,5 @@ int eps_flush_request(eps_request_t *eps_request)
 
     return uart_flush(eps_uart_port);
 }
+
 /** \} End of eps group */
