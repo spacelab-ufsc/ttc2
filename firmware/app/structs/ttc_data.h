@@ -1,7 +1,7 @@
 /*
  * ttc_data.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,8 +24,9 @@
  * \brief TTC data structure definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.0.23
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 0.4.1
  * 
  * \date 2021/04/14
  * 
@@ -39,18 +40,8 @@
 
 #include <stdint.h>
 
-/**
- * \brief Radio data.
- */
-typedef struct
-{
-    uint16_t temperature;           /**< Temperature in Kelvin. */
-    uint16_t voltage;               /**< Input voltage in mV. */
-    uint16_t current;               /**< Input current in mA. */
-    uint16_t power;                 /**< Input power in mW. */
-    uint8_t last_valid_tm;          /**< Last valid command (uplink packet ID). */
-    uint16_t rssi;                  /**< RSSI of the last valid command. */
-} radio_data_t;
+#include <devices/antenna/antenna_data.h>
+#include <devices/radio/radio_data.h>
 
 /**
  * \brief TTC data.
@@ -64,9 +55,13 @@ typedef struct
     uint16_t power;                 /**< Input power in mW. */
     uint8_t last_reset_cause;       /**< Last uC reset cause code. */
     uint16_t reset_counter;         /**< uC reset counter. */
-    radio_data_t radio;             /**< Radio data. */
     uint8_t hw_version;             /**< Hardware version. */
     uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
+    uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
+    uint8_t ant_deploy;             /**< Number of antenna deployment tries TODO: */
+    uint8_t ant_deploy_hib;         /**< Hibernation time completed */
+    radio_data_t radio;             /**< Radio data. */
+    antenna_data_t antenna;         /**< Antenna data. */
 } ttc_data_t;
 
 /**

@@ -25,16 +25,18 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.4.1
  *
  * \date 2023/02/12
  *
  * \addtogroup obdh
  * \{
  */
+#include <system/sys_log/sys_log.h>
 
 #include <system/cmdpr.h>
 #include <drivers/spi_slave/spi_slave.h>
+#include <app/structs/ttc_data.h>
 
 #include "obdh.h"
 
@@ -60,10 +62,8 @@ int obdh_init(void)
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error during OBDH initialization !");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error during OBDH initialization !");
         sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 
     return err;
@@ -82,6 +82,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 case CMDPR_CMD_READ_PARAM:
                     err = spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1);
                     break;
+
                 case CMDPR_CMD_WRITE_PARAM:
                     if (spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1) == 0)
                     {
@@ -92,6 +93,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                         err = -1;
                     }
                     break;
+
                 case CMDPR_CMD_TRANSMIT_PACKET:
                     obdh_request->data.data_packet.len = spi_slave_read_available(obdh_spi_port);
                     err = spi_slave_read(obdh_spi_port, obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len);
@@ -99,21 +101,18 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 case CMDPR_CMD_READ_FIRST_PACKET:
                     /* Nothing more to do */
                     break;
+
                 default:
-                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH command: unknown command!");
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH command: unknown command!");
                     sys_log_new_line();
-                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                     err = -1;
                     break;
             }
         }
         else
         {
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH command: unable to read command!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH command: unable to read command!");
             sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
         }
     }
 
@@ -139,18 +138,15 @@ int obdh_send_response(obdh_response_t obdh_response)
               {
                   err = -1;
               }
-
               break;
 
           case CMDPR_CMD_READ_FIRST_PACKET:
               /* Send the response packet */
               err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
-
               break;
 
           default:
               err = -1;
-
               break;
        }
     }
@@ -160,6 +156,130 @@ int obdh_send_response(obdh_response_t obdh_response)
     }
 
     return err;
+}
+
+int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_response)
+{
+    int err = 0;
+
+    if (obdh_response->command == CMDPR_CMD_READ_PARAM)
+    {
+        switch(obdh_response->parameter)
+        {
+            case CMDPR_PARAM_HW_VER:
+                obdh_response->data.param_8 = ttc_data_buf->hw_version;
+                break;
+
+            case CMDPR_PARAM_FW_VER:
+                obdh_response->data.param_32 = ttc_data_buf->fw_version;
+                break;
+
+            case CMDPR_PARAM_COUNTER:
+                obdh_response->data.param_32 = ttc_data_buf->timestamp;
+                break;
+
+            case CMDPR_PARAM_RST_COUNTER:
+                obdh_response->data.param_16 = ttc_data_buf->reset_counter;
+                break;
+
+            case CMDPR_PARAM_DEVICE_ID:
+                obdh_response->data.param_16 = ttc_data_buf->device_id;
+                break;
+
+            case CMDPR_PARAM_LAST_RST_CAUSE:
+                obdh_response->data.param_8 = ttc_data_buf->last_reset_cause;
+                break;
+
+            case CMDPR_PARAM_UC_VOLTAGE:
+                obdh_response->data.param_16 = ttc_data_buf->voltage;
+                break;
+
+            case CMDPR_PARAM_UC_CURRENT:
+                obdh_response->data.param_16 = ttc_data_buf->current;
+                break;
+
+            case CMDPR_PARAM_UC_TEMP:
+                obdh_response->data.param_16 = ttc_data_buf->temperature;
+                break;
+
+            case CMDPR_PARAM_RADIO_VOLTAGE:
+                obdh_response->data.param_16 = ttc_data_buf->radio.voltage;
+                break;
+
+            case CMDPR_PARAM_RADIO_CURRENT:
+                obdh_response->data.param_16 = ttc_data_buf->radio.current;
+                break;
+
+            case CMDPR_PARAM_RADIO_TEMP:
+                obdh_response->data.param_16 = ttc_data_buf->radio.temperature;
+                break;
+
+            case CMDPR_PARAM_LAST_UP_COMMAND:
+                obdh_response->data.param_8 = ttc_data_buf->radio.last_valid_tm;
+                break;
+
+            case CMDPR_PARAM_LAST_COMMAND_RSSI:
+                obdh_response->data.param_16 = ttc_data_buf->radio.rssi;
+                break;
+
+            case CMDPR_PARAM_ANT_TEMP:
+                obdh_response->data.param_16 = ttc_data_buf->antenna.temperature;
+                break;
+
+            case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
+                obdh_response->data.param_16 = ttc_data_buf->antenna.status.code;
+                break;
+
+            case CMDPR_PARAM_ANT_DEP_STATUS:
+                obdh_response->data.param_8 = ttc_data_buf->ant_deploy;
+                break;
+
+            case CMDPR_PARAM_ANT_DEP_HIB:
+                obdh_response->data.param_8 = ttc_data_buf->ant_deploy_hib;
+                break;
+
+            case CMDPR_PARAM_TX_ENABLE:
+                obdh_response->data.param_8 = ttc_data_buf->radio.tx_enable;
+                break;
+
+            case CMDPR_PARAM_TX_PACKET_COUNTER:
+                obdh_response->data.param_32 = ttc_data_buf->radio.tx_packet_counter;
+                break;
+
+            case CMDPR_PARAM_RX_VAL_PACKET_COUNTER:
+                obdh_response->data.param_32 = ttc_data_buf->radio.rx_packet_counter;
+                break;
+
+            case CMDPR_PARAM_PACKETS_AV_FIFO_TX:
+                obdh_response->data.param_8 = ttc_data_buf->radio.tx_fifo_counter;
+                break;
+
+            case CMDPR_PARAM_PACKETS_AV_FIFO_RX:
+                obdh_response->data.param_8 = ttc_data_buf->radio.rx_fifo_counter;
+                break;
+
+            case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
+                obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
+                break;
+
+            default:
+
+                break;
+        }
+    }
+    else
+    {
+        err = -1;
+    }
+
+    return err;
+}
+
+int obdh_flush_request(obdh_request_t *obdh_request)
+{
+    obdh_request->data.data_packet.len = 0;
+
+    return spi_slave_flush(obdh_spi_port);
 }
 
 static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
@@ -181,18 +301,14 @@ static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
             break;
         default:
             err = -1;
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH parameter: unknown parameter!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH parameter: unknown parameter!");
             sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             break;
     }
     if (err == -1)
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error reading OBDH parameter: unable to read parameter!");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH parameter: unable to read parameter!");
         sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 
     return err;
@@ -221,19 +337,15 @@ static int obdh_write_parameter(uint8_t param, cmdpr_data_t data)
             break;
         default:
             err = -1;
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unknown parameter!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error writing OBDH parameter: unknown parameter!");
             sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
             break;
     }
 
     if (err == -1)
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_ERROR, "Error writing OBDH parameter: unable to write parameter!");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error writing OBDH parameter: unable to write parameter!");
         sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 
     return err;

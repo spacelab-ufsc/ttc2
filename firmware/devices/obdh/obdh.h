@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.4.1
  *
  * \date 2023/02/12
  *
@@ -37,8 +37,13 @@
 #ifndef DEVICES_OBDH_H_
 #define DEVICES_OBDH_H_
 
+#include <system/cmdpr.h>
+#include <app/structs/ttc_data.h>
+
 typedef cmdpr_package_t obdh_request_t;
 typedef cmdpr_package_t obdh_response_t;
+
+#define OBDH_MODULE_NAME         "OBDH"
 
 /**
  * \brief OBDH initialization.
@@ -64,6 +69,26 @@ int obdh_read_request(obdh_request_t *obdh_request);
  * \return The status/error code.
  */
 int obdh_send_response(obdh_response_t obdh_response);
+
+/**
+ * \brief Writes the parameter to OBDH responses.
+ *
+ * \param[in] ttc_data_buf is the structure for TTC data.
+ *
+ * \param[out] *obdh_response is the structure for a response to OBDH.
+ *
+ * \return The status/error code.
+ */
+int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_response);
+
+/**
+ * \brief OBDH flush SPI RX buffer.
+ *
+ * \param[in, out] obdh_request is the structure to store the received information.
+ *
+ * \return The status/error code.
+ */
+int obdh_flush_request(obdh_request_t *obdh_request);
 
 #endif /* DEVICES_OBDH_H_ */
 
