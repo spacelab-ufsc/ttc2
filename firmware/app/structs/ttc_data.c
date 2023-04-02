@@ -37,4 +37,27 @@
 
 ttc_data_t ttc_data_buf = {0};
 
+void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
+{
+    ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
+
+    for (uint16_t i = 0; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
+    {
+        ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_write][i] = packet[i];
+    }
+
+    if (++ttc_data_buf.down_buf.position_to_write >= 5) ttc_data_buf.down_buf.position_to_write = 0;
+}
+
+void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
+{
+    *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
+
+    for (uint16_t i = 0; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
+    {
+        packet[i] = ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_read][i];
+    }
+
+    if (++ttc_data_buf.down_buf.position_to_read >= 5) ttc_data_buf.down_buf.position_to_read = 0;
+}
 /** \} End of ttc_data group */
