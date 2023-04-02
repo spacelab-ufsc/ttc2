@@ -38,6 +38,7 @@
 #include <devices/radio/radio.h>
 #include <system/cmdpr.h>
 #include <drivers/uart/uart.h>
+#include <app/structs/ttc_data.h>
 
 #include "obdh_server.h"
 #include "startup.h"
@@ -105,9 +106,12 @@ void vTaskObdhServer(void)
                     sys_log_print_str("|");
                 }
                 sys_log_new_line();
+
+                downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
                 break;
 
             case CMDPR_CMD_READ_FIRST_PACKET:
+                //TODO: Implementation of reception
                  break;
 
             case 0x00:
