@@ -46,6 +46,8 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
         ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_write][i] = packet[i];
     }
 
+    ttc_data_buf.radio.tx_fifo_counter++;
+
     if (++ttc_data_buf.down_buf.position_to_write >= 5) ttc_data_buf.down_buf.position_to_write = 0;
 }
 
@@ -57,6 +59,8 @@ void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
     {
         packet[i] = ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_read][i];
     }
+
+    ttc_data_buf.radio.tx_fifo_counter--;
 
     if (++ttc_data_buf.down_buf.position_to_read >= 5) ttc_data_buf.down_buf.position_to_read = 0;
 }
