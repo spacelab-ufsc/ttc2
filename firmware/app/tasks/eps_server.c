@@ -37,6 +37,7 @@
 #include <devices/eps/eps.h>
 #include <devices/radio/radio.h>
 #include <system/cmdpr.h>
+#include <app/structs/ttc_data.h>
 
 #include "eps_server.h"
 #include "startup.h"
@@ -72,7 +73,6 @@ void vTaskEpsServer(void)
                 sys_log_print_msg(" bytes!");
                 sys_log_new_line();
 
-                /* TODO: Implement data processing and radio link */
                 sys_log_print_str("Packet: ");
                 for (uint16_t i = 0; i < eps_request.data.data_packet.len; i++)
                 {
@@ -80,6 +80,9 @@ void vTaskEpsServer(void)
                     sys_log_print_str("|");
                 }
                 sys_log_new_line();
+
+                downlink_add_packet(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
+
                 break;
 
             case 0x00:
