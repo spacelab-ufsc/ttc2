@@ -62,7 +62,7 @@ int obdh_init(void)
     }
     else
     {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error during OBDH initialization !");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error during OBDH initialization!");
         sys_log_new_line();
     }
 
@@ -121,7 +121,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
 int obdh_send_response(obdh_response_t obdh_response)
 {
-    int err = 0;
+    int err = -1;
+    uint8_t packet_size_buf[2];
 
     if (spi_slave_write(obdh_spi_port, &(obdh_response.command), 1) == 0)
     {
@@ -141,12 +142,20 @@ int obdh_send_response(obdh_response_t obdh_response)
               break;
 
           case CMDPR_CMD_READ_FIRST_PACKET:
-              /* Send the response packet */
-              err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
+
+              packet_size_buf[0]=obdh_response.data.data_packet.len & 0xff;
+              packet_size_buf[1]=(obdh_response.data.data_packet.len >> 8);
+
+              if(obdh_write_packet(packet_size_buf, 2) == 0)
+              {
+                  err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
+              }
+
               break;
 
           default:
               err = -1;
+
               break;
        }
     }
