@@ -46,7 +46,6 @@
 #include "radio_reset.h"
 #include "read_sensors.h"
 #include "beacon.h"
-#include "uplink.h"
 #include "time_control.h"
 #include "eps_server.h"
 #include "obdh_server.h"
@@ -120,15 +119,6 @@ void create_tasks(void)
         /* Error creating the beacon task */
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
-
-#if defined(CONFIG_TASK_UPLINK_ENABLED) && (CONFIG_TASK_UPLINK_ENABLED == 1)
-    xTaskCreate(vTaskUplink, TASK_UPLINK_NAME, TASK_UPLINK_STACK_SIZE, NULL, TASK_UPLINK_PRIORITY, &xTaskUplinkHandle);
-
-    if (xTaskUplinkHandle == NULL)
-    {
-        /* Error creating the uplink task */
-    }
-#endif /* CONFIG_TASK_UPLINK_ENABLED */
 
 #if defined(CONFIG_TASK_TIME_CONTROL_ENABLED) && (CONFIG_TASK_TIME_CONTROL_ENABLED == 1)
     xTaskCreate(vTaskTimeControl, TASK_TIME_CONTROL_NAME, TASK_TIME_CONTROL_STACK_SIZE, NULL, TASK_TIME_CONTROL_PRIORITY, &xTaskTimeControlHandle);
