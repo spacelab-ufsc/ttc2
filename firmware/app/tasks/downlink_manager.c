@@ -61,7 +61,7 @@ void vTaskDownlinkManager(void)
 
     while(1)
      {
-        while(ttc_data_buf.radio.tx_fifo_counter > 0)
+        while((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1))
         {
             downlink_pop_packet(tx_packet, &tx_size);
 
