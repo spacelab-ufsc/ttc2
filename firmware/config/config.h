@@ -46,7 +46,10 @@
 #define CONFIG_TASK_BEACON_ENABLED                      1
 #define CONFIG_TASK_UPLINK_ENABLED                      1
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_EPS_ENABLED                         1
+#define CONFIG_TASK_EPS_SERVER_ENABLED                  1
+#define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
+#define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
+#define CONFIG_TASK_UPLINK_MANAGER_ENABLED              1
 
 /* Devices */
 #define CONFIG_DEV_MEDIA_INT_ENABLED                    1
