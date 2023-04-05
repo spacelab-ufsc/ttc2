@@ -84,7 +84,7 @@ extern ttc_data_t ttc_data_buf;
  *
  * \param[in] packet to be sent.
  *
- * \param[in] packet_size is the size of the packet
+ * \param[in] packet_size is the size of the packet.
  *
  * \return None.
  */
@@ -100,6 +100,28 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size);
  * \return None.
  */
 void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size);
+
+/**
+ * \brief Add a packet to the RX queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_add_packet(uint8_t *packet, uint16_t packet_size);
+
+/**
+ * \brief Returns the next received packet in queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size);
 
 #endif /* TTC_DATA_H_ */
 
