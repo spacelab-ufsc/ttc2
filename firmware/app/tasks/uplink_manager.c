@@ -1,5 +1,5 @@
 /*
- * downlink_manager.c
+ * uplink_manager.c
  *
  * Copyright The TTC 2.0 Contributors.
  *
@@ -21,15 +21,15 @@
  */
 
 /**
- * \brief Downlink Manager task implementation.
+ * \brief Uplink Manager task implementation.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
  * \version 0.4.1
  *
- * \date 2023/03/03
+ * \date 2023/04/03
  *
- * \addtogroup downlink_manager
+ * \addtogroup uplink_manager
  * \{
  */
 
@@ -37,40 +37,40 @@
 #include <devices/radio/radio.h>
 #include <structs/ttc_data.h>
 
-#include "downlink_manager.h"
+#include "uplink_manager.h"
 #include "startup.h"
 
-xTaskHandle xTaskDownlinkManagerHandle;
+xTaskHandle xTaskUplinkManagerHandle;
 
-void vTaskDownlinkManager(void)
+void vTaskUplinkManager(void)
 {
     /* Wait startup task to finish */
-    xEventGroupWaitBits(task_startup_status, TASK_STARTUP_DONE, pdFALSE, pdTRUE, pdMS_TO_TICKS(TASK_DOWNLINK_MANAGER_INIT_TIMEOUT_MS));
+    xEventGroupWaitBits(task_startup_status, TASK_STARTUP_DONE, pdFALSE, pdTRUE, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_INIT_TIMEOUT_MS));
 
     /* Delay before the first cycle */
-    vTaskDelay(pdMS_TO_TICKS(TASK_DOWNLINK_MANAGER_INITIAL_DELAY_MS));
+    vTaskDelay(pdMS_TO_TICKS(TASK_UPLINK_MANAGER_INITIAL_DELAY_MS));
 
-    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Initializing the Downlink Manager...");
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Initializing the Uplink Manager...");
     sys_log_new_line();
 
     ttc_data_buf.down_buf.position_to_read = 0;
     ttc_data_buf.down_buf.position_to_write = 0;
 
-    uint8_t tx_packet[230];
-    uint16_t tx_size = 0;
+    uint8_t rx_packet[230];
+    uint16_t rx_size = 0;
 
     while(1)
-     {
-        while(ttc_data_buf.radio.tx_fifo_counter > 0)
+    {
+        rx_size = radio_available();
+        if (rx_size > 0)
         {
-            downlink_pop_packet(tx_packet, &tx_size);
+            radio_recv(rx_packet, rx_size, 10);
 
-            /*TODO: Implement codification */
-            radio_send(tx_packet, tx_size);
+            /*TODO: Implement decodification */
+            uplink_add_packet(rx_packet, rx_size);
         }
-
-     }
+    }
 
 }
 
-/** \} End of downlink_manager group */
+/** \} End of uplink_manager group */
