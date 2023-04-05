@@ -45,7 +45,7 @@
 
 typedef struct
 {
-    uint8_t packet_array[5][300];
+    uint8_t packet_array[5][230];
     uint16_t packet_sizes[5];
     uint8_t position_to_write;
     uint8_t position_to_read;
