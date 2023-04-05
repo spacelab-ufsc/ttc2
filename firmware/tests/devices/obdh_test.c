@@ -176,6 +176,7 @@ static void obdh_read_request_test(void **state)
 static void obdh_send_response_test(void **state)
 {
   uint8_t write_buffer[4] = {0};
+
   obdh_response_t obdh_response = generate_random_response();
 
   expect_value(__wrap_spi_slave_write, port, spi_port);
@@ -233,6 +234,14 @@ static void obdh_send_response_test(void **state)
   }
   else if (obdh_response.command == CMDPR_CMD_READ_FIRST_PACKET)
   {
+    write_buffer[0]=obdh_response.data.data_packet.len & 0xff;
+    write_buffer[1]=(obdh_response.data.data_packet.len >> 8);
+
+    expect_value(__wrap_spi_slave_write, port, spi_port);
+    expect_memory(__wrap_spi_slave_write, data, write_buffer, (int)2);
+    expect_value(__wrap_spi_slave_write, len, 2);
+    will_return(__wrap_spi_slave_write, 0);
+
     expect_value(__wrap_spi_slave_write, port, spi_port);
     expect_memory(__wrap_spi_slave_write, data, obdh_response.data.data_packet.packet, (int)obdh_response.data.data_packet.len);
     expect_value(__wrap_spi_slave_write, len, obdh_response.data.data_packet.len);
