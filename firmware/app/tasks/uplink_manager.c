@@ -62,7 +62,7 @@ void vTaskUplinkManager(void)
     while(1)
     {
         rx_size = radio_available();
-        if (rx_size > 0)
+        if (rx_size > 0U)
         {
             radio_recv(rx_packet, rx_size, 10);
 
