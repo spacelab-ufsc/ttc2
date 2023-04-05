@@ -49,6 +49,9 @@
 #include "uplink.h"
 #include "time_control.h"
 #include "eps_server.h"
+#include "obdh_server.h"
+#include "downlink_manager.h"
+#include "uplink_manager.h"
 
 void create_tasks(void)
 {
@@ -136,14 +139,41 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_TIME_CONTROL_ENABLED */
 
-#if defined(CONFIG_TASK_EPS_ENABLED) && (CONFIG_TASK_EPS_ENABLED == 1)
+#if defined(CONFIG_TASK_EPS_SERVER_ENABLED) && (CONFIG_TASK_EPS_SERVER_ENABLED == 1)
     xTaskCreate(vTaskEpsServer, TASK_EPS_SERVER_NAME, TASK_EPS_SERVER_STACK_SIZE, NULL, TASK_EPS_SERVER_PRIORITY, &xTaskEpsServerHandle);
 
     if (xTaskEpsServerHandle == NULL)
     {
         /* Error creating the eps server task */
     }
-#endif /* CONFIG_TASK_EPS_ENABLED */
+#endif /* CONFIG_TASK_EPS_SERVER_ENABLED */
+
+#if defined(CONFIG_TASK_OBDH_SERVER_ENABLED) && (CONFIG_TASK_OBDH_SERVER_ENABLED == 1)
+    xTaskCreate(vTaskObdhServer, TASK_OBDH_SERVER_NAME, TASK_OBDH_SERVER_STACK_SIZE, NULL, TASK_OBDH_SERVER_PRIORITY, &xTaskObdhServerHandle);
+
+    if (xTaskObdhServerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_OBDH_SERVER_ENABLED */
+
+#if defined(CONFIG_TASK_DOWNLINK_MANAGER_ENABLED) && (CONFIG_TASK_DOWNLINK_MANAGER_ENABLED == 1)
+    xTaskCreate(vTaskDownlinkManager, TASK_DOWNLINK_MANAGER_NAME, TASK_DOWNLINK_MANAGER_STACK_SIZE, NULL, TASK_DOWNLINK_MANAGER_PRIORITY, &xTaskDownlinkManagerHandle);
+
+    if (xTaskDownlinkManagerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_DOWNLINK_MANAGER_ENABLED */
+
+#if defined(CONFIG_TASK_UPLINK_MANAGER_ENABLED) && (CONFIG_TASK_UPLINK_MANAGER_ENABLED == 1)
+    xTaskCreate(vTaskUplinkManager, TASK_UPLINK_MANAGER_NAME, TASK_UPLINK_MANAGER_STACK_SIZE, NULL, TASK_UPLINK_MANAGER_PRIORITY, &xTaskUplinkManagerHandle);
+
+    if (xTaskUplinkManagerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_UPLINK_MANAGER_ENABLED */
 
     create_event_groups();
 }
