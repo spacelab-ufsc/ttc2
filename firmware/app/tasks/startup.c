@@ -147,6 +147,13 @@ void vTaskStartup(void)
     }
 #endif /* CONFIG_DEV_EPS_ENABLED */
 
+#if defined(CONFIG_DEV_OBDH_ENABLED) && (CONFIG_DEV_OBDH_ENABLED == 1)
+    if (obdh_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_OBDH_ENABLED */
+
     if (error_counter > 0U)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "Boot completed with ");
