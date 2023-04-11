@@ -57,12 +57,13 @@
 #define CONFIG_DEV_TEMP_SENSOR_ENABLED                  1
 #define CONFIG_DEV_RADIO_ENABLED                        1
 #define CONFIG_DEV_ANTENNA_ENABLED                      1
+#define CONFIG_DEV_OBDH_ENABLED                         1
 #define CONFIG_DEV_EPS_ENABLED                          1
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
 
-#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"
+#define CONFIG_SATELLITE_CALLSIGN                       "PY0EFS"
 
 /* Packets IDs */
 #define CONFIG_PKT_ID_BEACON                            0x10
