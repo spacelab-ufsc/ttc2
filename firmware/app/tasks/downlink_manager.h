@@ -42,9 +42,9 @@
 
 #define TASK_DOWNLINK_MANAGER_NAME                "Downlink Manager"  /**< Task name. */
 #define TASK_DOWNLINK_MANAGER_STACK_SIZE          2000                /**< Stack size in bytes. */
-#define TASK_DOWNLINK_MANAGER_PRIORITY            5                   /**< Task priority. */
-#define TASK_DOWNLINK_MANAGER_PERIOD_MS           100                 /**< Task period in milliseconds. */
-#define TASK_DOWNLINK_MANAGER_INITIAL_DELAY_MS    1000                /**< Delay, in milliseconds, before the first execution. */
+#define TASK_DOWNLINK_MANAGER_PRIORITY            3                   /**< Task priority. */
+#define TASK_DOWNLINK_MANAGER_PERIOD_MS           150                 /**< Task period in milliseconds. */
+#define TASK_DOWNLINK_MANAGER_INITIAL_DELAY_MS    550                 /**< Delay, in milliseconds, before the first execution. */
 #define TASK_DOWNLINK_MANAGER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 
 /**
@@ -59,6 +59,6 @@ extern xTaskHandle xTaskDownlinkManagerHandle;
  */
 void vTaskDownlinkManager(void);
 
-#endif /* TASK_DOWNLIN_MANAGER_H_ */
+#endif /* TASK_DOWNLINK_MANAGER_H_ */
 
 /** \} End of downlink_manager group */

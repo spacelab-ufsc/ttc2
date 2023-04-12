@@ -53,6 +53,12 @@ void vTaskDownlinkManager(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Initializing the Downlink Manager...");
     sys_log_new_line();
 
+    /* Start TTC in TX mode */
+    ttc_data_buf.radio.tx_enable = 1U;
+
+    ttc_data_buf.radio.tx_fifo_counter = 0;
+    ttc_data_buf.radio.tx_packet_counter = 0;
+
     ttc_data_buf.down_buf.position_to_read = 0;
     ttc_data_buf.down_buf.position_to_write = 0;
 
@@ -61,14 +67,24 @@ void vTaskDownlinkManager(void)
 
     while(1)
      {
-        while((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1))
+        TickType_t last_cycle = xTaskGetTickCount();
+
+        sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Checking for packet...");
+        sys_log_print_hex(ttc_data_buf.radio.tx_fifo_counter);
+        sys_log_new_line();
+
+        if((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1U))
         {
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Checking for packet...");
+            sys_log_new_line();
+
             downlink_pop_packet(tx_packet, &tx_size);
 
             /*TODO: Implement codification */
             radio_send(tx_packet, tx_size);
         }
 
+        vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_DOWNLINK_MANAGER_PERIOD_MS));
      }
 
 }
