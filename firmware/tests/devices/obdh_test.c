@@ -125,8 +125,6 @@ static void obdh_read_request_test(void **state)
 	                expect_value(__wrap_spi_slave_read, port, spi_port);
 	                expect_value(__wrap_spi_slave_read, len, 2);
 
-                    uint16_t i = 0;
-
                     for(i = 0; i < 2; i++)
                     {
                         will_return(__wrap_spi_slave_read, read_buffer[i]);
@@ -139,8 +137,6 @@ static void obdh_read_request_test(void **state)
                 case 4:
                     expect_value(__wrap_spi_slave_read, port, spi_port);
                     expect_value(__wrap_spi_slave_read, len, 4);
-
-                    uint16_t i = 0;
 
                     for(i = 0; i < 4; i++)
                     {
@@ -160,8 +156,6 @@ static void obdh_read_request_test(void **state)
             break;
 
         case CMDPR_CMD_TRANSMIT_PACKET:
-            uint16_t i = 0;
-
             for(i = 0; i < obdh_request.data.data_packet.len; i++)
             {
                 obdh_request.data.data_packet.packet[i] = (uint8_t)(i + 1U);
@@ -172,8 +166,6 @@ static void obdh_read_request_test(void **state)
 
             expect_value(__wrap_spi_slave_read, port, spi_port);
             expect_value(__wrap_spi_slave_read, len, obdh_request.data.data_packet.len);
-
-            uint16_t i = 0;
 
             for(i = 0; i < obdh_request.data.data_packet.len; i++)
             {
