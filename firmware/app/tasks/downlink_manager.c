@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -68,9 +68,7 @@ void vTaskDownlinkManager(void)
             /*TODO: Implement codification */
             radio_send(tx_packet, tx_size);
         }
-
      }
-
 }
 
 /** \} End of downlink_manager group */

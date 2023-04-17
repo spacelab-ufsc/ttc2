@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/04/03
  *
@@ -62,6 +62,7 @@ void vTaskUplinkManager(void)
     while(1)
     {
         rx_size = radio_available();
+
         if (rx_size > 0U)
         {
             radio_recv(rx_packet, rx_size, 10);
@@ -70,7 +71,6 @@ void vTaskUplinkManager(void)
             uplink_add_packet(rx_packet, rx_size);
         }
     }
-
 }
 
 /** \} End of uplink_manager group */

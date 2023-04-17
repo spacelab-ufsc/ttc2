@@ -1,7 +1,7 @@
 /*
  * ttc_data.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.23
+ * \version 0.4.3
  * 
  * \date 2021/04/14
  * 
@@ -41,7 +41,9 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
     ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
 
-    for (uint16_t i = 0; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
+    uint16_t i = 0;
+
+    for(i = 0; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
     {
         ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_write][i] = packet[i];
     }
@@ -49,28 +51,38 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
     ttc_data_buf.radio.tx_fifo_counter++;
     ttc_data_buf.radio.tx_packet_counter++;
 
-    if (++ttc_data_buf.down_buf.position_to_write >= 5) ttc_data_buf.down_buf.position_to_write = 0;
+    if (++ttc_data_buf.down_buf.position_to_write >= 5)
+    {
+        ttc_data_buf.down_buf.position_to_write = 0;
+    }
 }
 
 void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
     *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
 
-    for (uint16_t i = 0; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
+    uint16_t i = 0;
+
+    for(i = 0; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
     {
         packet[i] = ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_read][i];
     }
 
     ttc_data_buf.radio.tx_fifo_counter--;
 
-    if (++ttc_data_buf.down_buf.position_to_read >= 5) ttc_data_buf.down_buf.position_to_read = 0;
+    if (++ttc_data_buf.down_buf.position_to_read >= 5)
+    {
+        ttc_data_buf.down_buf.position_to_read = 0;
+    }
 }
 
 void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
     ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write] = packet_size;
 
-    for (uint16_t i=0; i<ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write]; i++)
+    uint16_t i = 0;
+
+    for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write]; i++)
     {
         ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_write][i] = packet[i];
     }
@@ -79,21 +91,29 @@ void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
     ttc_data_buf.radio.rx_packet_counter++;
     ttc_data_buf.radio.last_rx_packet_bytes = packet_size;
 
-    if (++ttc_data_buf.up_buf.position_to_write >= 5) ttc_data_buf.up_buf.position_to_write = 0;
+    if (++ttc_data_buf.up_buf.position_to_write >= 5)
+    {
+        ttc_data_buf.up_buf.position_to_write = 0;
+    }
 }
 
 void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
     *packet_size = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
 
-    for (uint16_t i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]; i++)
+    uint16_t i = 0;
+
+    for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]; i++)
     {
         packet[i] = ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i];
     }
 
     ttc_data_buf.radio.rx_fifo_counter--;
 
-    if (++ttc_data_buf.up_buf.position_to_read >= 5) ttc_data_buf.up_buf.position_to_read = 0;
+    if (++ttc_data_buf.up_buf.position_to_read >= 5)
+    {
+        ttc_data_buf.up_buf.position_to_read = 0;
+    }
 }
 
 /** \} End of ttc_data group */

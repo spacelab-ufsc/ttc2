@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  * 
  * \date 2021/04/14
  * 
@@ -43,6 +43,9 @@
 #include <devices/antenna/antenna_data.h>
 #include <devices/radio/radio_data.h>
 
+/**
+ * \brief Transmission buffer structure.
+ */
 typedef struct
 {
     uint8_t packet_array[5][230];
