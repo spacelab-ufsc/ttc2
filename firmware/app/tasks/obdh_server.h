@@ -40,11 +40,11 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
-#define TASK_OBDH_SERVER_NAME                "OBDH Server"        /**< Task name. */
+#define TASK_OBDH_SERVER_NAME                "OBDH Server"       /**< Task name. */
 #define TASK_OBDH_SERVER_STACK_SIZE          2000                /**< Stack size in bytes. */
 #define TASK_OBDH_SERVER_PRIORITY            5                   /**< Task priority. */
-#define TASK_OBDH_SERVER_PERIOD_MS           100                 /**< Task period in milliseconds. */
-#define TASK_OBDH_SERVER_INITIAL_DELAY_MS    1000                /**< Delay, in milliseconds, before the first execution. */
+#define TASK_OBDH_SERVER_PERIOD_MS           500                 /**< Task period in milliseconds. */
+#define TASK_OBDH_SERVER_INITIAL_DELAY_MS    200                 /**< Delay, in milliseconds, before the first execution. */
 #define TASK_OBDH_SERVER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 
 /**
