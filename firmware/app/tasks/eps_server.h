@@ -43,7 +43,7 @@
 #define TASK_EPS_SERVER_NAME                "EPS Server"        /**< Task name. */
 #define TASK_EPS_SERVER_STACK_SIZE          2000                /**< Stack size in bytes. */
 #define TASK_EPS_SERVER_PRIORITY            4                   /**< Task priority. */
-#define TASK_EPS_SERVER_PERIOD_MS           100                 /**< Task period in milliseconds. */
+#define TASK_EPS_SERVER_PERIOD_MS           250                 /**< Task period in milliseconds. */
 #define TASK_EPS_SERVER_INITIAL_DELAY_MS    1000                /**< Delay, in milliseconds, before the first execution. */
 #define TASK_EPS_SERVER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 

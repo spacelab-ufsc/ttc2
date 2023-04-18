@@ -52,7 +52,7 @@ void vTaskEpsServer(void)
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_EPS_SERVER_INITIAL_DELAY_MS));
 
-    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server");
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server...");
     sys_log_new_line();
 
     eps_request_t eps_request = {0};
