@@ -53,6 +53,9 @@ void vTaskUplinkManager(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Initializing the Uplink Manager...");
     sys_log_new_line();
 
+    ttc_data_buf.radio.rx_fifo_counter = 0;
+    ttc_data_buf.radio.rx_packet_counter = 0;
+
     ttc_data_buf.down_buf.position_to_read = 0;
     ttc_data_buf.down_buf.position_to_write = 0;
 
@@ -61,6 +64,8 @@ void vTaskUplinkManager(void)
 
     while(1)
     {
+        TickType_t last_cycle = xTaskGetTickCount();
+
         rx_size = radio_available();
         if (rx_size > 0U)
         {
@@ -69,6 +74,7 @@ void vTaskUplinkManager(void)
             /*TODO: Implement decodification */
             uplink_add_packet(rx_packet, rx_size);
         }
+    vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }
 
 }
