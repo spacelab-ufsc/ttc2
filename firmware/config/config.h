@@ -43,7 +43,7 @@
 #define CONFIG_TASK_SYSTEM_RESET_ENABLED                1
 #define CONFIG_TASK_RADIO_RESET_ENABLED                 1
 #define CONFIG_TASK_READ_SENSORS_ENABLED                1
-#define CONFIG_TASK_BEACON_ENABLED                      1
+#define CONFIG_TASK_BEACON_ENABLED                      0
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
 #define CONFIG_TASK_EPS_SERVER_ENABLED                  1
 #define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
