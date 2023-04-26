@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -38,6 +38,7 @@
 #include <devices/radio/radio.h>
 #include <system/cmdpr.h>
 #include <drivers/uart/uart.h>
+#include <app/structs/ttc_data.h>
 
 #include "obdh_server.h"
 #include "startup.h"
@@ -52,12 +53,12 @@ void vTaskObdhServer(void)
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_OBDH_SERVER_INITIAL_DELAY_MS));
 
-    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Initializing the OBDH server");
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Initializing the OBDH server...");
     sys_log_new_line();
 
     obdh_request_t obdh_request = {0};
     obdh_request_t obdh_response = {0};
-    obdh_request.command = 0x00; /* No command */
+    obdh_request.command = 0x00U;   /* No command */
 
     while(1)
     {
@@ -92,41 +93,65 @@ void vTaskObdhServer(void)
                 break;
 
             case CMDPR_CMD_TRANSMIT_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit ");
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit.");
                 sys_log_print_uint(obdh_request.data.data_packet.len);
                 sys_log_print_msg(" bytes...");
                 sys_log_new_line();
 
-                /* TODO: Implement data processing and radio link */
                 sys_log_print_str("Packet: ");
-                for (uint16_t i = 0; i < obdh_request.data.data_packet.len; i++)
+
+                uint16_t i = 0;
+
+                for(i = 0; i < obdh_request.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(obdh_request.data.data_packet.packet[i]);
                     sys_log_print_str("|");
                 }
+
                 sys_log_new_line();
+
+                downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
+
                 break;
 
             case CMDPR_CMD_READ_FIRST_PACKET:
-                 break;
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to read received packet. Reading: ");
+                uplink_pop_packet(obdh_response.data.data_packet.packet, &obdh_response.data.data_packet.len);
+                sys_log_print_uint(obdh_response.data.data_packet.len);
+                sys_log_print_msg(" bytes...");
+                sys_log_new_line();
+
+                sys_log_print_str("Packet: ");
+
+                for(i = 0; i < obdh_response.data.data_packet.len; i++)
+                {
+                    sys_log_print_hex(obdh_response.data.data_packet.packet[i]);
+                    sys_log_print_str("|");
+                }
+
+                sys_log_new_line();
+
+                obdh_send_response(obdh_response);
+
+                break;
 
             case 0x00:
                 /* No request */
                 break;
 
             default:
-
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received invalid command (");
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Received invalid command (");
                 sys_log_print_hex(obdh_request.command);
                 sys_log_print_str(").");
                 sys_log_new_line();
 
                 obdh_flush_request(&obdh_request);
+
                 break;
         }
 
         /* Resetting command */
-        obdh_request.command = 0x00;
+        obdh_request.command = 0x00U;
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }

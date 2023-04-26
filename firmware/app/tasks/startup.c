@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.3
  * 
  * \date 2019/12/04
  * 
@@ -146,6 +146,13 @@ void vTaskStartup(void)
         error_counter++;
     }
 #endif /* CONFIG_DEV_EPS_ENABLED */
+
+#if defined(CONFIG_DEV_OBDH_ENABLED) && (CONFIG_DEV_OBDH_ENABLED == 1)
+    if (obdh_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_OBDH_ENABLED */
 
     if (error_counter > 0U)
     {

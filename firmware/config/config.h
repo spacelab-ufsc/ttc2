@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.3
  * 
  * \date 2019/10/26
  * 
@@ -43,10 +43,12 @@
 #define CONFIG_TASK_SYSTEM_RESET_ENABLED                1
 #define CONFIG_TASK_RADIO_RESET_ENABLED                 1
 #define CONFIG_TASK_READ_SENSORS_ENABLED                1
-#define CONFIG_TASK_BEACON_ENABLED                      1
-#define CONFIG_TASK_UPLINK_ENABLED                      1
+#define CONFIG_TASK_BEACON_ENABLED                      0
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_EPS_ENABLED                         1
+#define CONFIG_TASK_EPS_SERVER_ENABLED                  1
+#define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
+#define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
+#define CONFIG_TASK_UPLINK_MANAGER_ENABLED              1
 
 /* Devices */
 #define CONFIG_DEV_MEDIA_INT_ENABLED                    1
@@ -55,12 +57,13 @@
 #define CONFIG_DEV_TEMP_SENSOR_ENABLED                  1
 #define CONFIG_DEV_RADIO_ENABLED                        1
 #define CONFIG_DEV_ANTENNA_ENABLED                      1
+#define CONFIG_DEV_OBDH_ENABLED                         1
 #define CONFIG_DEV_EPS_ENABLED                          1
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
 
-#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"
+#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"   /* The callsign field must be 7 characters long! */
 
 /* Packets IDs */
 #define CONFIG_PKT_ID_BEACON                            0x10

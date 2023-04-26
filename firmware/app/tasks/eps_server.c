@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -37,6 +37,7 @@
 #include <devices/eps/eps.h>
 #include <devices/radio/radio.h>
 #include <system/cmdpr.h>
+#include <app/structs/ttc_data.h>
 
 #include "eps_server.h"
 #include "startup.h"
@@ -51,11 +52,11 @@ void vTaskEpsServer(void)
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_EPS_SERVER_INITIAL_DELAY_MS));
 
-    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server");
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server...");
     sys_log_new_line();
 
     eps_request_t eps_request = {0};
-    eps_request.command = 0x00; /* No command */
+    eps_request.command = 0x00U;    /* No command */
 
     while(1)
     {
@@ -72,14 +73,20 @@ void vTaskEpsServer(void)
                 sys_log_print_msg(" bytes!");
                 sys_log_new_line();
 
-                /* TODO: Implement data processing and radio link */
                 sys_log_print_str("Packet: ");
-                for (uint16_t i = 0; i < eps_request.data.data_packet.len; i++)
+
+                uint16_t i = 0;
+
+                for(i = 0; i < eps_request.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(eps_request.data.data_packet.packet[i]);
                     sys_log_print_str("|");
                 }
+
                 sys_log_new_line();
+
+                downlink_add_packet(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
+
                 break;
 
             case 0x00:
@@ -98,7 +105,7 @@ void vTaskEpsServer(void)
         }
 
         /* Resetting command */
-        eps_request.command = 0x00;
+        eps_request.command = 0x00U;
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_EPS_SERVER_PERIOD_MS));
     }

@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  * 
  * \date 2021/04/14
  * 
@@ -42,6 +42,17 @@
 
 #include <devices/antenna/antenna_data.h>
 #include <devices/radio/radio_data.h>
+
+/**
+ * \brief Transmission buffer structure.
+ */
+typedef struct
+{
+    uint8_t packet_array[5][230];
+    uint16_t packet_sizes[5];
+    uint8_t position_to_write;
+    uint8_t position_to_read;
+} transmission_buf_t;
 
 /**
  * \brief TTC data.
@@ -62,12 +73,58 @@ typedef struct
     uint8_t ant_deploy_hib;         /**< Hibernation time completed */
     radio_data_t radio;             /**< Radio data. */
     antenna_data_t antenna;         /**< Antenna data. */
+    transmission_buf_t down_buf;    /**< Downlink Buffer */
+    transmission_buf_t up_buf;      /**< Uplink Buffer */
 } ttc_data_t;
 
 /**
  * \brief TTC data buffer.
  */
 extern ttc_data_t ttc_data_buf;
+
+/**
+ * \brief Add a packet to the TX queue.
+ *
+ * \param[in] packet to be sent.
+ *
+ * \param[in] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void downlink_add_packet(uint8_t *packet, uint16_t packet_size);
+
+/**
+ * \brief Returns the next packet in queue to be sent.
+ *
+ * \param[in] packet to be sent.
+ *
+ * \param[in] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size);
+
+/**
+ * \brief Add a packet to the RX queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_add_packet(uint8_t *packet, uint16_t packet_size);
+
+/**
+ * \brief Returns the next received packet in queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size);
 
 #endif /* TTC_DATA_H_ */
 
