@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -86,7 +86,6 @@ void vTaskDownlinkManager(void)
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_DOWNLINK_MANAGER_PERIOD_MS));
      }
-
 }
 
 /** \} End of downlink_manager group */

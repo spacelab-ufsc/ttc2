@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.3
  * 
  * \date 2019/10/26
  * 
@@ -63,7 +63,7 @@
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
 
-#define CONFIG_SATELLITE_CALLSIGN                       "PY0EFS"
+#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"   /* The callsign field must be 7 characters long! */
 
 /* Packets IDs */
 #define CONFIG_PKT_ID_BEACON                            0x10

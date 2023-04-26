@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -58,7 +58,7 @@ void vTaskObdhServer(void)
 
     obdh_request_t obdh_request = {0};
     obdh_request_t obdh_response = {0};
-    obdh_request.command = 0x00; /* No command */
+    obdh_request.command = 0x00U;   /* No command */
 
     while(1)
     {
@@ -99,11 +99,15 @@ void vTaskObdhServer(void)
                 sys_log_new_line();
 
                 sys_log_print_str("Packet: ");
-                for (uint16_t i = 0; i < obdh_request.data.data_packet.len; i++)
+
+                uint16_t i = 0;
+
+                for(i = 0; i < obdh_request.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(obdh_request.data.data_packet.packet[i]);
                     sys_log_print_str("|");
                 }
+
                 sys_log_new_line();
 
                 downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
@@ -118,11 +122,13 @@ void vTaskObdhServer(void)
                 sys_log_new_line();
 
                 sys_log_print_str("Packet: ");
-                for (uint16_t i = 0; i < obdh_response.data.data_packet.len; i++)
+
+                for(i = 0; i < obdh_response.data.data_packet.len; i++)
                 {
                     sys_log_print_hex(obdh_response.data.data_packet.packet[i]);
                     sys_log_print_str("|");
                 }
+
                 sys_log_new_line();
 
                 obdh_send_response(obdh_response);
@@ -145,7 +151,7 @@ void vTaskObdhServer(void)
         }
 
         /* Resetting command */
-        obdh_request.command = 0x00;
+        obdh_request.command = 0x00U;
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }

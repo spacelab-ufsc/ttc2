@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/04/03
  *
@@ -67,6 +67,7 @@ void vTaskUplinkManager(void)
         TickType_t last_cycle = xTaskGetTickCount();
 
         rx_size = radio_available();
+
         if (rx_size > 0U)
         {
             radio_recv(rx_packet, rx_size, 10);
@@ -76,7 +77,6 @@ void vTaskUplinkManager(void)
         }
     vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }
-
 }
 
 /** \} End of uplink_manager group */

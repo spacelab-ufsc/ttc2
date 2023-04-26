@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.3
  *
  * \date 2023/02/12
  *
@@ -122,7 +122,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
 int obdh_send_response(obdh_response_t obdh_response)
 {
     int err = -1;
-    uint8_t packet_size_buf[2];
+    uint8_t packet_size_buf[2] = {0};
 
     if (spi_slave_write(obdh_spi_port, &(obdh_response.command), 1) == 0)
     {
@@ -131,7 +131,7 @@ int obdh_send_response(obdh_response_t obdh_response)
           case CMDPR_CMD_READ_PARAM:
               /* Send the response parameter */
               if ((spi_slave_write(obdh_spi_port, &(obdh_response.parameter), 1) == 0) &&
-              (obdh_write_parameter(obdh_response.parameter, obdh_response.data) == 0))
+                  (obdh_write_parameter(obdh_response.parameter, obdh_response.data) == 0))
               {
                   err = 0;
               }
@@ -143,10 +143,10 @@ int obdh_send_response(obdh_response_t obdh_response)
 
           case CMDPR_CMD_READ_FIRST_PACKET:
 
-              packet_size_buf[0]=obdh_response.data.data_packet.len & 0xff;
-              packet_size_buf[1]=(obdh_response.data.data_packet.len >> 8);
+              packet_size_buf[0] = obdh_response.data.data_packet.len & 0xFFU;
+              packet_size_buf[1] = (obdh_response.data.data_packet.len >> 8);
 
-              if(obdh_write_packet(packet_size_buf, 2) == 0)
+              if (obdh_write_packet(packet_size_buf, 2) == 0)
               {
                   err = obdh_write_packet(obdh_response.data.data_packet.packet, obdh_response.data.data_packet.len);
               }
@@ -295,6 +295,7 @@ static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
 {
     int err = 0;
     uint8_t read_buffer[4] = {0};
+
     switch(cmdpr_param_size(param))
     {
         case 1:
@@ -314,6 +315,7 @@ static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
             sys_log_new_line();
             break;
     }
+
     if (err == -1)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH parameter: unable to read parameter!");
@@ -327,6 +329,7 @@ static int obdh_write_parameter(uint8_t param, cmdpr_data_t data)
 {
     int err = 0;
     uint8_t write_buffer[4] = {0};
+
     switch(cmdpr_param_size(param))
     {
         case 1:
