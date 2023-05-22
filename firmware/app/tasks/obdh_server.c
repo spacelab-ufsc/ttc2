@@ -93,9 +93,9 @@ void vTaskObdhServer(void)
                 break;
 
             case CMDPR_CMD_TRANSMIT_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit.");
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit:");
                 sys_log_print_uint(obdh_request.data.data_packet.len);
-                sys_log_print_msg(" bytes...");
+                sys_log_print_msg(" bytes!");
                 sys_log_new_line();
 
                 sys_log_print_str("Packet: ");
