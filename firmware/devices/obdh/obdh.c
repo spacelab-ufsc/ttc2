@@ -81,6 +81,11 @@ int obdh_read_request(obdh_request_t *obdh_request)
             {
                 case CMDPR_CMD_READ_PARAM:
                     err = spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:")
+                    sys_log_print_hex(obdh_request->parameter);
+                    sys_log_new_line();
+
                     break;
 
                 case CMDPR_CMD_WRITE_PARAM:
@@ -103,7 +108,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     break;
 
                 default:
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH command: unknown command!");
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, " Unknown command: ");
+                    sys_log_print_hex(obdh_request->command);
                     sys_log_new_line();
                     err = -1;
                     break;
@@ -123,6 +129,7 @@ int obdh_send_response(obdh_response_t obdh_response)
 {
     int err = -1;
     uint8_t packet_size_buf[2] = {0};
+    uint8_t dummy_buffer[4];
 
     if (spi_slave_write(obdh_spi_port, &(obdh_response.command), 1) == 0)
     {
@@ -133,7 +140,8 @@ int obdh_send_response(obdh_response_t obdh_response)
               if ((spi_slave_write(obdh_spi_port, &(obdh_response.parameter), 1) == 0) &&
                   (obdh_write_parameter(obdh_response.parameter, obdh_response.data) == 0))
               {
-                  err = 0;
+                  /* Time for spi to write response */
+                  err = spi_slave_read(obdh_spi_port, dummy_buffer, 4);
               }
               else
               {
