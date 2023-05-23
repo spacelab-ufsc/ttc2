@@ -161,17 +161,8 @@ __interrupt void USCI_A2_ISR(void) // cppcheck-suppress misra-c2012-8.4
 
             break;
         case ISR_SPI_CONFIG:
-            /* Delay cycles to send only in next MOSI byte, the number of cycles needs to be adjusted
-             * for different frequencies beyond 100 kHz*/
-            __delay_cycles(420);
 
             while (!USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT))
-            {
-            }
-
-            USCI_A_SPI_transmitData(USCI_A2_BASE, queue_pop_front(&spi_port_2_tx_buffer));
-
-            while (!USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT))
             {
             }
 
