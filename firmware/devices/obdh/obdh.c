@@ -82,7 +82,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 case CMDPR_CMD_READ_PARAM:
                     err = spi_slave_read(obdh_spi_port, &(obdh_request->parameter), 1);
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:")
+                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
                     sys_log_print_hex(obdh_request->parameter);
                     sys_log_new_line();
 
@@ -105,6 +105,10 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     break;
                 case CMDPR_CMD_READ_FIRST_PACKET:
                     /* Nothing more to do */
+                    break;
+
+                case 0x00:
+                    /* Transmit only */
                     break;
 
                 default:
