@@ -33,12 +33,18 @@
  * \{
  */
 
+#include <system/sys_log/sys_log.h>
+
 #include "ttc_data.h"
 
 ttc_data_t ttc_data_buf = {0};
 
 void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
+    sys_log_print_msg("Adding downlink packet");
+    sys_log_new_line();
+    ttc_data_buf.radio.tx_enable = 1U;
+
     ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
 
     uint16_t i = 0;
