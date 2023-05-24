@@ -69,8 +69,6 @@ void vTaskDownlinkManager(void)
      {
         TickType_t last_cycle = xTaskGetTickCount();
 
-        ttc_data_buf.radio.tx_enable = 1U;
-
         if((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1U))
         {
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Sending packet...");
