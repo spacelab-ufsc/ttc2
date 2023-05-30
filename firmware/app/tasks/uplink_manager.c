@@ -56,8 +56,8 @@ void vTaskUplinkManager(void)
     ttc_data_buf.radio.rx_fifo_counter = 0;
     ttc_data_buf.radio.rx_packet_counter = 0;
 
-    ttc_data_buf.down_buf.position_to_read = 0;
-    ttc_data_buf.down_buf.position_to_write = 0;
+    ttc_data_buf.up_buf.position_to_read = 0;
+    ttc_data_buf.up_buf.position_to_write = 0;
 
     uint8_t rx_packet[230];
     uint16_t rx_size = 0;
