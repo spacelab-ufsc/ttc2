@@ -59,22 +59,44 @@ void vTaskUplinkManager(void)
     ttc_data_buf.up_buf.position_to_read = 0;
     ttc_data_buf.up_buf.position_to_write = 0;
 
+    uint16_t rx_size = 230;
     uint8_t rx_packet[230];
-    uint16_t rx_size = 0;
-
+    uint8_t pop_rx_packet[230];
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
 
-        rx_size = radio_available();
 
-        if (rx_size > 0U)
+        if (radio_available())
         {
             radio_recv(rx_packet, rx_size, 10);
 
             /*TODO: Implement decodification */
+
             uplink_add_packet(rx_packet, rx_size);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package: ");
+            for (int i=0; i<230; i++)
+            {
+                sys_log_print_hex(rx_packet[i]);
+                sys_log_print_msg("|");
+            }
+            sys_log_new_line();
+
         }
+        /*Print the package for debug*/
+        if (ttc_data_buf.radio.rx_fifo_counter > 0U)
+        {
+            uplink_pop_packet(&pop_rx_packet, 230);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Popping out a package: ");
+            for (int i=0; i<230; i++)
+            {
+                sys_log_print_hex(pop_rx_packet[i]);
+                sys_log_print_msg("|");
+            }
+            sys_log_new_line();
+        }
+
+
     vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }
 }
