@@ -42,6 +42,12 @@
 
 #include <drivers/spi/spi.h>
 
+typedef enum
+{
+    SPI_SLAVE_DMA_TX = 0,
+    SPI_SLAVE_DMA_RX
+} spi_slave_dma_e;
+
 /**
  * \brief SPI Slave port initialization.
  *
@@ -61,6 +67,8 @@
  * \return The status/error code.
  */
 int spi_slave_init(spi_port_t port, spi_config_t config);
+
+void spi_slave_change_dma_transfer_size(spi_port_t port, uint16_t dma_transfer_size, spi_slave_dma_e dma);
 
 /**
  * \brief Enables SPI Slave port interruption.

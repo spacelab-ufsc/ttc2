@@ -44,6 +44,7 @@
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
 #include <drivers/isr/isr.h>
+#include <hal/dma.h>
 
 #include "spi_slave.h"
 
@@ -80,6 +81,28 @@ static uint16_t spi_read_mtu(queue_t *spi_rx_buffer);
 static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
+
+static DMA_initParam spi_slave_dma_param_tx = {
+    .channelSelect = DMA_CHANNEL_0,
+    .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
+    .transferSize = 6,
+    .triggerSourceSelect = DMA_TRIGGERSOURCE_13,
+    .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
+    .triggerTypeSelect = DMA_TRIGGER_HIGH,
+};
+
+static DMA_initParam spi_slave_dma_param_rx = {
+    .channelSelect = DMA_CHANNEL_1,
+     .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
+     .transferSize = 6,
+     .triggerSourceSelect = DMA_TRIGGERSOURCE_12,
+     .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
+     .triggerTypeSelect = DMA_TRIGGER_HIGH,
+
+};
+
+static uint8_t dma_tx_data[230];
+static uint8_t dma_rx_data[230];
 
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
@@ -168,13 +191,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             if (USCI_A_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
             {
-                switch(config.mode)
-                {
-                    case SPI_MODE_1:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_1;    break;
-                    case SPI_MODE_2:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;    break;
-                    case SPI_MODE_3:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_3;    break;
-                    default:                                                                break;
-                }
+                HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;
 
                 USCI_A_SPI_enable(base_address);
             }
@@ -186,6 +203,34 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                 err = -1;   /* Error initializing the SPI port */
             }
+
+            DMA_init(&spi_slave_dma_param_tx);
+
+            DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)dma_tx_data, DMA_DIRECTION_INCREMENT);
+
+            DMA_setDstAddress(DMA_CHANNEL_0, USCI_A_SPI_getTransmitBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+            DMA_clearInterrupt(DMA_CHANNEL_0);
+
+            DMA_enableInterrupt(DMA_CHANNEL_0);
+
+            DMA_enableTransfers(DMA_CHANNEL_0);
+
+
+            DMA_init(&spi_slave_dma_param_rx);
+
+            DMA_setSrcAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)dma_rx_data, DMA_DIRECTION_INCREMENT);
+
+            DMA_setDstAddress(DMA_CHANNEL_1, USCI_A_SPI_getReceiveBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+            DMA_clearInterrupt(DMA_CHANNEL_1);
+
+            DMA_enableInterrupt(DMA_CHANNEL_1);
+
+            DMA_enableTransfers(DMA_CHANNEL_1);
+
+
+            __bis_SR_register(LPM4_bits + GIE);
         }
         else if ((err == 0) && (((base_address == USCI_B0_BASE) || (base_address == USCI_B1_BASE) || (base_address == USCI_B2_BASE))))
         {
@@ -262,6 +307,27 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     return err;
 }
 
+void spi_slave_change_dma_transfer_size(spi_port_t port, uint16_t dma_transfer_size, spi_slave_dma_e dma)
+{
+    DMA_initParam *dma_config;
+
+    switch(dma)
+    {
+        case SPI_SLAVE_DMA_TX:
+            dma_config = &spi_slave_dma_param_tx;
+            break;
+        case SPI_SLAVE_DMA_RX:
+            dma_config = &spi_slave_dma_param_rx;
+            break;
+        default:
+            break;
+    }
+
+    dma_config->transferSize = dma_transfer_size;
+    DMA_init(dma_config);
+}
+
+
 static int spi_slave_setup_gpio(spi_port_t port)
 {
     int err = 0;
@@ -275,7 +341,8 @@ static int spi_slave_setup_gpio(spi_port_t port)
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN4 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN1);
             break;
         case SPI_PORT_2:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P9, GPIO_PIN3);
             break;
         case SPI_PORT_3:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
@@ -316,8 +383,8 @@ int spi_slave_enable_isr(spi_port_t port)
 
             break;
         case SPI_PORT_2:
-            USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-            USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
+            //USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
+            //USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
 
             break;
         case SPI_PORT_3:
