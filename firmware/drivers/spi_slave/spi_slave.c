@@ -101,8 +101,8 @@ static DMA_initParam spi_slave_dma_param_rx = {
 
 };
 
-static uint8_t dma_tx_data[230];
-static uint8_t dma_rx_data[230];
+static uint8_t spi_slave_dma_tx_data[230];
+static uint8_t spi_slave_dma_rx_data[230];
 
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
@@ -206,7 +206,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             DMA_init(&spi_slave_dma_param_tx);
 
-            DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)dma_tx_data, DMA_DIRECTION_INCREMENT);
+            DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)spi_slave_dma_tx_data, DMA_DIRECTION_INCREMENT);
 
             DMA_setDstAddress(DMA_CHANNEL_0, USCI_A_SPI_getTransmitBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
 
@@ -219,7 +219,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             DMA_init(&spi_slave_dma_param_rx);
 
-            DMA_setSrcAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)dma_rx_data, DMA_DIRECTION_INCREMENT);
+            DMA_setSrcAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)spi_slave_dma_rx_data, DMA_DIRECTION_INCREMENT);
 
             DMA_setDstAddress(DMA_CHANNEL_1, USCI_A_SPI_getReceiveBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
 
@@ -327,6 +327,30 @@ void spi_slave_change_dma_transfer_size(spi_port_t port, uint16_t dma_transfer_s
     DMA_init(dma_config);
 }
 
+void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len)
+{
+    uint16_t i;
+
+    for (i = 0U; i < 230; i++)  spi_slave_dma_tx_data[0];
+
+    for (i = 0U; i <len; i++)
+    {
+        spi_slave_dma_tx_data[i] = data[i];
+    }
+
+
+}
+
+void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len)
+{
+    uint16_t i;
+
+    for (i = 0U; i < len; i++)
+    {
+        data[i] = spi_slave_dma_rx_data[i];
+        spi_slave_dma_rx_data[i] = 0U;
+    }
+}
 
 static int spi_slave_setup_gpio(spi_port_t port)
 {

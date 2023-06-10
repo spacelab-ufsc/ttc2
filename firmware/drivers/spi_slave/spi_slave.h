@@ -70,6 +70,11 @@ int spi_slave_init(spi_port_t port, spi_config_t config);
 
 void spi_slave_change_dma_transfer_size(spi_port_t port, uint16_t dma_transfer_size, spi_slave_dma_e dma);
 
+void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len);
+
+void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len);
+
+
 /**
  * \brief Enables SPI Slave port interruption.
  *
