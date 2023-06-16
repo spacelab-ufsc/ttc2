@@ -1,7 +1,7 @@
 /*
  * beacon.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.4.4
  * 
  * \date 2019/10/27
  * 
@@ -33,6 +33,7 @@
  * \{
  */
 
+#include <system/sys_log/sys_log.h>
 #include <fsat_pkt/fsat_pkt.h>
 #include <ngham/ngham.h>
 #include <config/config.h>
@@ -49,6 +50,12 @@ void vTaskBeacon(void)
 
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_BEACON_INITIAL_DELAY_MS));
+
+    uint8_t tx_pkt[30] = {0U};
+    uint16_t tx_pkt_len = UINT8_MAX;
+
+    uint8_t ngham_pkt[60] = {0U};
+    uint16_t ngham_pkt_len = UINT16_MAX;
 
     while(1)
     {
@@ -69,14 +76,17 @@ void vTaskBeacon(void)
         /* Payload data */
         fsat_pkt_add_payload(&beacon_pl, data, data_len);
 
-        tx_pkt_t beacon_pkt;
+        fsat_pkt_encode(beacon_pl, tx_pkt, &tx_pkt_len);
 
-        fsat_pkt_encode(beacon_pl, beacon_pkt.pl, &beacon_pkt.pl_len);
-
-        beacon_pkt.ngham_flags = 0;
-        beacon_pkt.priority = PKT_PRIORITY_NORMAL;
-
-        ngham_encode(&beacon_pkt);
+        if (ngham_encode(tx_pkt, tx_pkt_len, 0U, ngham_pkt, &ngham_pkt_len) == 0)
+        {
+            radio_send(&ngham_pkt[8], ngham_pkt_len);   /* 8 = Removing preamble and sync word */
+        }
+        else
+        {
+            sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_BEACON_NAME, "Error encoding a NGHam packet!");
+            sys_log_new_line();
+        }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_BEACON_PERIOD_MS));
     }
