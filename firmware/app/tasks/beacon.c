@@ -51,10 +51,10 @@ void vTaskBeacon(void)
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_BEACON_INITIAL_DELAY_MS));
 
-    uint8_t tx_pkt[30] = {0U};
+    uint8_t tx_pkt[30] = {0};
     uint16_t tx_pkt_len = UINT8_MAX;
 
-    uint8_t ngham_pkt[60] = {0U};
+    uint8_t ngham_pkt[60] = {0};
     uint16_t ngham_pkt_len = UINT16_MAX;
 
     while(1)

@@ -63,10 +63,10 @@ void vTaskDownlinkManager(void)
     ttc_data_buf.down_buf.position_to_read = 0;
     ttc_data_buf.down_buf.position_to_write = 0;
 
-    uint8_t tx_pkt[220] = {0U};
+    uint8_t tx_pkt[220] = {0};
     uint16_t tx_pkt_len = UINT8_MAX;
 
-    uint8_t ngham_pkt[300] = {0U};
+    uint8_t ngham_pkt[300] = {0};
     uint16_t ngham_pkt_len = UINT16_MAX;
 
     while(1)
