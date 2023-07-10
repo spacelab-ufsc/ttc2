@@ -68,7 +68,7 @@ int obdh_read_request(obdh_request_t *obdh_request);
  *
  * \return The status/error code.
  */
-int obdh_send_response(obdh_response_t obdh_response);
+int obdh_send_response(obdh_response_t *obdh_response);
 
 /**
  * \brief Writes the parameter to OBDH responses.

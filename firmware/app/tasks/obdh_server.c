@@ -39,6 +39,7 @@
 #include <system/cmdpr.h>
 #include <drivers/uart/uart.h>
 #include <app/structs/ttc_data.h>
+#include <drivers/spi_slave/spi_slave.h>
 
 #include "obdh_server.h"
 #include "startup.h"
@@ -60,12 +61,24 @@ void vTaskObdhServer(void)
     obdh_request_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
+    ttc_data_buf.hw_version = 0x42;
+    ttc_data_buf.device_id = 0xCC2A;
+    ttc_data_buf.fw_version = 0xABCDEFCC;
+
+    uint8_t buffer[6] = {0x00, 0x00,0x00,0x00,0x00,0x00};
+
+    spi_slave_dma_write(SPI_PORT_2, buffer, 6);
+
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
 
         /* Receiving data from obdh */
+
         obdh_read_request(&obdh_request);
+
+        //sys_log_print_hex(obdh_request.command);
+        //sys_log_new_line();
 
         switch(obdh_request.command)
         {
@@ -74,20 +87,36 @@ void vTaskObdhServer(void)
                 obdh_response.parameter = obdh_request.parameter;
 
                 obdh_write_response_param(&ttc_data_buf, &obdh_response);
-                obdh_send_response(obdh_response);
+                obdh_send_response(&obdh_response);
+
+                spi_slave_dma_write(SPI_PORT_2, buffer, 6);
 
                 break;
-
+/*
             case CMDPR_CMD_WRITE_PARAM:
                 if (obdh_request.parameter == CMDPR_PARAM_TX_ENABLE)
                 {
-                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
-                }
-                else
-                {
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Received invalid write command: ");
-                    sys_log_print_hex(obdh_request.data.param_8);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX mode is now: ");
+                    switch (obdh_request.data.param_8)
+                    {
+                    case 0x00:
+                        sys_log_print_msg("Turned on.");
+                        ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                        break;
+                    case 0x01:
+                        sys_log_print_msg("Turned off.");
+                        ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                        break;
+                    default:
+                        sys_log_print_msg("Invalid mode!");
+
+                        break;
+                    }
                     sys_log_new_line();
+
                 }
 
                 break;
@@ -136,7 +165,7 @@ void vTaskObdhServer(void)
                 break;
 
             case 0x00:
-                /* No request */
+
                 break;
 
             default:
@@ -150,8 +179,11 @@ void vTaskObdhServer(void)
                 break;
         }
 
-        /* Resetting command */
-        obdh_request.command = 0x00U;
+
+        obdh_request.command = 0x00U;*/
+            case 0x00:
+                /* No command received, TX MODE */
+        }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }

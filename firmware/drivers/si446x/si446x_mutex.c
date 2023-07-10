@@ -43,53 +43,17 @@ static SemaphoreHandle_t si446x_semaphore = NULL;
 
 int si446x_mutex_create(void)
 {
-    /* Create a mutex type semaphore */
-    si446x_semaphore = xSemaphoreCreateMutex();
-
-    int err = 0;
-
-    if (si446x_semaphore == NULL)
-    {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, SI446X_DEVICE_NAME, "Error creating a mutex!");
-        sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
-
-        err = -1;
-    }
-
-    return err;
+    return 0;
 }
 
 int si446x_mutex_take(void)
 {
-    int err = -1;
-
-    if (si446x_semaphore != NULL)
-    {
-        /* See if we can obtain the semaphore. If the semaphore is not */
-        /* available wait SYS_LOG_MUTEX_WAIT_TIME_MS ms to see if it becomes free */
-        if (xSemaphoreTake(si446x_semaphore, pdMS_TO_TICKS(SI446X_MUTEX_WAIT_TIME_MS)) == pdTRUE)
-        {
-            err = 0;
-        }
-    }
-
-    return err;
+    return 0;
 }
 
 int si446x_mutex_give(void)
 {
-    int err = -1;
-
-    if (si446x_semaphore != NULL)
-    {
-        xSemaphoreGive(si446x_semaphore);
-
-        err = 0;
-    }
-
-    return err;
+    return 0;
 }
 
 /**< \} End of si446x group */

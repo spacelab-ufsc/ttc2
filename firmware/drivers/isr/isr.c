@@ -36,6 +36,7 @@
 #include <hal/usci_a_uart.h>
 #include <hal/usci_a_spi.h>
 #include <hal/usci_b_spi.h>
+#include <hal/dma.h>
 
 #include <hal/gpio.h>
 
@@ -145,35 +146,6 @@ __interrupt void USCI_A1_ISR(void) // cppcheck-suppress misra-c2012-8.4
     }
 }
 
-#pragma vector=USCI_A2_VECTOR
-__interrupt void USCI_A2_ISR(void) // cppcheck-suppress misra-c2012-8.4
-{
-    switch(isr_a2_bus)
-    {
-        case ISR_NO_CONFIG:
-            break;
-        case ISR_UART_CONFIG:
-            if (USCI_A_UART_getInterruptStatus(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG) == USCI_A_UART_RECEIVE_INTERRUPT_FLAG)
-            {
-                queue_push_back(&uart_port_2_rx_buffer, USCI_A_UART_receiveData(USCI_A2_BASE));
-                USCI_A_UART_clearInterrupt(USCI_A2_BASE, USCI_A_UART_RECEIVE_INTERRUPT_FLAG);
-            }
-
-            break;
-        case ISR_SPI_CONFIG:
-
-            while (!USCI_A_SPI_getInterruptStatus(USCI_A2_BASE, USCI_A_SPI_TRANSMIT_INTERRUPT))
-            {
-            }
-
-            queue_push_back(&spi_port_2_rx_buffer, USCI_A_SPI_receiveData(USCI_A2_BASE));
-
-            break;
-        default:
-            break;
-    }
-}
-
 #pragma vector=USCI_B0_VECTOR
 __interrupt void USCI_B0_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
@@ -232,6 +204,7 @@ __interrupt void USCI_B1_ISR(void) // cppcheck-suppress misra-c2012-8.4
             break;
     }
 }
+#pragma vector=USCI_B2_VECTOR
 __interrupt void USCI_B2_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
     switch(isr_b2_bus)
@@ -258,6 +231,32 @@ __interrupt void USCI_B2_ISR(void) // cppcheck-suppress misra-c2012-8.4
             break;
         default:
             break;
+    }
+}
+
+#pragma vector=DMA_VECTOR
+__interrupt void DMA0_ISR(void)
+{
+    switch (__even_in_range(DMAIV, 16))
+    {
+        case DMAIV_NONE: break; // No interrupts
+        case DMAIV_DMA0IFG: // DMA0IFG = DMA Channel 0 (TX)
+            DMA_clearInterrupt(DMA_CHANNEL_0);
+
+            break;
+        case DMAIV_DMA1IFG: // DMA1IFG = DMA Channel 1 (RX)
+            sys_log_print_msg("Int. RX");
+            sys_log_new_line();
+            DMA_clearInterrupt(DMA_CHANNEL_1);
+
+            break;
+        case DMAIV_DMA2IFG: break; // DMA2IFG = DMA Channel 2
+        case 8: break; // Reserved
+        case 10: break; // Reserved
+        case 12: break; // Reserved
+        case 14: break; // Reserved
+        case 16: break; // Reserved
+        default: break;
     }
 }
 

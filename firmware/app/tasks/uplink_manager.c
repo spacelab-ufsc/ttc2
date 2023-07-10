@@ -67,7 +67,7 @@ void vTaskUplinkManager(void)
         TickType_t last_cycle = xTaskGetTickCount();
 
 
-        if (radio_available())
+        if (!radio_available())
         {
             radio_recv(rx_packet, rx_size, 10);
 
