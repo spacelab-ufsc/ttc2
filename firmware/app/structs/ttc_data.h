@@ -54,6 +54,8 @@ typedef struct
     uint8_t position_to_read;
 } transmission_buf_t;
 
+
+
 /**
  * \brief TTC data.
  */
@@ -69,8 +71,10 @@ typedef struct
     uint8_t hw_version;             /**< Hardware version. */
     uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
     uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
-    uint8_t ant_deploy;             /**< Number of antenna deployment tries TODO: */
-    uint8_t ant_deploy_hib;         /**< Hibernation time completed */
+    uint8_t ant_deploy_count;       /**< Number of antenna deployment tries TODO: */
+    bool ant_deploy_exec;           /**< The deployment has executed*/
+    uint8_t ant_deploy_hib_count;   /**< Hibernation count for deployment */
+    bool ant_deploy_hib_exec;       /**< Hibernation time has completed */
     radio_data_t radio;             /**< Radio data. */
     antenna_data_t antenna;         /**< Antenna data. */
     transmission_buf_t down_buf;    /**< Downlink Buffer */
