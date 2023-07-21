@@ -40,6 +40,7 @@
 
 #include <stdint.h>
 
+#include <system/system.h>
 #include <devices/antenna/antenna_data.h>
 #include <devices/radio/radio_data.h>
 
@@ -54,7 +55,14 @@ typedef struct
     uint8_t position_to_read;
 } transmission_buf_t;
 
-
+/**
+ * \brief Antenna telemetry type.
+ */
+typedef struct
+{
+    sys_time_t timestamp;           /**< Timestamp of the Antenna data. */
+    antenna_data_t data;            /**< Antenna data. */
+} antenna_telemetry_t;
 
 /**
  * \brief TTC data.
@@ -76,7 +84,7 @@ typedef struct
     uint8_t ant_deploy_hib_count;   /**< Hibernation count for deployment */
     bool ant_deploy_hib_exec;       /**< Hibernation time has completed */
     radio_data_t radio;             /**< Radio data. */
-    antenna_data_t antenna;         /**< Antenna data. */
+    antenna_telemetry_t antenna;    /**< Antenna data. */
     transmission_buf_t down_buf;    /**< Downlink Buffer */
     transmission_buf_t up_buf;      /**< Uplink Buffer */
 } ttc_data_t;
