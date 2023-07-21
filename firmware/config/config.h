@@ -50,6 +50,7 @@
 #define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
 #define CONFIG_TASK_UPLINK_MANAGER_ENABLED              1
 #define CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED          0
+#define CONFIG_TASK_READ_ANTENNA_ENABLED                0
 
 /* Devices */
 #define CONFIG_DEV_MEDIA_INT_ENABLED                    1

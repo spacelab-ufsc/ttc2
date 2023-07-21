@@ -52,6 +52,7 @@
 #include "downlink_manager.h"
 #include "uplink_manager.h"
 #include "antenna_deployment.h"
+#include "read_antenna.h"
 
 void create_tasks(void)
 {
@@ -175,6 +176,16 @@ void create_tasks(void)
         /* Error creating the antenna deployment task */
     }
 #endif /* CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED */
+
+
+#if defined(CONFIG_TASK_READ_ANTENNA_ENABLED) && (CONFIG_TASK_READ_ANTENNA_ENABLED == 1)
+    xTaskCreate(vTaskReadAntenna, TASK_READ_ANTENNA_NAME, TASK_READ_ANTENNA_STACK_SIZE, NULL, TASK_READ_ANTENNA_PRIORITY, &xTaskReadAntennaHandle);
+
+    if (xTaskReadAntennaHandle == NULL)
+    {
+        /* Error creating the read Antenna task */
+    }
+#endif /* CONFIG_TASK_READ_ANTENNA_ENABLED */
 
     create_event_groups();
 }
