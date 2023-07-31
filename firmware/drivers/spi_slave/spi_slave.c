@@ -85,7 +85,7 @@ static int spi_slave_setup_gpio(spi_port_t port);
 static DMA_initParam spi_slave_dma_param_tx = {
     .channelSelect = DMA_CHANNEL_0,
     .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
-    .transferSize = 230,
+    .transferSize = 228,
     .triggerSourceSelect = DMA_TRIGGERSOURCE_13,
     .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
     .triggerTypeSelect = DMA_TRIGGER_HIGH,
@@ -94,15 +94,15 @@ static DMA_initParam spi_slave_dma_param_tx = {
 static DMA_initParam spi_slave_dma_param_rx = {
     .channelSelect = DMA_CHANNEL_1,
      .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
-     .transferSize = 230,
+     .transferSize = 228,
      .triggerSourceSelect = DMA_TRIGGERSOURCE_12,
      .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
      .triggerTypeSelect = DMA_TRIGGER_HIGH,
 
 };
 
-static uint8_t spi_slave_dma_tx_data[230] = {0};
-static uint8_t spi_slave_dma_rx_data[230] = {0};
+uint8_t spi_slave_dma_tx_data[228] = {0};
+uint8_t spi_slave_dma_rx_data[228] = {0};
 
 uint16_t spi_slave_dma_tx_position;
 uint16_t spi_slave_dma_rx_position;
@@ -192,14 +192,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                     break;
             }
 
-            spi_slave_dma_tx_data[1] = 'b';
-            spi_slave_dma_tx_data[2] = 'c';
-            spi_slave_dma_tx_data[3] = 'd';
-            spi_slave_dma_tx_data[4] = 'e';
-            spi_slave_dma_tx_data[5] = 'f';
-            spi_slave_dma_tx_data[6] = 'g';
-            spi_slave_dma_tx_data[7] = 'h';
-
             if (USCI_A_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
             {
                 HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;
@@ -229,12 +221,22 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             spi_slave_dma_rx_position = 0;
 
-            for (uint8_t i = 0; i<230;i++)
+            for (uint8_t i = 0; i<228;i++)
             {
                 spi_slave_dma_rx_data[i] = 0xFF;
-                spi_slave_dma_tx_data[i] = i;
+                spi_slave_dma_tx_data[i] = 0xFF;
             }
 
+            spi_slave_dma_tx_data[0] = 0xE7;
+            spi_slave_dma_tx_data[1] = 0x00;
+            spi_slave_dma_tx_data[2] = 0x00;
+            spi_slave_dma_tx_data[3] = 0x00;
+            spi_slave_dma_tx_data[4] = 0x00;
+            spi_slave_dma_tx_data[5] = 0x00;
+            spi_slave_dma_tx_data[6] = 0x00;
+
+            /* Next commmand preamble */
+            spi_slave_dma_tx_data[7] = 0xE7;
 
             DMA_init(&spi_slave_dma_param_rx);
 
@@ -248,7 +250,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             DMA_enableTransfers(DMA_CHANNEL_1);
 
-            spi_slave_dma_tx_position = 0;
+            spi_slave_dma_tx_position = 8U;
 
             __bis_SR_register(LPM4_bits + GIE);
         }
@@ -350,19 +352,22 @@ void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len)
 {
     uint16_t i = 0U;
 
-    sys_log_print_uint(spi_slave_dma_tx_position);
-    sys_log_new_line();
-
     for (i = 0U; i <len; i++)
     {
         spi_slave_dma_tx_data[spi_slave_dma_tx_position++] = data[i];
-        sys_log_print_hex(data[i]);
-        sys_log_print_msg("|");
 
-        if (spi_slave_dma_tx_position > 229U) /* Reset position after the end of the buffer */
+
+        if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
         {
             spi_slave_dma_tx_position = 0U;
         }
+    }
+
+    spi_slave_dma_tx_data[spi_slave_dma_tx_position++] = 0xE7;
+
+    if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
+    {
+        spi_slave_dma_tx_position = 0U;
     }
 
     //sys_log_new_line();
@@ -372,7 +377,6 @@ void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len)
         sys_log_print_msg("|");
 
     }*/
-    sys_log_new_line();
 
 }
 
@@ -383,25 +387,40 @@ void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len)
     if ((spi_slave_dma_rx_data[spi_slave_dma_rx_position] != 0xFF) && (spi_slave_dma_rx_data[spi_slave_dma_rx_position] != 0x00))
     {
 
+
+        for (i = 0U; i < len; i++)
+        {
+            data[i] = spi_slave_dma_rx_data[spi_slave_dma_rx_position];
+
+            spi_slave_dma_rx_data[spi_slave_dma_rx_position++] = 0xFFU; /* Clear after read */
+
+            if (spi_slave_dma_rx_position > 227)
+            {
+                spi_slave_dma_rx_position = 0; /* Reset position after the end of the buffer */
+            }
+        }
+
+    }
+    else if (spi_slave_dma_rx_data[spi_slave_dma_rx_position] == 0x00)
+    {
         for (i = 0U; i < len; i++)
         {
            data[i] = spi_slave_dma_rx_data[spi_slave_dma_rx_position];
 
            spi_slave_dma_rx_data[spi_slave_dma_rx_position++] = 0xFFU; /* Clear after read */
+        }
 
-            if (spi_slave_dma_rx_position > 229)
-            {
-                spi_slave_dma_rx_position = 0; /* Reset position after the end of the buffer */
-            }
-
+        if (spi_slave_dma_rx_position > 227)
+        {
+            spi_slave_dma_rx_position = 0; /* Reset position after the end of the buffer */
         }
     }
+
     else
     {
         for (i=0U; i < len; i++)
         {
             data[i] = 0xFF;
-
         }
     }
 }

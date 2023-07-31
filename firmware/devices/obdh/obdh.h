@@ -90,6 +90,8 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
  */
 int obdh_flush_request(obdh_request_t *obdh_request);
 
+void obdh_write_read_bytes(uint16_t number_of_bytes);
+
 #endif /* DEVICES_OBDH_H_ */
 
 /** \} End of obdh group */

@@ -41,9 +41,9 @@
 #include <task.h>
 
 #define TASK_OBDH_SERVER_NAME                "OBDH Server"       /**< Task name. */
-#define TASK_OBDH_SERVER_STACK_SIZE          2000                /**< Stack size in bytes. */
+#define TASK_OBDH_SERVER_STACK_SIZE          6000                /**< Stack size in bytes. */
 #define TASK_OBDH_SERVER_PRIORITY            5                   /**< Task priority. */
-#define TASK_OBDH_SERVER_PERIOD_MS           5                  /**< Task period in milliseconds. */
+#define TASK_OBDH_SERVER_PERIOD_MS           100                 /**< Task period in milliseconds. */
 #define TASK_OBDH_SERVER_INITIAL_DELAY_MS    200                 /**< Delay, in milliseconds, before the first execution. */
 #define TASK_OBDH_SERVER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 

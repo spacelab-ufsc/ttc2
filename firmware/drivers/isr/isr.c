@@ -245,8 +245,6 @@ __interrupt void DMA0_ISR(void)
 
             break;
         case DMAIV_DMA1IFG: // DMA1IFG = DMA Channel 1 (RX)
-            sys_log_print_msg("Int. RX");
-            sys_log_new_line();
             DMA_clearInterrupt(DMA_CHANNEL_1);
 
             break;

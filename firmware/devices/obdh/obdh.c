@@ -76,11 +76,11 @@ int obdh_init(void)
 int obdh_read_request(obdh_request_t *obdh_request)
 {
     int err = 0;
-    uint8_t request[6] = {0};
+    uint8_t request[7] = {0};
 
-    spi_slave_dma_read(obdh_spi_port, request, 6);
+    spi_slave_dma_read(obdh_spi_port, request, 7);
 
-    obdh_request->command = request[0];
+    obdh_request->command = request[1];
 
 
     if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00)) /* Received a request */
@@ -89,7 +89,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
         {
 
         case CMDPR_CMD_READ_PARAM:
-                    obdh_request->parameter = request[1];
+                    obdh_request->parameter = request[2];
 
                     sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
                     sys_log_print_hex(obdh_request->parameter);
@@ -97,8 +97,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                     break;
 
-                /*case CMDPR_CMD_WRITE_PARAM:
-                    obdh_request->parameter = request[1];
+                case CMDPR_CMD_WRITE_PARAM:
+                    obdh_request->parameter = request[2];
 
                     sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Write command received, parameter:");
                     sys_log_print_hex(obdh_request->parameter);
@@ -106,7 +106,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                     if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
                     {
-                        obdh_request->data.param_8 = request[2];
+                        obdh_request->data.param_8 = request[3];
                     }
                     else
                     {
@@ -117,24 +117,28 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     break;
 
                 case CMDPR_CMD_TRANSMIT_PACKET:
-                    uint8_t packet[230] = {0};
-                    obdh_request->data.data_packet.len = request[1];
-                    spi_slave_change_dma_transfer_size(obdh_spi_port, request[1], SPI_SLAVE_DMA_RX);
+                    uint8_t buffer_c[23] = {0xEE};
+                    obdh_request->data.data_packet.len = request[2];
 
-                    vTaskDelay(pdMS_TO_TICKS(100)); /* Wait for 105ms */
-                   /* spi_slave_dma_read(obdh_spi_port, packet, 230);
+                    obdh_write_read_bytes(request[2]+3);
+
+                    vTaskDelay(pdMS_TO_TICKS(350));
+
+                    spi_slave_dma_read(obdh_spi_port, buffer_c, (obdh_request->data.data_packet.len)+3);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit command received:");
+                    sys_log_print_uint(obdh_request->data.data_packet.len);
+                    sys_log_print_msg(" bytes.");
+                    sys_log_new_line();
 
                     sys_log_print_str("Packet: ");
 
-                    for(uint16_t i = 0; i < 230; i++)
+                    for(uint16_t i = 0; i < 23; i++)
                     {
-                        sys_log_print_hex(packet[i]);
+                        sys_log_print_hex(buffer_c[i]);
                         sys_log_print_str("|");
                     }
-
                     sys_log_new_line();
-
-                    spi_slave_change_dma_transfer_size(obdh_spi_port, 6, SPI_SLAVE_DMA_RX);
 
                     break;
                     /*
@@ -143,8 +147,12 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     //break;
 
 
+        case 0x00:
+            /* Read Mode */
+            break;
+
         default:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, " Unknown command: ");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown command: ");
             sys_log_print_hex(obdh_request->command);
             sys_log_new_line();
             err = -1;
@@ -384,6 +392,12 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
     }
 
     return err;
+}
+void obdh_write_read_bytes(uint16_t number_of_bytes)
+{
+    uint8_t buffer[230] = {0x00};
+
+    spi_slave_dma_write(obdh_spi_port, buffer, number_of_bytes);
 }
 
 static int obdh_write_packet(uint8_t *packet, uint16_t len)

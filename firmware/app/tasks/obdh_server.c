@@ -40,6 +40,7 @@
 #include <drivers/uart/uart.h>
 #include <app/structs/ttc_data.h>
 #include <drivers/spi_slave/spi_slave.h>
+#include <hal/dma.h>
 
 #include "obdh_server.h"
 #include "startup.h"
@@ -58,16 +59,16 @@ void vTaskObdhServer(void)
     sys_log_new_line();
 
     obdh_request_t obdh_request = {0};
-    obdh_request_t obdh_response = {0};
+    obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
     ttc_data_buf.hw_version = 0x42;
     ttc_data_buf.device_id = 0xCC2A;
     ttc_data_buf.fw_version = 0xABCDEFCC;
 
-    uint8_t buffer[6] = {0x00, 0x00,0x00,0x00,0x00,0x00};
 
-    spi_slave_dma_write(SPI_PORT_2, buffer, 6);
+    uint8_t buffer1[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t buffer2[6] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
 
     while(1)
     {
@@ -80,16 +81,76 @@ void vTaskObdhServer(void)
         //sys_log_print_hex(obdh_request.command);
         //sys_log_new_line();
 
-        switch(obdh_request.command)
+        if (obdh_request.command != 0xFF)
+        {
+            if (obdh_request.command == 0x01)
+            {
+
+                obdh_response.command = obdh_request.command;
+                obdh_response.parameter = obdh_request.parameter;
+                obdh_write_response_param(&ttc_data_buf, &obdh_response);
+
+                obdh_send_response(&obdh_response);
+            }
+            else if (obdh_request.command == 0x02)
+            {
+                obdh_write_read_bytes(6);
+
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
+                switch (obdh_request.data.param_8)
+                {
+                case 0x00:
+                    sys_log_print_msg("Turned on.");
+                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                    break;
+
+                case 0x01:
+                    sys_log_print_msg("Turned off.");
+                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                    break;
+
+                default:
+                    sys_log_print_msg("Invalid mode: ");
+                    sys_log_print_uint(obdh_request.data.param_8);
+
+                    break;
+                }
+                sys_log_new_line();
+
+
+            }
+            else if(obdh_request.command == 0x03)
+            {
+                obdh_write_read_bytes(6);
+            }
+            else if(obdh_request.command == 0x00)
+            {
+                //spi_slave_dma_write(SPI_PORT_2, buffer1, 6);
+                obdh_write_read_bytes(6);
+            //    sys_log_print_msg("L");
+             //   sys_log_new_line();
+            }
+        }
+        /*for (int i=0;i<6;i++)
+        {
+            sys_log_print_hex(buffer[i]);
+            sys_log_print_msg("|");
+
+        }
+        sys_log_new_line();
+
+       /* switch(obdh_request.command)
         {
             case CMDPR_CMD_READ_PARAM:
                 obdh_response.command = CMDPR_CMD_READ_PARAM;
                 obdh_response.parameter = obdh_request.parameter;
 
-                obdh_write_response_param(&ttc_data_buf, &obdh_response);
-                obdh_send_response(&obdh_response);
+           //     obdh_write_response_param(&ttc_data_buf, &obdh_response);
+             //   obdh_send_response(&obdh_response);
 
-                spi_slave_dma_write(SPI_PORT_2, buffer, 6);
+               // spi_slave_dma_write(SPI_PORT_2, buffer, 6);
 
                 break;
 /*
@@ -181,9 +242,9 @@ void vTaskObdhServer(void)
 
 
         obdh_request.command = 0x00U;*/
-            case 0x00:
+     //       case 0x00:
                 /* No command received, TX MODE */
-        }
+      //  }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }
