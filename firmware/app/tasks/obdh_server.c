@@ -124,6 +124,8 @@ void vTaskObdhServer(void)
             else if(obdh_request.command == 0x03)
             {
                 obdh_write_read_bytes(6);
+
+                downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
             }
             else if(obdh_request.command == 0x00)
             {

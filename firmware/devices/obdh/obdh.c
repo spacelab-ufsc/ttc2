@@ -117,14 +117,14 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     break;
 
                 case CMDPR_CMD_TRANSMIT_PACKET:
-                    uint8_t buffer_c[23] = {0xEE};
+
                     obdh_request->data.data_packet.len = request[2];
 
-                    obdh_write_read_bytes(request[2]+3);
+                    obdh_write_read_bytes(request[2]+2);
 
-                    vTaskDelay(pdMS_TO_TICKS(350));
+                    vTaskDelay(pdMS_TO_TICKS(100));
 
-                    spi_slave_dma_read(obdh_spi_port, buffer_c, (obdh_request->data.data_packet.len)+3);
+                    spi_slave_dma_read(obdh_spi_port, obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
 
                     sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit command received:");
                     sys_log_print_uint(obdh_request->data.data_packet.len);
@@ -132,12 +132,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     sys_log_new_line();
 
                     sys_log_print_str("Packet: ");
-
-                    for(uint16_t i = 0; i < 23; i++)
-                    {
-                        sys_log_print_hex(buffer_c[i]);
-                        sys_log_print_str("|");
-                    }
+                    sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
                     sys_log_new_line();
 
                     break;

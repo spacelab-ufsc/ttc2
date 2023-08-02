@@ -329,25 +329,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     return err;
 }
 
-void spi_slave_change_dma_transfer_size(spi_port_t port, uint16_t dma_transfer_size, spi_slave_dma_e dma)
-{
-
-    switch(dma)
-    {
-        case SPI_SLAVE_DMA_TX:
-            DMA_setTransferSize(DMA_CHANNEL_0, dma_transfer_size);
-            break;
-        case SPI_SLAVE_DMA_RX:
-            DMA_setTransferSize(DMA_CHANNEL_1, dma_transfer_size);
-            break;
-        default:
-            break;
-    }
-    /* Reset position after transactions of different sizes */
-    //DMA_setDstAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)spi_slave_dma_rx_data, DMA_DIRECTION_INCREMENT);
-    //DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)spi_slave_dma_tx_data, DMA_DIRECTION_INCREMENT);
-}
-
 void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len)
 {
     uint16_t i = 0U;
@@ -423,6 +404,26 @@ void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len)
             data[i] = 0xFF;
         }
     }
+}
+
+void spi_slave_dma_dump_buff(spi_slave_dma_e dma, uint16_t len)
+{
+    uint8_t *ptr;
+    switch(dma)
+    {
+    case SPI_SLAVE_DMA_RX:
+        ptr = spi_slave_dma_rx_data;
+
+        break;
+
+    case SPI_SLAVE_DMA_TX:
+        ptr = spi_slave_dma_tx_data;
+
+        break;
+    }
+
+    sys_log_dump_hex(ptr, len);
+    sys_log_new_line();
 }
 
 static int spi_slave_setup_gpio(spi_port_t port)
