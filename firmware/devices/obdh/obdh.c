@@ -48,7 +48,7 @@ static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data);
 
 static int obdh_write_parameter(obdh_request_t *obdh_request);
 
-static int obdh_write_packet(uint8_t *packet, uint16_t len);
+static int obdh_write_packet(obdh_response_t *obdh_response);
 
 static const spi_port_t obdh_spi_port = SPI_PORT_2;
 
@@ -126,7 +126,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                     spi_slave_dma_read(obdh_spi_port, obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit command received:");
+                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
                     sys_log_print_uint(obdh_request->data.data_packet.len);
                     sys_log_print_msg(" bytes.");
                     sys_log_new_line();
@@ -136,10 +136,14 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     sys_log_new_line();
 
                     break;
-                    /*
+
                 case CMDPR_CMD_READ_FIRST_PACKET:
-                    /* Nothing more to do */
-                    //break;
+                    obdh_request->data.data_packet.len = request[2];
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
+                    sys_log_new_line();
+
+                    break;
 
 
         case 0x00:
@@ -173,8 +177,8 @@ int obdh_send_response(obdh_response_t *obdh_response)
               break;
 
           case CMDPR_CMD_READ_FIRST_PACKET:
-              //obdh_write_packet(packet, len);
-              //TODO
+              obdh_write_packet(obdh_response);
+
           default:
               err = -1;
 
@@ -395,11 +399,17 @@ void obdh_write_read_bytes(uint16_t number_of_bytes)
     spi_slave_dma_write(obdh_spi_port, buffer, number_of_bytes);
 }
 
-static int obdh_write_packet(uint8_t *packet, uint16_t len)
+static int obdh_write_packet(obdh_response_t *obdh_response)
 {
-    int err = -1;
+    int err = 0;
 
-    err = spi_slave_write(obdh_spi_port, packet, len);
+    spi_slave_dma_write(obdh_spi_port, obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
+
+    sys_log_print_str("Packet:");
+
+
+    sys_log_dump_hex(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
+    sys_log_new_line();
 
     return err;
 }

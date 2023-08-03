@@ -69,6 +69,10 @@ void vTaskObdhServer(void)
 
     uint8_t buffer1[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     uint8_t buffer2[6] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
+    uint8_t buffer3[10] = {0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
+
+    uplink_add_packet(buffer2, 6);
+    uplink_add_packet(buffer3, 10);
 
     while(1)
     {
@@ -126,6 +130,16 @@ void vTaskObdhServer(void)
                 obdh_write_read_bytes(6);
 
                 downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
+            }
+
+            else if (obdh_request.command == 0x04)
+            {
+                obdh_response.command = obdh_request.command;
+
+                uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
+
+                obdh_send_response(&obdh_response);
+
             }
             else if(obdh_request.command == 0x00)
             {
