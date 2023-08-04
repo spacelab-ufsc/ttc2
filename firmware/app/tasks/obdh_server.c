@@ -67,8 +67,8 @@ void vTaskObdhServer(void)
     ttc_data_buf.fw_version = 0xABCDEFCC;
 
 
-    uint8_t buffer1[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint8_t buffer2[6] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
+    uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
     uint8_t buffer3[10] = {0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
 
     uplink_add_packet(buffer2, 6);
@@ -87,6 +87,7 @@ void vTaskObdhServer(void)
 
         if (obdh_request.command != 0xFF)
         {
+            taskENTER_CRITICAL();
             if (obdh_request.command == 0x01)
             {
 
@@ -148,6 +149,7 @@ void vTaskObdhServer(void)
             //    sys_log_print_msg("L");
              //   sys_log_new_line();
             }
+            taskEXIT_CRITICAL();
         }
         /*for (int i=0;i<6;i++)
         {

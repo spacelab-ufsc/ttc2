@@ -24,7 +24,7 @@
  * \brief TTC data structure implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * \version 0.4.3
  * 
  * \date 2021/04/14
@@ -39,9 +39,9 @@
 
 void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
-    ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
-
     uint16_t i = 0;
+
+    ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
 
     for(i = 0; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
     {
@@ -59,9 +59,9 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 
 void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
-    *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
-
     uint16_t i = 0;
+
+    *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
 
     for(i = 0; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
     {
@@ -78,9 +78,9 @@ void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 
 void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
-    ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write] = packet_size;
-
     uint16_t i = 0;
+
+    ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write] = packet_size;
 
     for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write]; i++)
     {
@@ -89,7 +89,6 @@ void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 
     ttc_data_buf.radio.rx_fifo_counter++;
     ttc_data_buf.radio.rx_packet_counter++;
-    ttc_data_buf.radio.last_rx_packet_bytes = packet_size;
 
     if (++ttc_data_buf.up_buf.position_to_write >= 5)
     {
@@ -99,14 +98,17 @@ void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 
 void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
-    *packet_size = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
-
     uint16_t i = 0;
+
+    *packet_size = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
 
     for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]; i++)
     {
         packet[i] = ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i];
+        ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i] = 0xFF; /* Remove packet after a read */
     }
+
+    ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read] = 0xFF; /* 0xFF means that there is no package in this position */
 
     ttc_data_buf.radio.rx_fifo_counter--;
 
@@ -114,6 +116,10 @@ void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size)
     {
         ttc_data_buf.up_buf.position_to_read = 0;
     }
+
+    /* Update rx packet bytes */
+    ttc_data_buf.radio.last_rx_packet_bytes = &(ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]);
+
 }
 
 /** \} End of ttc_data group */

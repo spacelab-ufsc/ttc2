@@ -43,7 +43,7 @@
 #define TASK_UPLINK_MANAGER_NAME                "Uplink Manager"    /**< Task name. */
 #define TASK_UPLINK_MANAGER_STACK_SIZE          2000                /**< Stack size in bytes. */
 #define TASK_UPLINK_MANAGER_PRIORITY            3                   /**< Task priority. */
-#define TASK_UPLINK_MANAGER_PERIOD_MS           100                 /**< Task period in milliseconds. */
+#define TASK_UPLINK_MANAGER_PERIOD_MS           300                 /**< Task period in milliseconds. */
 #define TASK_UPLINK_MANAGER_INITIAL_DELAY_MS    500                 /**< Delay, in milliseconds, before the first execution. */
 #define TASK_UPLINK_MANAGER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 
