@@ -62,11 +62,6 @@ void vTaskObdhServer(void)
     obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
-    ttc_data_buf.hw_version = 0x42;
-    ttc_data_buf.device_id = 0xCC2A;
-    ttc_data_buf.fw_version = 0xABCDEFCC;
-
-
     uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
     uint8_t buffer3[10] = {0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
@@ -79,190 +74,84 @@ void vTaskObdhServer(void)
         TickType_t last_cycle = xTaskGetTickCount();
 
         /* Receiving data from obdh */
-
         obdh_read_request(&obdh_request);
-
-        //sys_log_print_hex(obdh_request.command);
-        //sys_log_new_line();
 
         if (obdh_request.command != 0xFF)
         {
             taskENTER_CRITICAL();
-            if (obdh_request.command == 0x01)
+
+            switch(obdh_request.command)
             {
+            case CMDPR_CMD_READ_PARAM:
 
                 obdh_response.command = obdh_request.command;
                 obdh_response.parameter = obdh_request.parameter;
                 obdh_write_response_param(&ttc_data_buf, &obdh_response);
 
                 obdh_send_response(&obdh_response);
-            }
-            else if (obdh_request.command == 0x02)
-            {
+
+                break;
+
+            case CMDPR_CMD_WRITE_PARAM:
+
                 obdh_write_read_bytes(6);
 
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
-                switch (obdh_request.data.param_8)
+
+                switch(obdh_request.data.param_8)
                 {
-                case 0x00:
-                    sys_log_print_msg("Turned on.");
-                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
-
-                    break;
-
-                case 0x01:
-                    sys_log_print_msg("Turned off.");
-                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
-
-                    break;
-
-                default:
-                    sys_log_print_msg("Invalid mode: ");
-                    sys_log_print_uint(obdh_request.data.param_8);
-
-                    break;
-                }
-                sys_log_new_line();
-
-
-            }
-            else if(obdh_request.command == 0x03)
-            {
-                obdh_write_read_bytes(6);
-
-                downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
-            }
-
-            else if (obdh_request.command == 0x04)
-            {
-                obdh_response.command = obdh_request.command;
-
-                uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
-
-                obdh_send_response(&obdh_response);
-
-            }
-            else if(obdh_request.command == 0x00)
-            {
-                //spi_slave_dma_write(SPI_PORT_2, buffer1, 6);
-                obdh_write_read_bytes(6);
-            //    sys_log_print_msg("L");
-             //   sys_log_new_line();
-            }
-            taskEXIT_CRITICAL();
-        }
-        /*for (int i=0;i<6;i++)
-        {
-            sys_log_print_hex(buffer[i]);
-            sys_log_print_msg("|");
-
-        }
-        sys_log_new_line();
-
-       /* switch(obdh_request.command)
-        {
-            case CMDPR_CMD_READ_PARAM:
-                obdh_response.command = CMDPR_CMD_READ_PARAM;
-                obdh_response.parameter = obdh_request.parameter;
-
-           //     obdh_write_response_param(&ttc_data_buf, &obdh_response);
-             //   obdh_send_response(&obdh_response);
-
-               // spi_slave_dma_write(SPI_PORT_2, buffer, 6);
-
-                break;
-/*
-            case CMDPR_CMD_WRITE_PARAM:
-                if (obdh_request.parameter == CMDPR_PARAM_TX_ENABLE)
-                {
-
-                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX mode is now: ");
-                    switch (obdh_request.data.param_8)
-                    {
                     case 0x00:
                         sys_log_print_msg("Turned on.");
                         ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                         break;
+
                     case 0x01:
                         sys_log_print_msg("Turned off.");
                         ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                         break;
-                    default:
-                        sys_log_print_msg("Invalid mode!");
 
-                        break;
-                    }
-                    sys_log_new_line();
+                   default:
+                       sys_log_print_msg("Invalid mode: ");
+                       sys_log_print_uint(obdh_request.data.param_8);
 
-                }
+                       break;
+                 }
+                 sys_log_new_line();
 
-                break;
+                 break;
 
-            case CMDPR_CMD_TRANSMIT_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit:");
-                sys_log_print_uint(obdh_request.data.data_packet.len);
-                sys_log_print_msg(" bytes!");
-                sys_log_new_line();
 
-                sys_log_print_str("Packet: ");
+                 case CMDPR_CMD_TRANSMIT_PACKET:
+                     obdh_write_read_bytes(6);
 
-                uint16_t i = 0;
+                     downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
 
-                for(i = 0; i < obdh_request.data.data_packet.len; i++)
-                {
-                    sys_log_print_hex(obdh_request.data.data_packet.packet[i]);
-                    sys_log_print_str("|");
-                }
+                     break;
 
-                sys_log_new_line();
+                 case CMDPR_CMD_READ_FIRST_PACKET:
+                     obdh_response.command = obdh_request.command;
 
-                downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
+                     uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
 
-                break;
+                     obdh_send_response(&obdh_response);
 
-            case CMDPR_CMD_READ_FIRST_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to read received packet. Reading: ");
-                uplink_pop_packet(obdh_response.data.data_packet.packet, &obdh_response.data.data_packet.len);
-                sys_log_print_uint(obdh_response.data.data_packet.len);
-                sys_log_print_msg(" bytes...");
-                sys_log_new_line();
+                     break;
 
-                sys_log_print_str("Packet: ");
+                 case 0x00:
+                     /* Read mode */
+                     obdh_write_read_bytes(6);
+                     break;
 
-                for(i = 0; i < obdh_response.data.data_packet.len; i++)
-                {
-                    sys_log_print_hex(obdh_response.data.data_packet.packet[i]);
-                    sys_log_print_str("|");
-                }
+                 default:
 
-                sys_log_new_line();
+                     break;
 
-                obdh_send_response(obdh_response);
+            }
 
-                break;
-
-            case 0x00:
-
-                break;
-
-            default:
-                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Received invalid command (");
-                sys_log_print_hex(obdh_request.command);
-                sys_log_print_str(").");
-                sys_log_new_line();
-
-                obdh_flush_request(&obdh_request);
-
-                break;
+            taskEXIT_CRITICAL();
         }
-
-
-        obdh_request.command = 0x00U;*/
-     //       case 0x00:
-                /* No command received, TX MODE */
-      //  }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }

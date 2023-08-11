@@ -68,6 +68,25 @@ typedef enum
  */
 int spi_slave_init(spi_port_t port, spi_config_t config);
 
+
+/**
+ * \brief Writes on the SPI Slave port DMA buffer.
+ *
+ * \param[in] port is the SPI port to initialize. It can be:
+ * \parblock
+ *      -\b SPI_PORT_0
+ *      -\b SPI_PORT_1
+ *      -\b SPI_PORT_2
+ *      -\b SPI_PORT_3
+ *      -\b SPI_PORT_4
+ *      -\b SPI_PORT_5
+ *      .
+ * \endparblock
+ *
+ * \param[in] config is the configuration of the SPI port.
+ *
+ * \return The status/error code.
+ */
 void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len);
 
 void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len);

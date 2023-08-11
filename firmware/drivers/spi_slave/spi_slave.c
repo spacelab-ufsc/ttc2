@@ -206,53 +206,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
             #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                 err = -1;   /* Error initializing the SPI port */
             }
-
-            DMA_init(&spi_slave_dma_param_tx);
-
-            DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)spi_slave_dma_tx_data, DMA_DIRECTION_INCREMENT);
-
-            DMA_setDstAddress(DMA_CHANNEL_0, USCI_A_SPI_getTransmitBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
-
-            DMA_clearInterrupt(DMA_CHANNEL_0);
-
-            DMA_enableInterrupt(DMA_CHANNEL_0);
-
-            DMA_enableTransfers(DMA_CHANNEL_0);
-
-            spi_slave_dma_rx_position = 0;
-
-            for (uint8_t i = 0; i<228;i++)
-            {
-                spi_slave_dma_rx_data[i] = 0xFF;
-                spi_slave_dma_tx_data[i] = 0xFF;
-            }
-
-            spi_slave_dma_tx_data[0] = 0xE7;
-            spi_slave_dma_tx_data[1] = 0x00;
-            spi_slave_dma_tx_data[2] = 0x00;
-            spi_slave_dma_tx_data[3] = 0x00;
-            spi_slave_dma_tx_data[4] = 0x00;
-            spi_slave_dma_tx_data[5] = 0x00;
-            spi_slave_dma_tx_data[6] = 0x00;
-
-            /* Next commmand preamble */
-            spi_slave_dma_tx_data[7] = 0xE7;
-
-            DMA_init(&spi_slave_dma_param_rx);
-
-            DMA_setSrcAddress(DMA_CHANNEL_1, USCI_A_SPI_getReceiveBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
-
-            DMA_setDstAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)spi_slave_dma_rx_data, DMA_DIRECTION_INCREMENT);
-
-            DMA_clearInterrupt(DMA_CHANNEL_1);
-
-            DMA_enableInterrupt(DMA_CHANNEL_1);
-
-            DMA_enableTransfers(DMA_CHANNEL_1);
-
-            spi_slave_dma_tx_position = 8U;
-
-            __bis_SR_register(LPM4_bits + GIE);
         }
         else if ((err == 0) && (((base_address == USCI_B0_BASE) || (base_address == USCI_B1_BASE) || (base_address == USCI_B2_BASE))))
         {
@@ -308,6 +261,94 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
         else
         {
         }
+
+        switch(base_address)
+        {
+        case USCI_A0_BASE:
+
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_17;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_16;
+
+            break;
+
+        case USCI_A1_BASE:
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_21;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_20;
+
+            break;
+
+        case USCI_A2_BASE:
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_13;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_12;
+
+            break;
+
+        case USCI_B0_BASE:
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_19;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_18;
+
+            break;
+
+        case USCI_B1_BASE:
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_23;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_22;
+
+            break;
+
+        case USCI_B2_BASE:
+            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_15;
+            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_14;
+            break;
+
+        }
+
+        DMA_init(&spi_slave_dma_param_tx);
+
+        DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)spi_slave_dma_tx_data, DMA_DIRECTION_INCREMENT);
+
+        DMA_setDstAddress(DMA_CHANNEL_0, USCI_A_SPI_getTransmitBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+        DMA_clearInterrupt(DMA_CHANNEL_0);
+
+        DMA_enableInterrupt(DMA_CHANNEL_0);
+
+        DMA_enableTransfers(DMA_CHANNEL_0);
+
+        spi_slave_dma_rx_position = 0;
+
+        for (uint8_t i = 0; i<228;i++)
+        {
+            spi_slave_dma_rx_data[i] = 0xFF;
+            spi_slave_dma_tx_data[i] = 0xFF;
+        }
+
+        spi_slave_dma_tx_data[0] = 0x7E;
+        spi_slave_dma_tx_data[1] = 0x00;
+        spi_slave_dma_tx_data[2] = 0x00;
+        spi_slave_dma_tx_data[3] = 0x00;
+        spi_slave_dma_tx_data[4] = 0x00;
+        spi_slave_dma_tx_data[5] = 0x00;
+        spi_slave_dma_tx_data[6] = 0x00;
+
+        /* Next command preamble */
+        spi_slave_dma_tx_data[7] = 0x7E;
+
+        DMA_init(&spi_slave_dma_param_rx);
+
+        DMA_setSrcAddress(DMA_CHANNEL_1, USCI_A_SPI_getReceiveBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+        DMA_setDstAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)spi_slave_dma_rx_data, DMA_DIRECTION_INCREMENT);
+
+        DMA_clearInterrupt(DMA_CHANNEL_1);
+
+        DMA_enableInterrupt(DMA_CHANNEL_1);
+
+        DMA_enableTransfers(DMA_CHANNEL_1);
+
+        spi_slave_dma_tx_position = 8U;
+
+        __bis_SR_register(LPM4_bits + GIE);
+
         if (err == 0)
         {
             switch(base_address)
@@ -344,21 +385,12 @@ void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len)
         }
     }
 
-    spi_slave_dma_tx_data[spi_slave_dma_tx_position++] = 0xE7;
+    spi_slave_dma_tx_data[spi_slave_dma_tx_position++] = 0x7E;
 
     if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
     {
         spi_slave_dma_tx_position = 0U;
     }
-
-    //sys_log_new_line();
-    /*(for (i =0U; i < 230; i++)
-    {
-        sys_log_print_hex(spi_slave_dma_tx_data[i]);
-        sys_log_print_msg("|");
-
-    }*/
-
 }
 
 void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len)

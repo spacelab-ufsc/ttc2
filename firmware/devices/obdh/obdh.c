@@ -110,7 +110,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     }
                     else
                     {
-                        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter!");
+                        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
+                        sys_log_print_hex(request[3]);
                         sys_log_new_line();
                         err = -1;
                     }
@@ -290,8 +291,6 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
 
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
                 obdh_response->data.param_16 = *(ttc_data_buf->radio.last_rx_packet_bytes);
-                sys_log_print_uint(obdh_response->data.param_16);
-                sys_log_new_line();
                 break;
 
             default:

@@ -46,6 +46,7 @@
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
 #include <devices/eps/eps.h>
+#include <app/structs/ttc_data.h>
 
 #include <ngham/ngham.h>
 
@@ -87,6 +88,11 @@ void vTaskStartup(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "Last reset cause: ");
     sys_log_print_hex(system_get_reset_cause());
     sys_log_new_line();
+
+    /* TTC parameters */
+    ttc_data_buf.hw_version = 0x04;
+    ttc_data_buf.fw_version = 0x00000400;
+    ttc_data_buf.device_id = 0xCC2B;
 
 #if defined(CONFIG_DEV_MEDIA_INT_ENABLED) && (CONFIG_DEV_MEDIA_INT_ENABLED == 1)
     /* Internal non-volatile memory initialization */
