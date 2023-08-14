@@ -44,8 +44,6 @@
 
 #include "obdh.h"
 
-static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data);
-
 static int obdh_write_parameter(obdh_request_t *obdh_request);
 
 static int obdh_write_packet(obdh_response_t *obdh_response);
@@ -60,11 +58,7 @@ int obdh_init(void)
     spi_slave_config.mode = SPI_MODE_0;
     spi_slave_config.speed_hz = 0U; /* Parameter not used in slave mode */
 
-    if (spi_slave_init(obdh_spi_port, spi_slave_config) == 0)
-    {
-        //err = spi_slave_enable_isr(obdh_spi_port);
-    }
-    else
+    if (spi_slave_init(obdh_spi_port, spi_slave_config) != 0)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error during OBDH initialization!");
         sys_log_new_line();
@@ -78,7 +72,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
     int err = 0;
     uint8_t request[7] = {0};
 
-    spi_slave_dma_read(obdh_spi_port, request, 7);
+    spi_slave_dma_read(request, 7);
 
     obdh_request->command = request[1];
 
@@ -121,11 +115,11 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                     obdh_request->data.data_packet.len = request[2];
 
-                    obdh_write_read_bytes(request[2]+2);
+                    obdh_write_read_bytes(request[2]+2U);
 
                     vTaskDelay(pdMS_TO_TICKS(100));
 
-                    spi_slave_dma_read(obdh_spi_port, obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
+                    spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
 
                     sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
                     sys_log_print_uint(obdh_request->data.data_packet.len);
@@ -174,11 +168,13 @@ int obdh_send_response(obdh_response_t *obdh_response)
     switch(obdh_response->command)
     {
           case CMDPR_CMD_READ_PARAM:
-              obdh_write_parameter(obdh_response);
+              err = obdh_write_parameter(obdh_response);
               break;
 
           case CMDPR_CMD_READ_FIRST_PACKET:
-              obdh_write_packet(obdh_response);
+              err = obdh_write_packet(obdh_response);
+
+              break;
 
           default:
               err = -1;
@@ -313,40 +309,6 @@ int obdh_flush_request(obdh_request_t *obdh_request)
     return spi_slave_flush(obdh_spi_port);
 }
 
-static int obdh_read_parameter(uint8_t param, cmdpr_data_t *data)
-{
-    int err = 0;
-    uint8_t read_buffer[4] = {0};
-
-    switch(cmdpr_param_size(param))
-    {
-        case 1:
-            err = spi_slave_read(obdh_spi_port, &(data->param_8), 1);
-            break;
-        case 2:
-            err = spi_slave_read(obdh_spi_port, read_buffer, 2);
-            data->param_16 = ((uint16_t)read_buffer[0]) | ((uint16_t)(read_buffer[1])<<8);
-            break;
-        case 4:
-            err = spi_slave_read(obdh_spi_port, read_buffer, 4);
-            data->param_32 = ((uint32_t)read_buffer[0]) | ((uint32_t)(read_buffer[1])<<8) | ((uint32_t)(read_buffer[2])<<16) | ((uint32_t)(read_buffer[3])<<24);
-            break;
-        default:
-            err = -1;
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH parameter: unknown parameter!");
-            sys_log_new_line();
-            break;
-    }
-
-    if (err == -1)
-    {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error reading OBDH parameter: unable to read parameter!");
-        sys_log_new_line();
-    }
-
-    return err;
-}
-
 static int obdh_write_parameter(obdh_response_t *obdh_response)
 {
     int err = 0;
@@ -383,7 +345,7 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
 
     if (err == 0)
     {
-        spi_slave_dma_write(obdh_spi_port, response, 6);
+        spi_slave_dma_write(response, 6);
     }
     else
     {
@@ -393,18 +355,24 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
 
     return err;
 }
-void obdh_write_read_bytes(uint16_t number_of_bytes)
+void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-c2012-8.7
 {
-    uint8_t buffer[230] = {0x00};
+    uint8_t buffer[230];
+    uint8_t i;
 
-    spi_slave_dma_write(obdh_spi_port, buffer, number_of_bytes);
+    for (i = 0U; i < 230U; i++)
+    {
+        buffer[i] = 0x00U;
+    }
+
+    spi_slave_dma_write(buffer, number_of_bytes);
 }
 
 static int obdh_write_packet(obdh_response_t *obdh_response)
 {
     int err = 0;
 
-    spi_slave_dma_write(obdh_spi_port, obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
+    spi_slave_dma_write(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
 
     sys_log_print_str("Packet:");
 
