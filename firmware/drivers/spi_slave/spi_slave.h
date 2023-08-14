@@ -42,12 +42,6 @@
 
 #include <drivers/spi/spi.h>
 
-typedef enum
-{
-    SPI_SLAVE_DMA_TX = 0,
-    SPI_SLAVE_DMA_RX
-} spi_slave_dma_e;
-
 /**
  * \brief SPI Slave port initialization.
  *
@@ -72,26 +66,24 @@ int spi_slave_init(spi_port_t port, spi_config_t config);
 /**
  * \brief Writes on the SPI Slave port DMA buffer.
  *
- * \param[in] port is the SPI port to initialize. It can be:
- * \parblock
- *      -\b SPI_PORT_0
- *      -\b SPI_PORT_1
- *      -\b SPI_PORT_2
- *      -\b SPI_PORT_3
- *      -\b SPI_PORT_4
- *      -\b SPI_PORT_5
- *      .
- * \endparblock
+ * \param[in] data is the array to be transfered to the DMA buffer.
  *
- * \param[in] config is the configuration of the SPI port.
+ * \param[in] len is the number of bytes to be written.
  *
- * \return The status/error code.
+ * \return None.
  */
-void spi_slave_dma_write(spi_port_t port, uint8_t *data, uint16_t len);
+void spi_slave_dma_write(uint8_t *data, uint16_t len);
 
-void spi_slave_dma_read(spi_port_t port, uint8_t *data, uint16_t len);
-
-void spi_slave_dma_dump_buff(spi_slave_dma_e dma, uint16_t len);
+/**
+ * \brief Reads on the SPI Slave port DMA buffer.
+ *
+ * \param[out] data is the array to be transfered from the DMA buffer.
+ *
+ * \param[in] len is the number of bytes to be read.
+ *
+ * \return None.
+ */
+void spi_slave_dma_read(uint8_t *data, uint16_t len);
 
 /**
  * \brief Enables SPI Slave port interruption.
