@@ -57,7 +57,7 @@ void vTaskAntennaDeployment(void)
 
         for(i = initial_hib_time_counter; i < CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN; i++)
         {
-            vTaskDelay(pdMS_TO_TICKS(60000));
+            vTaskDelay(pdMS_TO_TICKS(60000U));
 
             ttc_data_buf.ant_deploy_hib_count++;
         }
@@ -98,6 +98,8 @@ void vTaskAntennaDeployment(void)
         sys_log_new_line();
 
     }
+
+    vTaskSuspend(xTaskAntennaDeploymentHandle);
 }
 
 /** \} End of antenna_deployment group */
