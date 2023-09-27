@@ -45,8 +45,12 @@
 #include <time.h>
 #include <stdio.h>
 
-#include <system/cmdpr.h>
+#include <FreeRTOS.h>
+#include <task.h>
 
+#include <system/sys_log/sys_log.h>
+
+#include <system/cmdpr.h>
 #include <devices/obdh/obdh.h>
 #include <drivers/spi_slave/spi_slave.h>
 
@@ -257,7 +261,7 @@ static void obdh_send_response_test(void **state)
         will_return(__wrap_spi_slave_write, 0);
     }
 
-    assert_return_code(obdh_send_response(obdh_response), 0);
+    assert_return_code(obdh_send_response(&obdh_response), 0);
 }
 
 int main(void)
