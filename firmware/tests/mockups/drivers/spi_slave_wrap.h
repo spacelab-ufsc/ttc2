@@ -42,6 +42,10 @@
 
 int __wrap_spi_slave_init(spi_port_t port, spi_config_t config);
 
+void __wrap_spi_slave_dma_write(uint8_t *data, uint16_t len);
+
+void __wrap_spi_slave_dma_read(uint8_t *data, uint16_t len);
+
 int __wrap_spi_slave_enable_isr(spi_port_t port);
 
 int __wrap_spi_slave_disable_isr(spi_port_t port);

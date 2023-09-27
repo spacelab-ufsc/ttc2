@@ -52,6 +52,27 @@ int __wrap_spi_slave_init(spi_port_t port, spi_config_t config)
     return mock_type(int);
 }
 
+void __wrap_spi_slave_dma_write(uint8_t *data, uint16_t len)
+{
+    check_expected_ptr(data);
+    check_expected(len);
+}
+
+void __wrap_spi_slave_dma_read(uint8_t *data, uint16_t len)
+{
+
+    if (data != NULL)
+    {
+        uint16_t i = 0;
+        for (i=0; i<len;i++)
+        {
+            data[i] = mock_type(uint8_t);
+        }
+    }
+
+    check_expected(len);
+}
+
 int __wrap_spi_slave_enable_isr(spi_port_t port)
 {
     check_expected(port);
