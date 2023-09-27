@@ -14,7 +14,7 @@ endif
 
 CC=gcc
 INC=../../
-FLAGS=-fpic -std=c99 -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wstrict-prototypes -Wmissing-prototypes -I$(INC) -I../../config/ -I../../tests/freertos_sim/ -Wl,--wrap=sys_log_print_event_from_module,--wrap=sys_log_new_line,--wrap=sys_log_print_msg,--wrap=sys_log_print_uint,--wrap=sys_log_print_int,--wrap=sys_log_print_float,--wrap=sys_log_print_hex
+FLAGS=-fpic -std=c99 -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-qual -Wstrict-prototypes -Wmissing-prototypes -I$(INC) -I../../config/ -I../../tests/freertos_sim/ -Wl,--wrap=sys_log_print_event,--wrap=sys_log_print_event_from_module,--wrap=sys_log_print_msg,--wrap=sys_log_print_str,--wrap=sys_log_new_line,--wrap=sys_log_print_uint,--wrap=sys_log_print_int,--wrap=sys_log_print_hex,--wrap=sys_log_dump_hex,--wrap=sys_log_print_float,--wrap=sys_log_print_byte,--wrap=sys_log_print_system_time
 
 WATCHDOG_TEST_FLAGS=$(FLAGS),--wrap=wdt_init,--wrap=wdt_reset,--wrap=tps382x_init,--wrap=tps382x_trigger
 
@@ -30,7 +30,7 @@ LEDS_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_
 
 MEDIA_TEST_FLAGS=$(FLAGS),--wrap=flash_init,--wrap=flash_write,--wrap=flash_write_single,--wrap=flash_read_single,--wrap=flash_write_long,--wrap=flash_read_long,--wrap=flash_erase
 
-OBDH_TEST_FLAGS=$(FLAGS),--wrap=spi_slave_init,--wrap=spi_slave_enable_isr,--wrap=spi_slave_disable_isr,--wrap=spi_slave_read_available,--wrap=spi_slave_read,--wrap=spi_slave_write,--wrap=spi_slave_flush,--wrap=spi_slave_bytes_not_sent
+OBDH_TEST_FLAGS=$(FLAGS),--wrap=spi_slave_init,--wrap=spi_slave_dma_write,--wrap=spi_slave_dma_read,--wrap=spi_slave_enable_isr,--wrap=spi_slave_disable_isr,--wrap=spi_slave_read_available,--wrap=spi_slave_read,--wrap=spi_slave_write,--wrap=spi_slave_flush,--wrap=spi_slave_bytes_not_sent
 
 EPS_TEST_FLAGS=$(FLAGS),--wrap=uart_init,--wrap=uart_write,--wrap=uart_read,--wrap=uart_rx_enable,--wrap=uart_rx_disable,--wrap=uart_read_available,--wrap=uart_flush 
 
