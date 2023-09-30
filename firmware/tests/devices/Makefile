@@ -66,8 +66,8 @@ media_test: $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_
 	$(CC) $(MEDIA_TEST_FLAGS) $(BUILD_DIR)/media.o $(BUILD_DIR)/media_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/flash_wrap.o -o $(BUILD_DIR)/$(TARGET_MEDIA) -lcmocka
 
 .PHONY: obdh_test
-obdh_test: $(BUILD_DIR)/obdh.o $(BUILD_DIR)/cmdpr.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o
-	$(CC) $(OBDH_TEST_FLAGS) $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o $(BUILD_DIR)/cmdpr.o -o $(BUILD_DIR)/$(TARGET_OBDH) -lcmocka
+obdh_test: $(BUILD_DIR)/obdh.o $(BUILD_DIR)/cmdpr.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o $(BUILD_DIR)/task.o
+	$(CC) $(OBDH_TEST_FLAGS) $(BUILD_DIR)/obdh.o $(BUILD_DIR)/obdh_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_slave_wrap.o $(BUILD_DIR)/task.o $(BUILD_DIR)/cmdpr.o -o $(BUILD_DIR)/$(TARGET_OBDH) -lcmocka -lm
 
 .PHONY: eps_test
 eps_test: $(BUILD_DIR)/eps.o $(BUILD_DIR)/cmdpr.o $(BUILD_DIR)/eps_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/uart_wrap.o
