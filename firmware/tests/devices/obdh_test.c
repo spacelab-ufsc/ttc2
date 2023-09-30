@@ -45,9 +45,6 @@
 #include <time.h>
 #include <stdio.h>
 
-#include <FreeRTOS.h>
-#include <task.h>
-
 #include <system/sys_log/sys_log.h>
 
 #include <system/cmdpr.h>
