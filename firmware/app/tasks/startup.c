@@ -46,6 +46,7 @@
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
 #include <devices/eps/eps.h>
+#include <devices/obdh/obdh.h>
 
 #include <ngham/ngham.h>
 
