@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.3
+ * \version 0.4.4
  * 
  * \date 2019/12/04
  * 
@@ -130,8 +130,10 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_RADIO_ENABLED */
 
     /* NGHam initialization */
-    ngham_init_arrays();
-    ngham_init();
+    if (ngham_init() != 0)
+    {
+        error_counter++;
+    }
 
     /* Antenna device initialization */
 #if defined(CONFIG_DEV_ANTENNA_ENABLED) && (CONFIG_DEV_ANTENNA_ENABLED == 1)
