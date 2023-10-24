@@ -58,7 +58,8 @@ int obdh_init(void)
     spi_slave_config.mode = SPI_MODE_0;
     spi_slave_config.speed_hz = 0U; /* Parameter not used in slave mode */
 
-    if (spi_slave_init(obdh_spi_port, spi_slave_config) != 0)
+    err = spi_slave_init(obdh_spi_port, spi_slave_config);
+    if (err != 0)
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error during OBDH initialization!");
         sys_log_new_line();
@@ -76,69 +77,68 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
     obdh_request->command = request[1];
 
-
     if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00)) /* Received a request */
     {
         switch(obdh_request->command)
         {
 
         case CMDPR_CMD_READ_PARAM:
-                    obdh_request->parameter = request[2];
+            obdh_request->parameter = request[2];
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
-                    sys_log_print_hex(obdh_request->parameter);
-                    sys_log_new_line();
+            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
+            sys_log_print_hex(obdh_request->parameter);
+            sys_log_new_line();
 
-                    break;
+            break;
 
-                case CMDPR_CMD_WRITE_PARAM:
-                    obdh_request->parameter = request[2];
+        case CMDPR_CMD_WRITE_PARAM:
+            obdh_request->parameter = request[2];
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Write command received, parameter:");
-                    sys_log_print_hex(obdh_request->parameter);
-                    sys_log_new_line();
+            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Write command received, parameter:");
+            sys_log_print_hex(obdh_request->parameter);
+            sys_log_new_line();
 
-                    if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
-                    {
-                        obdh_request->data.param_8 = request[3];
-                    }
-                    else
-                    {
-                        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
-                        sys_log_print_hex(request[3]);
-                        sys_log_new_line();
-                        err = -1;
-                    }
-                    break;
+            if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
+            {
+                obdh_request->data.param_8 = request[3];
+            }
+            else
+            {
+            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
+            sys_log_print_hex(request[3]);
+            sys_log_new_line();
+            err = -1;
+            }
+            break;
 
-                case CMDPR_CMD_TRANSMIT_PACKET:
+        case CMDPR_CMD_TRANSMIT_PACKET:
 
-                    obdh_request->data.data_packet.len = request[2];
+            obdh_request->data.data_packet.len = request[2];
 
-                    obdh_write_read_bytes(request[2]+2U);
+            obdh_write_read_bytes(request[2]+2U);
 
-                    vTaskDelay(pdMS_TO_TICKS(100));
+            vTaskDelay(pdMS_TO_TICKS(100));
 
-                    spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
+            spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
-                    sys_log_print_uint(obdh_request->data.data_packet.len);
-                    sys_log_print_msg(" bytes.");
-                    sys_log_new_line();
+            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
+            sys_log_print_uint(obdh_request->data.data_packet.len);
+            sys_log_print_msg(" bytes.");
+            sys_log_new_line();
 
-                    sys_log_print_str("Packet: ");
-                    sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
-                    sys_log_new_line();
+            sys_log_print_str("Packet: ");
+            sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
+            sys_log_new_line();
 
-                    break;
+            break;
 
-                case CMDPR_CMD_READ_FIRST_PACKET:
-                    obdh_request->data.data_packet.len = request[2];
+        case CMDPR_CMD_READ_FIRST_PACKET:
+            obdh_request->data.data_packet.len = request[2];
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
-                    sys_log_new_line();
+            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
+            sys_log_new_line();
 
-                    break;
+            break;
 
 
         case 0x00:
@@ -157,7 +157,6 @@ int obdh_read_request(obdh_request_t *obdh_request)
     {
         /* TX mode*/
     }
-
     return err;
 }
 
@@ -323,11 +322,13 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
             response[2] = obdh_response->data.param_8;
 
             break;
+
         case 2:
             response[2] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
             response[3] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
 
             break;
+
         case 4:
             response[2] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
             response[3] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
@@ -340,6 +341,7 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
             err = -1;
             sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error writing OBDH parameter: unknown parameter!");
             sys_log_new_line();
+
             break;
     }
 
