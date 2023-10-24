@@ -80,7 +80,7 @@ typedef struct
 /**
  * \brief TTC data buffer.
  */
-ttc_data_t ttc_data_buf;
+extern ttc_data_t ttc_data_buf;
 
 /**
  * \brief Add a packet to the TX queue.

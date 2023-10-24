@@ -37,6 +37,8 @@
 
 #include "ttc_data.h"
 
+ttc_data_t ttc_data_buf;
+
 void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
     uint16_t i = 0;
