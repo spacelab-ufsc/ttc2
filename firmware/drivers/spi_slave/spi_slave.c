@@ -91,7 +91,7 @@ static uint16_t spi_slave_dma_rx_position;
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
     int err = 0;
-    uint8_t i = 0;
+    uint8_t i = 0U;
 
     uint16_t base_address;
     uint8_t msb_first = USCI_A_SPI_MSB_FIRST;
@@ -322,20 +322,20 @@ static DMA_initParam spi_slave_dma_param_rx = {
 
         for (i = 0U; i<228U; i++)
         {
-            spi_slave_dma_rx_data[i] = 0xFF;
-            spi_slave_dma_tx_data[i] = 0xFF;
+            spi_slave_dma_rx_data[i] = 0xFFU;
+            spi_slave_dma_tx_data[i] = 0xFFU;
         }
 
-        spi_slave_dma_tx_data[0] = 0x7E;
-        spi_slave_dma_tx_data[1] = 0x00;
-        spi_slave_dma_tx_data[2] = 0x00;
-        spi_slave_dma_tx_data[3] = 0x00;
-        spi_slave_dma_tx_data[4] = 0x00;
-        spi_slave_dma_tx_data[5] = 0x00;
-        spi_slave_dma_tx_data[6] = 0x00;
+        spi_slave_dma_tx_data[0] = 0x7EU;
+        spi_slave_dma_tx_data[1] = 0x00U;
+        spi_slave_dma_tx_data[2] = 0x00U;
+        spi_slave_dma_tx_data[3] = 0x00U;
+        spi_slave_dma_tx_data[4] = 0x00U;
+        spi_slave_dma_tx_data[5] = 0x00U;
+        spi_slave_dma_tx_data[6] = 0x00U;
 
         /* Next command preamble */
-        spi_slave_dma_tx_data[7] = 0x7E;
+        spi_slave_dma_tx_data[7] = 0x7EU;
 
         DMA_init(&spi_slave_dma_param_rx);
 
@@ -390,7 +390,7 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len)
         }
     }
 
-    spi_slave_dma_tx_data[spi_slave_dma_tx_position] = 0x7E;
+    spi_slave_dma_tx_data[spi_slave_dma_tx_position] = 0x7EU;
 
     spi_slave_dma_tx_position++;
 
@@ -402,7 +402,7 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len)
 
 void spi_slave_dma_read(uint8_t *data, uint16_t len)
 {
-    uint16_t i = 0;
+    uint16_t i = 0U;
 
     if ((spi_slave_dma_rx_data[spi_slave_dma_rx_position] != 0xFFU))
     {
@@ -416,7 +416,7 @@ void spi_slave_dma_read(uint8_t *data, uint16_t len)
 
             if (spi_slave_dma_rx_position > 227U)
             {
-                spi_slave_dma_rx_position = 0; /* Reset position after the end of the buffer */
+                spi_slave_dma_rx_position = 0U; /* Reset position after the end of the buffer */
             }
         }
     }
@@ -425,7 +425,7 @@ void spi_slave_dma_read(uint8_t *data, uint16_t len)
     {
         for (i=0U; i < len; i++)
         {
-            data[i] = 0xFF;
+            data[i] = 0xFFU;
         }
     }
 }
@@ -744,7 +744,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
             break;
     }
 
-    for(i = 0; i < len; i++)
+    for(i = 0U; i < len; i++)
     {
         queue_push_back(queue, data[i]);
     }
