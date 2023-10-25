@@ -235,7 +235,7 @@ __interrupt void USCI_B2_ISR(void) // cppcheck-suppress misra-c2012-8.4
 }
 
 #pragma vector=DMA_VECTOR
-__interrupt void DMA0_ISR(void)
+__interrupt void DMA0_ISR(void) // cppcheck-suppress misra-c2012-8.4
 {
     switch (__even_in_range(DMAIV, 16))
     {
