@@ -40,6 +40,7 @@
 
 #include <stdint.h>
 
+#include <system/system.h>
 #include <devices/antenna/antenna_data.h>
 #include <devices/radio/radio_data.h>
 
@@ -53,6 +54,15 @@ typedef struct
     uint8_t position_to_write;
     uint8_t position_to_read;
 } transmission_buf_t;
+
+/**
+ * \brief Antenna telemetry type.
+ */
+typedef struct
+{
+    sys_time_t timestamp;           /**< Timestamp of the Antenna data. */
+    antenna_data_t data;            /**< Antenna data. */
+} antenna_telemetry_t;
 
 /**
  * \brief TTC data.
@@ -69,10 +79,12 @@ typedef struct
     uint8_t hw_version;             /**< Hardware version. */
     uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
     uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
-    uint8_t ant_deploy;             /**< Number of antenna deployment tries TODO: */
-    uint8_t ant_deploy_hib;         /**< Hibernation time completed */
+    uint8_t ant_deploy_count;       /**< Number of antenna deployment tries TODO: */
+    bool ant_deploy_exec;           /**< The deployment has executed*/
+    uint8_t ant_deploy_hib_count;   /**< Hibernation count for deployment */
+    bool ant_deploy_hib_exec;       /**< Hibernation time has completed */
     radio_data_t radio;             /**< Radio data. */
-    antenna_data_t antenna;         /**< Antenna data. */
+    antenna_telemetry_t antenna;    /**< Antenna data. */
     transmission_buf_t down_buf;    /**< Downlink Buffer */
     transmission_buf_t up_buf;      /**< Uplink Buffer */
 } ttc_data_t;

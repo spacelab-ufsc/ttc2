@@ -41,6 +41,8 @@
 
 static SemaphoreHandle_t si446x_semaphore = NULL;
 
+#define SI446X_MUTEX_WAIT_TIME_MS 100;
+
 int si446x_mutex_create(void)
 {
     return 0;
@@ -48,7 +50,19 @@ int si446x_mutex_create(void)
 
 int si446x_mutex_take(void)
 {
-    return 0;
+    int err = -1;
+
+    //if (si446x_semaphore != NULL)
+    //{
+        /* See if we can obtain the semaphore. If the semaphore is not */
+        /* available wait SYS_LOG_MUTEX_WAIT_TIME_MS ms to see if it becomes free */
+       // if (xSemaphoreTake(si446x_semaphore, pdMS_TO_TICKS(SI446X_MUTEX_WAIT_TIME_MS)) == pdTRUE)
+        //{
+         //   err = 0;
+        //}
+    //}
+
+    return err;
 }
 
 int si446x_mutex_give(void)

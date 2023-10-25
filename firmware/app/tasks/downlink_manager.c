@@ -24,8 +24,9 @@
  * \brief Downlink Manager task implementation.
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
+ * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.4
  *
  * \date 2023/03/03
  *
@@ -62,8 +63,11 @@ void vTaskDownlinkManager(void)
     ttc_data_buf.down_buf.position_to_read = 0;
     ttc_data_buf.down_buf.position_to_write = 0;
 
-    uint8_t tx_packet[230];
-    uint16_t tx_size = 0;
+    uint8_t tx_pkt[220] = {0};
+    uint16_t tx_pkt_len = UINT8_MAX;
+
+    uint8_t ngham_pkt[300] = {0};
+    uint16_t ngham_pkt_len = UINT16_MAX;
 
     while(1)
      {
@@ -74,17 +78,15 @@ void vTaskDownlinkManager(void)
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Sending packet...");
             sys_log_new_line();
 
-            downlink_pop_packet(tx_packet, &tx_size);
+            downlink_pop_packet(tx_pkt, &tx_pkt_len);
 
-            /*TODO: Implement codification */
-            if (radio_send(tx_packet, tx_size) == 0)
+            if (ngham_encode(tx_pkt, tx_pkt_len, 0U, ngham_pkt, &ngham_pkt_len) == 0)
             {
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Package successfully sent.");
-                sys_log_new_line();
+                radio_send(&ngham_pkt[8], ngham_pkt_len);   /* 8 = Removing preamble and sync word */
             }
             else
             {
-                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_DOWNLINK_MANAGER_NAME, "Error sending package.");
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_DOWNLINK_MANAGER_NAME, "Error encoding a NGHam packet!");
                 sys_log_new_line();
             }
         }

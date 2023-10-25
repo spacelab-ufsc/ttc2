@@ -249,19 +249,19 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
                 break;
 
             case CMDPR_PARAM_ANT_TEMP:
-                obdh_response->data.param_16 = ttc_data_buf->antenna.temperature;
+                obdh_response->data.param_16 = ttc_data_buf->antenna.data.temperature;
                 break;
 
             case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
-                obdh_response->data.param_16 = ttc_data_buf->antenna.status.code;
+                obdh_response->data.param_16 = ttc_data_buf->antenna.data.status.code;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_STATUS:
-                obdh_response->data.param_8 = ttc_data_buf->ant_deploy;
+                obdh_response->data.param_8 = (uint8_t) ttc_data_buf->ant_deploy_exec;
                 break;
 
             case CMDPR_PARAM_ANT_DEP_HIB:
-                obdh_response->data.param_8 = ttc_data_buf->ant_deploy_hib;
+                obdh_response->data.param_8 = (uint8_t) ttc_data_buf->ant_deploy_hib_exec;
                 break;
 
             case CMDPR_PARAM_TX_ENABLE:

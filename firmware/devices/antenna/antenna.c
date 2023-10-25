@@ -240,7 +240,6 @@ int antenna_deploy(uint32_t timeout_ms)
         err++;
     }
 
-    return err;
 #else
     sys_log_print_event_from_module(SYS_LOG_ERROR, ANTENNA_MODULE_NAME, "No driver to read the status!");
     sys_log_new_line();
@@ -248,7 +247,7 @@ int antenna_deploy(uint32_t timeout_ms)
     err = -1;
 #endif /* CONFIG_DRV_ANTENNA_DRIVER */
 
-    return err;
+   return err;
 }
 
 static void antenna_print_status(isis_antenna_status_t status)
