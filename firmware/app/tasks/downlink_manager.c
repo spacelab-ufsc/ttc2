@@ -26,7 +26,7 @@
  * \author Miguel Boing <miguelboing13@gmail.com>
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  *
- * \version 0.4.4
+ * \version 0.4.5
  *
  * \date 2023/03/03
  *
@@ -70,10 +70,10 @@ void vTaskDownlinkManager(void)
     uint16_t ngham_pkt_len = UINT16_MAX;
 
     while(1)
-     {
+    {
         TickType_t last_cycle = xTaskGetTickCount();
 
-        if((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1U))
+        if ((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1U))
         {
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Sending packet...");
             sys_log_new_line();
@@ -92,7 +92,7 @@ void vTaskDownlinkManager(void)
         }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_DOWNLINK_MANAGER_PERIOD_MS));
-     }
+    }
 }
 
 /** \} End of downlink_manager group */

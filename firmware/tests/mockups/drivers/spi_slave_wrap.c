@@ -1,7 +1,7 @@
 /*
  * spi_slave_wrap.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.4.5
  * 
  * \date 2022/05/22
  * 
@@ -64,7 +64,7 @@ void __wrap_spi_slave_dma_read(uint8_t *data, uint16_t len)
     if (data != NULL)
     {
         uint16_t i = 0;
-        for (i=0; i<len;i++)
+        for(i = 0; i < len;i++)
         {
             data[i] = mock_type(uint8_t);
         }
@@ -102,7 +102,7 @@ int __wrap_spi_slave_read(spi_port_t port, uint8_t *data, uint16_t len)
     if (data != NULL)
     {
         uint16_t i = 0;
-        for (i=0;i<len; i++)
+        for(i = 0; i < len; i++)
         {
             data[i] = mock_type(uint8_t);
         }

@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.1
+ * \version 0.4.5
  *
  * \date 2022/05/21
  *
@@ -61,7 +61,6 @@
  * \return The status/error code.
  */
 int spi_slave_init(spi_port_t port, spi_config_t config);
-
 
 /**
  * \brief Writes on the SPI Slave port DMA buffer.

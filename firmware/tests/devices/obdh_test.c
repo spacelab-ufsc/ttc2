@@ -23,9 +23,9 @@
 /**
  * \brief Unit test of the obdh device.
  *
- *  * \author Miguel Boing <miguelboing13@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.5
  *
  * \date 2023/02/17
  *
@@ -78,7 +78,6 @@ static void obdh_read_request_test(void **state)
     int err = 0;
     uint16_t dummy;
 
-
     obdh_request_t obdh_request;
 
     uint8_t request[7] = {0};
@@ -90,7 +89,7 @@ static void obdh_read_request_test(void **state)
 
     expect_value(__wrap_spi_slave_dma_read, len, 7);
 
-    for (i = 0; i<7; i++)
+    for(i = 0; i < 7; i++)
     {
         will_return(__wrap_spi_slave_dma_read, request[i]);
     }
@@ -103,7 +102,6 @@ static void obdh_read_request_test(void **state)
                 obdh_request.parameter = request[2];
 
                 break;
-
             case CMDPR_CMD_WRITE_PARAM:
                 obdh_request.parameter = request[2];
 
@@ -117,7 +115,6 @@ static void obdh_read_request_test(void **state)
                 }
 
                 break;
-
             case CMDPR_CMD_TRANSMIT_PACKET:
 
                 obdh_request.data.data_packet.len = request[2];
@@ -125,7 +122,7 @@ static void obdh_read_request_test(void **state)
                 /* obdh_write_read_bytes */
                 uint8_t buffer[230];
 
-                for (i=0U; i<230; i++)
+                for(i = 0U; i < 230; i++)
                 {
                     buffer[i] = 0x00U;
                 }
@@ -141,28 +138,25 @@ static void obdh_read_request_test(void **state)
                 dummy = obdh_request.data.data_packet.len + 3;
 
                 expect_value(__wrap_spi_slave_dma_read, len, dummy);
-                for (i = 0; i<dummy; i++)
+                for(i = 0; i < dummy; i++)
                 {
                     will_return(__wrap_spi_slave_dma_read, obdh_request.data.data_packet.packet[i]); 
                 }
 
                 break;
+            case CMDPR_CMD_READ_FIRST_PACKET:
+                obdh_request.data.data_packet.len = request[2];
 
-        case CMDPR_CMD_READ_FIRST_PACKET:
-            obdh_request.data.data_packet.len = request[2];
+                break;
+            case 0x00:
+                /* Read Mode */
+                break;
+            default:
+                err = -1;
 
-            break;
-
-        case 0x00:
-            /* Read Mode */
-            break;
-
-        default:
-            err = -1;
-
-            break;
+                break;
         }
-   }
+    }
 
     assert_int_equal(obdh_read_request(&(obdh_request)), err);
 }
@@ -188,36 +182,34 @@ static void obdh_send_response_test(void **state)
 
             switch(cmdpr_param_size(obdh_response.parameter))
             {
-            case 1:
-                obdh_response.data.param_8 = response[3];
+                case 1:
+                    obdh_response.data.param_8 = response[3];
 
-                for (i=4; i<7; i++)
-                {
-                    response[i] = 0x00;
+                    for(i = 4; i < 7; i++)
+                    {
+                        response[i] = 0x00;
+                    }
+
+                    break;
+                case 2:
+                    obdh_response.data.param_16 =  ((uint16_t)(response[3]) << 8) | (uint16_t)(response[4] & 0xFFU);
+
+                    for(i = 5; i < 7; i++)
+                    {
+                        response[i] = 0x00;
+                    }
+
+                    break;
+                case 4:
+                    obdh_response.data.param_32 = (uint32_t)(response[3] << 24) | (uint32_t)(response[4] << 16) | (uint32_t)(response[5] << 8) | (uint32_t)(response[6]);
+
+                    break;
+
+                default:
+                    err = -1;
+
+                    break;
                 }
-
-                break;
-
-            case 2:
-                obdh_response.data.param_16 =  ((uint16_t)(response[3]) << 8) | (uint16_t)(response[4] & 0xFFU);
-
-                for (i=5; i<7; i++)
-                {
-                    response[i] = 0x00;
-                }
-
-                break;
-
-            case 4:
-                obdh_response.data.param_32 = (uint32_t)(response[3] << 24) | (uint32_t)(response[4] << 16) | (uint32_t)(response[5] << 8) | (uint32_t)(response[6]);
-
-                break;
-
-            default:
-                err = -1;
-
-                break;
-            }
 
             if (err == 0)
             {
@@ -227,9 +219,7 @@ static void obdh_send_response_test(void **state)
 
             break;
         case CMDPR_CMD_READ_FIRST_PACKET:
-
             break;
-
         default:
             err = -1;
 
@@ -255,10 +245,10 @@ int main(void)
 void generate_random_request(uint8_t *request)
 {
     /* Preamble */
-    request[0]= 0xE7;
+    request[0] = 0xE7;
 
     /* Command */
-    request[1]= (uint8_t)(rand() % 4 + 1);
+    request[1] = (uint8_t)(rand() % 4 + 1);
 
     /* Paramater */
     if ((request[1] == CMDPR_CMD_READ_PARAM) || (request[1]== CMDPR_CMD_WRITE_PARAM))
@@ -275,7 +265,7 @@ void generate_random_request(uint8_t *request)
 void generate_random_packet(uint8_t *packet, uint16_t len)
 {
     uint16_t i;
-    for (i = 0; i<len; i++)
+    for(i = 0; i < len; i++)
     {
         packet[i] = (uint8_t)(rand() % 0x100);
     }
@@ -293,7 +283,7 @@ void generate_random_response(uint8_t *response)
     {
         response[2] = (uint8_t)(rand()%24);
         /* Random values */
-        for (i = 3; i < 7; i ++)
+        for(i = 3; i < 7; i ++)
         {
             /* From 0x00 to 0xFF */
             response[i] = (uint8_t)(rand() % 0x100);

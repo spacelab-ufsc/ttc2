@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.5
  *
  * \date 2023/04/03
  *
@@ -57,21 +57,20 @@ void vTaskUplinkManager(void)
     ttc_data_buf.radio.rx_packet_counter = 0;
     ttc_data_buf.radio.last_rx_packet_bytes = &(ttc_data_buf.up_buf.packet_sizes);
 
-
     ttc_data_buf.up_buf.position_to_read = 0;
     ttc_data_buf.up_buf.position_to_write = 0;
-
 
     uint16_t rx_size = 230;
     uint8_t rx_packet[230];
     uint8_t pop_rx_packet[230];
+
     while(1)
     {
-    TickType_t last_cycle = xTaskGetTickCount();
+        TickType_t last_cycle = xTaskGetTickCount();
 
+        /* TODO */
 
-
-    vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
+        vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }
 }
 

@@ -1,7 +1,7 @@
 /*
  * spi_slave_wrap.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.4.5
  * 
  * \date 2021/08/25
  * 

@@ -34,7 +34,6 @@
  */
 
 #include <devices/leds/leds.h>
-#include <system/sys_log/sys_log.h>
 
 #include "heartbeat.h"
 #include "startup.h"

@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.5
  *
  * \date 2023/03/03
  *
@@ -64,7 +64,7 @@ void vTaskObdhServer(void)
 
     uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
-    uint8_t buffer3[10] = {0x11, 0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
+    uint8_t buffer3[10] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
 
     uplink_add_packet(buffer2, 6);
     uplink_add_packet(buffer3, 10);
@@ -82,72 +82,60 @@ void vTaskObdhServer(void)
 
             switch(obdh_request.command)
             {
-            case CMDPR_CMD_READ_PARAM:
+                case CMDPR_CMD_READ_PARAM:
+                    obdh_response.command = obdh_request.command;
+                    obdh_response.parameter = obdh_request.parameter;
+                    obdh_write_response_param(&ttc_data_buf, &obdh_response);
 
-                obdh_response.command = obdh_request.command;
-                obdh_response.parameter = obdh_request.parameter;
-                obdh_write_response_param(&ttc_data_buf, &obdh_response);
+                    obdh_send_response(&obdh_response);
 
-                obdh_send_response(&obdh_response);
+                    break;
+                case CMDPR_CMD_WRITE_PARAM:
+                    obdh_write_read_bytes(6);
 
-                break;
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
 
-            case CMDPR_CMD_WRITE_PARAM:
+                    switch(obdh_request.data.param_8)
+                    {
+                        case 0x00:
+                            sys_log_print_msg("Turned on.");
+                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
-                obdh_write_read_bytes(6);
+                            break;
+                        case 0x01:
+                            sys_log_print_msg("Turned off.");
+                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
+                            break;
+                        default:
+                            sys_log_print_msg("Invalid mode: ");
+                            sys_log_print_uint(obdh_request.data.param_8);
 
-                switch(obdh_request.data.param_8)
-                {
-                    case 0x00:
-                        sys_log_print_msg("Turned on.");
-                        ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+                            break;
+                    }
+                    sys_log_new_line();
 
-                        break;
+                    break;
+                case CMDPR_CMD_TRANSMIT_PACKET:
+                    obdh_write_read_bytes(6);
 
-                    case 0x01:
-                        sys_log_print_msg("Turned off.");
-                        ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+                    downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
 
-                        break;
+                    break;
+                case CMDPR_CMD_READ_FIRST_PACKET:
+                    obdh_response.command = obdh_request.command;
 
-                   default:
-                       sys_log_print_msg("Invalid mode: ");
-                       sys_log_print_uint(obdh_request.data.param_8);
+                    uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
 
-                       break;
-                 }
-                 sys_log_new_line();
+                    obdh_send_response(&obdh_response);
 
-                 break;
-
-
-                 case CMDPR_CMD_TRANSMIT_PACKET:
-                     obdh_write_read_bytes(6);
-
-                     downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
-
-                     break;
-
-                 case CMDPR_CMD_READ_FIRST_PACKET:
-                     obdh_response.command = obdh_request.command;
-
-                     uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
-
-                     obdh_send_response(&obdh_response);
-
-                     break;
-
-                 case 0x00:
-                     /* Read mode */
-                     obdh_write_read_bytes(6);
-                     break;
-
-                 default:
-
-                     break;
-
+                    break;
+                case 0x00:
+                    /* Read mode */
+                    obdh_write_read_bytes(6);
+                    break;
+                default:
+                    break;
             }
 
             taskEXIT_CRITICAL();

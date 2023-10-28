@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.5
  *
  * \date 2023/02/12
  *
@@ -81,82 +81,80 @@ int obdh_read_request(obdh_request_t *obdh_request)
     {
         switch(obdh_request->command)
         {
+            case CMDPR_CMD_READ_PARAM:
+                obdh_request->parameter = request[2];
 
-        case CMDPR_CMD_READ_PARAM:
-            obdh_request->parameter = request[2];
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
+                sys_log_print_hex(obdh_request->parameter);
+                sys_log_new_line();
 
-            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read command received, parameter:");
-            sys_log_print_hex(obdh_request->parameter);
-            sys_log_new_line();
+                break;
+            case CMDPR_CMD_WRITE_PARAM:
+                obdh_request->parameter = request[2];
 
-            break;
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Write command received, parameter:");
+                sys_log_print_hex(obdh_request->parameter);
+                sys_log_new_line();
 
-        case CMDPR_CMD_WRITE_PARAM:
-            obdh_request->parameter = request[2];
+                if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
+                {
+                    obdh_request->data.param_8 = request[3];
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
+                    sys_log_print_hex(request[3]);
+                    sys_log_new_line();
 
-            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Write command received, parameter:");
-            sys_log_print_hex(obdh_request->parameter);
-            sys_log_new_line();
+                    err = -1;
+                }
 
-            if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
-            {
-                obdh_request->data.param_8 = request[3];
-            }
-            else
-            {
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
-            sys_log_print_hex(request[3]);
-            sys_log_new_line();
-            err = -1;
-            }
-            break;
+                break;
+            case CMDPR_CMD_TRANSMIT_PACKET:
 
-        case CMDPR_CMD_TRANSMIT_PACKET:
+                obdh_request->data.data_packet.len = request[2];
 
-            obdh_request->data.data_packet.len = request[2];
+                obdh_write_read_bytes(request[2]+2U);
 
-            obdh_write_read_bytes(request[2]+2U);
+                vTaskDelay(pdMS_TO_TICKS(100));
 
-            vTaskDelay(pdMS_TO_TICKS(100));
+                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
 
-            spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
+                sys_log_print_uint(obdh_request->data.data_packet.len);
+                sys_log_print_msg(" bytes.");
+                sys_log_new_line();
 
-            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
-            sys_log_print_uint(obdh_request->data.data_packet.len);
-            sys_log_print_msg(" bytes.");
-            sys_log_new_line();
+                sys_log_print_str("Packet: ");
+                sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
+                sys_log_new_line();
 
-            sys_log_print_str("Packet: ");
-            sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
-            sys_log_new_line();
+                break;
+            case CMDPR_CMD_READ_FIRST_PACKET:
+                obdh_request->data.data_packet.len = request[2];
 
-            break;
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
+                sys_log_new_line();
 
-        case CMDPR_CMD_READ_FIRST_PACKET:
-            obdh_request->data.data_packet.len = request[2];
+                break;
+            case 0x00:
+                /* Read Mode */
+                break;
+            default:
+                sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown command: ");
+                sys_log_print_hex(obdh_request->command);
+                sys_log_new_line();
 
-            sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
-            sys_log_new_line();
+                err = -1;
 
-            break;
-
-
-        case 0x00:
-            /* Read Mode */
-            break;
-
-        default:
-            sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown command: ");
-            sys_log_print_hex(obdh_request->command);
-            sys_log_new_line();
-            err = -1;
-            break;
+                break;
         }
     }
     else
     {
         /* TX mode*/
     }
+
     return err;
 }
 
@@ -166,19 +164,18 @@ int obdh_send_response(obdh_response_t *obdh_response)
 
     switch(obdh_response->command)
     {
-          case CMDPR_CMD_READ_PARAM:
-              err = obdh_write_parameter(obdh_response);
-              break;
+        case CMDPR_CMD_READ_PARAM:
+            err = obdh_write_parameter(obdh_response);
 
-          case CMDPR_CMD_READ_FIRST_PACKET:
-              err = obdh_write_packet(obdh_response);
+            break;
+        case CMDPR_CMD_READ_FIRST_PACKET:
+            err = obdh_write_packet(obdh_response);
 
-              break;
+            break;
+        default:
+            err = -1;
 
-          default:
-              err = -1;
-
-              break;
+            break;
     }
 
     return err;
@@ -194,102 +191,101 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
         {
             case CMDPR_PARAM_HW_VER:
                 obdh_response->data.param_8 = ttc_data_buf->hw_version;
-                break;
 
+                break;
             case CMDPR_PARAM_FW_VER:
                 obdh_response->data.param_32 = ttc_data_buf->fw_version;
-                break;
 
+                break;
             case CMDPR_PARAM_COUNTER:
                 obdh_response->data.param_32 = ttc_data_buf->timestamp;
-                break;
 
+                break;
             case CMDPR_PARAM_RST_COUNTER:
                 obdh_response->data.param_16 = ttc_data_buf->reset_counter;
-                break;
 
+                break;
             case CMDPR_PARAM_DEVICE_ID:
                 obdh_response->data.param_16 = ttc_data_buf->device_id;
-                break;
 
+                break;
             case CMDPR_PARAM_LAST_RST_CAUSE:
                 obdh_response->data.param_8 = ttc_data_buf->last_reset_cause;
-                break;
 
+                break;
             case CMDPR_PARAM_UC_VOLTAGE:
                 obdh_response->data.param_16 = ttc_data_buf->voltage;
-                break;
 
+                break;
             case CMDPR_PARAM_UC_CURRENT:
                 obdh_response->data.param_16 = ttc_data_buf->current;
-                break;
 
+                break;
             case CMDPR_PARAM_UC_TEMP:
                 obdh_response->data.param_16 = ttc_data_buf->temperature;
-                break;
 
+                break;
             case CMDPR_PARAM_RADIO_VOLTAGE:
                 obdh_response->data.param_16 = ttc_data_buf->radio.voltage;
-                break;
 
+                break;
             case CMDPR_PARAM_RADIO_CURRENT:
                 obdh_response->data.param_16 = ttc_data_buf->radio.current;
-                break;
 
+                break;
             case CMDPR_PARAM_RADIO_TEMP:
                 obdh_response->data.param_16 = ttc_data_buf->radio.temperature;
-                break;
 
+                break;
             case CMDPR_PARAM_LAST_UP_COMMAND:
                 obdh_response->data.param_8 = ttc_data_buf->radio.last_valid_tm;
-                break;
 
+                break;
             case CMDPR_PARAM_LAST_COMMAND_RSSI:
                 obdh_response->data.param_16 = ttc_data_buf->radio.rssi;
-                break;
 
+                break;
             case CMDPR_PARAM_ANT_TEMP:
                 obdh_response->data.param_16 = ttc_data_buf->antenna.data.temperature;
-                break;
 
+                break;
             case CMDPR_PARAM_ANT_MOD_STATUS_BITS:
                 obdh_response->data.param_16 = ttc_data_buf->antenna.data.status.code;
-                break;
 
+                break;
             case CMDPR_PARAM_ANT_DEP_STATUS:
                 obdh_response->data.param_8 = (uint8_t) ttc_data_buf->ant_deploy_exec;
-                break;
 
+                break;
             case CMDPR_PARAM_ANT_DEP_HIB:
                 obdh_response->data.param_8 = (uint8_t) ttc_data_buf->ant_deploy_hib_exec;
-                break;
 
+                break;
             case CMDPR_PARAM_TX_ENABLE:
                 obdh_response->data.param_8 = ttc_data_buf->radio.tx_enable;
-                break;
 
+                break;
             case CMDPR_PARAM_TX_PACKET_COUNTER:
                 obdh_response->data.param_32 = ttc_data_buf->radio.tx_packet_counter;
-                break;
 
+                break;
             case CMDPR_PARAM_RX_VAL_PACKET_COUNTER:
                 obdh_response->data.param_32 = ttc_data_buf->radio.rx_packet_counter;
-                break;
 
+                break;
             case CMDPR_PARAM_PACKETS_AV_FIFO_TX:
                 obdh_response->data.param_8 = ttc_data_buf->radio.tx_fifo_counter;
-                break;
 
+                break;
             case CMDPR_PARAM_PACKETS_AV_FIFO_RX:
                 obdh_response->data.param_8 = ttc_data_buf->radio.rx_fifo_counter;
-                break;
 
+                break;
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
                 obdh_response->data.param_16 = *(ttc_data_buf->radio.last_rx_packet_bytes);
+
                 break;
-
             default:
-
                 break;
         }
     }
@@ -322,13 +318,11 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
             response[2] = obdh_response->data.param_8;
 
             break;
-
         case 2:
             response[2] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
             response[3] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
 
             break;
-
         case 4:
             response[2] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
             response[3] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
@@ -336,7 +330,6 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
             response[5] = (uint8_t)(obdh_response->data.param_32 & 0xFFU);
 
             break;
-
         default:
             err = -1;
             sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Error writing OBDH parameter: unknown parameter!");
@@ -377,7 +370,6 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
     spi_slave_dma_write(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
 
     sys_log_print_str("Packet:");
-
 
     sys_log_dump_hex(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
     sys_log_new_line();

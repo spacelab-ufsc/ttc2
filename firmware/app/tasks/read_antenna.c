@@ -1,7 +1,7 @@
 /*
  * read_antenna.c
  *
- * Copyright (C) 2023, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  *
  * This file is part of TTC 2.0.
  *
@@ -25,7 +25,7 @@
  *
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  *
- * \version 0.8.6
+ * \version 0.4.5
  *
  * \date 2023/07/21
  *

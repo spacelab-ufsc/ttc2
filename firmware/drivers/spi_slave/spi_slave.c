@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.4.5
  *
  * \date 2022/05/21
  *
@@ -77,7 +77,6 @@ static uint16_t spi_read_mtu(queue_t *spi_rx_buffer);
  *
  * \return The status/error code.
  */
-
 static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
@@ -99,22 +98,21 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     uint8_t clock_polarity;
 
     static DMA_initParam spi_slave_dma_param_tx = {
-    .channelSelect = DMA_CHANNEL_0,
-    .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
-    .transferSize = 228,
-    .triggerSourceSelect = DMA_TRIGGERSOURCE_13,
-    .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
-    .triggerTypeSelect = DMA_TRIGGER_HIGH,
+        .channelSelect          = DMA_CHANNEL_0,
+        .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
+        .transferSize           = 228,
+        .triggerSourceSelect    = DMA_TRIGGERSOURCE_13,
+        .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
+        .triggerTypeSelect      = DMA_TRIGGER_HIGH,
     };
 
-static DMA_initParam spi_slave_dma_param_rx = {
-    .channelSelect = DMA_CHANNEL_1,
-     .transferModeSelect = DMA_TRANSFER_REPEATED_SINGLE,
-     .transferSize = 228,
-     .triggerSourceSelect = DMA_TRIGGERSOURCE_12,
-     .transferUnitSelect = DMA_SIZE_SRCBYTE_DSTBYTE,
-     .triggerTypeSelect = DMA_TRIGGER_HIGH,
-
+    static DMA_initParam spi_slave_dma_param_rx = {
+        .channelSelect          = DMA_CHANNEL_1,
+        .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
+        .transferSize           = 228,
+        .triggerSourceSelect    = DMA_TRIGGERSOURCE_12,
+        .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
+        .triggerTypeSelect      = DMA_TRIGGER_HIGH,
     };
 
     switch(port)
@@ -170,7 +168,6 @@ static DMA_initParam spi_slave_dma_param_rx = {
                 case SPI_MODE_0:
                     clock_phase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
-
                     break;
                 case SPI_MODE_1:
                     clock_phase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
@@ -265,45 +262,39 @@ static DMA_initParam spi_slave_dma_param_rx = {
 
         switch(base_address)
         {
-        case USCI_A0_BASE:
+            case USCI_A0_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_17;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_16;
 
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_17;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_16;
+                break;
+            case USCI_A1_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_21;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_20;
 
-            break;
+                break;
+            case USCI_A2_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_13;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_12;
 
-        case USCI_A1_BASE:
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_21;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_20;
+                break;
+            case USCI_B0_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_19;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_18;
 
-            break;
+                break;
+            case USCI_B1_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_23;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_22;
 
-        case USCI_A2_BASE:
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_13;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_12;
+                break;
+            case USCI_B2_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_15;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_14;
 
-            break;
-
-        case USCI_B0_BASE:
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_19;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_18;
-
-            break;
-
-        case USCI_B1_BASE:
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_23;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_22;
-
-            break;
-
-        case USCI_B2_BASE:
-            spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_15;
-            spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_14;
-            break;
-
-        default:
-            err = -1;
-            break;
+                break;
+            default:
+                err = -1;
+                break;
         }
 
         DMA_init(&spi_slave_dma_param_tx);
@@ -320,7 +311,7 @@ static DMA_initParam spi_slave_dma_param_rx = {
 
         spi_slave_dma_rx_position = 0U;
 
-        for (i = 0U; i<228U; i++)
+        for(i = 0U; i < 228U; i++)
         {
             spi_slave_dma_rx_data[i] = 0xFFU;
             spi_slave_dma_tx_data[i] = 0xFFU;
@@ -378,7 +369,7 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len)
 {
     uint16_t i = 0U;
 
-    for (i = 0U; i <len; i++)
+    for(i = 0U; i < len; i++)
     {
         spi_slave_dma_tx_data[spi_slave_dma_tx_position] = data[i];
 
@@ -406,7 +397,7 @@ void spi_slave_dma_read(uint8_t *data, uint16_t len)
 
     if ((spi_slave_dma_rx_data[spi_slave_dma_rx_position] != 0xFFU))
     {
-        for (i = 0U; i < len; i++)
+        for(i = 0U; i < len; i++)
         {
             data[i] = spi_slave_dma_rx_data[spi_slave_dma_rx_position];
 
@@ -724,7 +715,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
 {
     int err = 0;
     uint16_t i;
-    queue_t* queue;
+    queue_t *queue;
 
     switch(port)
     {
