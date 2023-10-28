@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.1
+ * \version 0.4.5
  *
  * \date 2022/05/21
  *
@@ -61,6 +61,28 @@
  * \return The status/error code.
  */
 int spi_slave_init(spi_port_t port, spi_config_t config);
+
+/**
+ * \brief Writes on the SPI Slave port DMA buffer.
+ *
+ * \param[in] data is the array to be transfered to the DMA buffer.
+ *
+ * \param[in] len is the number of bytes to be written.
+ *
+ * \return None.
+ */
+void spi_slave_dma_write(uint8_t *data, uint16_t len);
+
+/**
+ * \brief Reads on the SPI Slave port DMA buffer.
+ *
+ * \param[out] data is the array to be transfered from the DMA buffer.
+ *
+ * \param[in] len is the number of bytes to be read.
+ *
+ * \return None.
+ */
+void spi_slave_dma_read(uint8_t *data, uint16_t len);
 
 /**
  * \brief Enables SPI Slave port interruption.

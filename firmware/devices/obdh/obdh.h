@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.5
  *
  * \date 2023/02/12
  *
@@ -68,7 +68,7 @@ int obdh_read_request(obdh_request_t *obdh_request);
  *
  * \return The status/error code.
  */
-int obdh_send_response(obdh_response_t obdh_response);
+int obdh_send_response(obdh_response_t *obdh_response);
 
 /**
  * \brief Writes the parameter to OBDH responses.
@@ -89,6 +89,15 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
  * \return The status/error code.
  */
 int obdh_flush_request(obdh_request_t *obdh_request);
+
+/**
+ * \brief .
+ *
+ * \param[in] number_of_bytes
+ *
+ * \return None.
+ */
+void obdh_write_read_bytes(uint16_t number_of_bytes);
 
 #endif /* DEVICES_OBDH_H_ */
 

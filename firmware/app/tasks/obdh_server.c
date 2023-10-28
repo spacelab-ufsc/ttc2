@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 0.4.5
  *
  * \date 2023/03/03
  *
@@ -39,6 +39,8 @@
 #include <system/cmdpr.h>
 #include <drivers/uart/uart.h>
 #include <app/structs/ttc_data.h>
+#include <drivers/spi_slave/spi_slave.h>
+#include <hal/dma.h>
 
 #include "obdh_server.h"
 #include "startup.h"
@@ -57,8 +59,15 @@ void vTaskObdhServer(void)
     sys_log_new_line();
 
     obdh_request_t obdh_request = {0};
-    obdh_request_t obdh_response = {0};
+    obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
+
+    uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
+    uint8_t buffer3[10] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
+
+    uplink_add_packet(buffer2, 6);
+    uplink_add_packet(buffer3, 10);
 
     while(1)
     {
@@ -67,91 +76,70 @@ void vTaskObdhServer(void)
         /* Receiving data from obdh */
         obdh_read_request(&obdh_request);
 
-        switch(obdh_request.command)
+        if (obdh_request.command != 0xFF)
         {
-            case CMDPR_CMD_READ_PARAM:
-                obdh_response.command = CMDPR_CMD_READ_PARAM;
-                obdh_response.parameter = obdh_request.parameter;
+            taskENTER_CRITICAL();
 
-                obdh_write_response_param(&ttc_data_buf, &obdh_response);
-                obdh_send_response(obdh_response);
+            switch(obdh_request.command)
+            {
+                case CMDPR_CMD_READ_PARAM:
+                    obdh_response.command = obdh_request.command;
+                    obdh_response.parameter = obdh_request.parameter;
+                    obdh_write_response_param(&ttc_data_buf, &obdh_response);
 
-                break;
+                    obdh_send_response(&obdh_response);
 
-            case CMDPR_CMD_WRITE_PARAM:
-                if (obdh_request.parameter == CMDPR_PARAM_TX_ENABLE)
-                {
-                    ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
-                }
-                else
-                {
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Received invalid write command: ");
-                    sys_log_print_hex(obdh_request.data.param_8);
+                    break;
+                case CMDPR_CMD_WRITE_PARAM:
+                    obdh_write_read_bytes(6);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
+
+                    switch(obdh_request.data.param_8)
+                    {
+                        case 0x00:
+                            sys_log_print_msg("Turned on.");
+                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                            break;
+                        case 0x01:
+                            sys_log_print_msg("Turned off.");
+                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                            break;
+                        default:
+                            sys_log_print_msg("Invalid mode: ");
+                            sys_log_print_uint(obdh_request.data.param_8);
+
+                            break;
+                    }
                     sys_log_new_line();
-                }
 
-                break;
+                    break;
+                case CMDPR_CMD_TRANSMIT_PACKET:
+                    obdh_write_read_bytes(6);
 
-            case CMDPR_CMD_TRANSMIT_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to transmit.");
-                sys_log_print_uint(obdh_request.data.data_packet.len);
-                sys_log_print_msg(" bytes...");
-                sys_log_new_line();
+                    downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
 
-                sys_log_print_str("Packet: ");
+                    break;
+                case CMDPR_CMD_READ_FIRST_PACKET:
+                    obdh_response.command = obdh_request.command;
 
-                uint16_t i = 0;
+                    uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
 
-                for(i = 0; i < obdh_request.data.data_packet.len; i++)
-                {
-                    sys_log_print_hex(obdh_request.data.data_packet.packet[i]);
-                    sys_log_print_str("|");
-                }
+                    obdh_send_response(&obdh_response);
 
-                sys_log_new_line();
+                    break;
+                case 0x00:
+                    /* Read mode */
+                    obdh_write_read_bytes(6);
+                    break;
+                default:
+                    break;
+            }
 
-                downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
-
-                break;
-
-            case CMDPR_CMD_READ_FIRST_PACKET:
-                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to read received packet. Reading: ");
-                uplink_pop_packet(obdh_response.data.data_packet.packet, &obdh_response.data.data_packet.len);
-                sys_log_print_uint(obdh_response.data.data_packet.len);
-                sys_log_print_msg(" bytes...");
-                sys_log_new_line();
-
-                sys_log_print_str("Packet: ");
-
-                for(i = 0; i < obdh_response.data.data_packet.len; i++)
-                {
-                    sys_log_print_hex(obdh_response.data.data_packet.packet[i]);
-                    sys_log_print_str("|");
-                }
-
-                sys_log_new_line();
-
-                obdh_send_response(obdh_response);
-
-                break;
-
-            case 0x00:
-                /* No request */
-                break;
-
-            default:
-                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Received invalid command (");
-                sys_log_print_hex(obdh_request.command);
-                sys_log_print_str(").");
-                sys_log_new_line();
-
-                obdh_flush_request(&obdh_request);
-
-                break;
+            taskEXIT_CRITICAL();
         }
-
-        /* Resetting command */
-        obdh_request.command = 0x00U;
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }

@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.3
+ * \version 0.4.5
  * 
  * \date 2019/10/26
  * 
@@ -45,7 +45,7 @@
 #define CONFIG_TASK_READ_SENSORS_ENABLED                1
 #define CONFIG_TASK_BEACON_ENABLED                      0
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_EPS_SERVER_ENABLED                  1
+#define CONFIG_TASK_EPS_SERVER_ENABLED                  0
 #define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
 #define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
 #define CONFIG_TASK_UPLINK_MANAGER_ENABLED              0

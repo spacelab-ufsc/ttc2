@@ -1,7 +1,7 @@
 /*
  * spi_slave_wrap.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.1
+ * \version 0.4.5
  * 
  * \date 2021/08/25
  * 
@@ -41,6 +41,10 @@
 #include <drivers/spi/spi.h>
 
 int __wrap_spi_slave_init(spi_port_t port, spi_config_t config);
+
+void __wrap_spi_slave_dma_write(uint8_t *data, uint16_t len);
+
+void __wrap_spi_slave_dma_read(uint8_t *data, uint16_t len);
 
 int __wrap_spi_slave_enable_isr(spi_port_t port);
 

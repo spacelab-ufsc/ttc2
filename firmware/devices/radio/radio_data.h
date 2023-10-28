@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.1
+ * \version 0.4.5
  *
  * \date 2020/07/24
  *
@@ -55,7 +55,7 @@ typedef struct
     uint32_t tx_packet_counter;     /**< Number of total packets sent */
     uint8_t rx_fifo_counter;        /**< Packets received in queue */
     uint8_t tx_fifo_counter;        /**< Packets in queue to be sent */
-    uint16_t last_rx_packet_bytes;  /**< Number of available bytes in the last packet received */
+    uint16_t *last_rx_packet_bytes;  /**< Number of available bytes in the last packet received */
 } radio_data_t;
 
 #endif /* RADIO_DATA_H_ */
