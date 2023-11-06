@@ -25,13 +25,15 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 0.4.1
  *
  * \date 2023/02/12
  *
  * \addtogroup eps
  * \{
  */
+
+#include <system/sys_log/sys_log.h>
 
 #include <system/cmdpr.h>
 #include <drivers/uart/uart.h>
@@ -58,10 +60,8 @@ int eps_init(void)
     }
     else
     {
-    #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-        sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_ERROR, "Error during EPS initialization !");
+        sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_NAME, "Error during EPS initialization !");
         sys_log_new_line();
-    #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
     }
 
     return err;
@@ -83,10 +83,8 @@ int eps_read_request(eps_request_t *eps_request)
 
                     break;
                 default:
-                #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_ERROR, "Error reading EPS command: unknown command!");
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_NAME, "Error reading EPS command: unknown command!");
                     sys_log_new_line();
-                #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
                     err = -1;
 
                     break;
@@ -94,10 +92,8 @@ int eps_read_request(eps_request_t *eps_request)
         }
         else
         {
-        #if defined(CONFIG_DRIVERS_DEBUG_ENABLED) && (CONFIG_DRIVERS_DEBUG_ENABLED == 1)
-            sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_ERROR, "Error reading EPS command: unable to read command!");
+            sys_log_print_event_from_module(SYS_LOG_ERROR, EPS_MODULE_NAME, "Error reading EPS command: unable to read command!");
             sys_log_new_line();
-        #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
         }
     }
 
@@ -110,4 +106,5 @@ int eps_flush_request(eps_request_t *eps_request)
 
     return uart_flush(eps_uart_port);
 }
+
 /** \} End of eps group */

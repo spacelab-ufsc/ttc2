@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.4.3
  * 
  * \date 2017/06/01
  * 
@@ -465,6 +465,27 @@ void si446x_delay_ms(uint16_t ms);
  * \return None.
  */
 void si446x_delay_us(uint32_t us);
+
+/**
+ * \brief Creates a mutex to use the si446x chip.
+ *
+ * \return The status/error code.
+ */
+int si446x_mutex_create(void);
+
+/**
+ * \brief Holds the resource (si446x chip).
+ *
+ * \return The status/error code.
+ */
+int si446x_mutex_take(void);
+
+/**
+ * \brief Frees the resource (si446x chip).
+ *
+ * \return The status/error code.
+ */
+int si446x_mutex_give(void);
 
 #endif /* SI446X_H_ */
 

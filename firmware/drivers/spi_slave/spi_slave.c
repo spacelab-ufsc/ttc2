@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.4.5
  *
  * \date 2022/05/21
  *
@@ -44,6 +44,7 @@
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
 #include <drivers/isr/isr.h>
+#include <hal/dma.h>
 
 #include "spi_slave.h"
 
@@ -76,19 +77,43 @@ static uint16_t spi_read_mtu(queue_t *spi_rx_buffer);
  *
  * \return The status/error code.
  */
-
 static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
 
+static uint8_t spi_slave_dma_tx_data[228] = {0};
+static uint8_t spi_slave_dma_rx_data[228] = {0};
+
+static uint16_t spi_slave_dma_tx_position;
+static uint16_t spi_slave_dma_rx_position;
+
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
     int err = 0;
+    uint8_t i = 0U;
 
     uint16_t base_address;
     uint8_t msb_first = USCI_A_SPI_MSB_FIRST;
     uint8_t clock_phase;
     uint8_t clock_polarity;
+
+    static DMA_initParam spi_slave_dma_param_tx = {
+        .channelSelect          = DMA_CHANNEL_0,
+        .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
+        .transferSize           = 228,
+        .triggerSourceSelect    = DMA_TRIGGERSOURCE_13,
+        .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
+        .triggerTypeSelect      = DMA_TRIGGER_HIGH,
+    };
+
+    static DMA_initParam spi_slave_dma_param_rx = {
+        .channelSelect          = DMA_CHANNEL_1,
+        .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
+        .transferSize           = 228,
+        .triggerSourceSelect    = DMA_TRIGGERSOURCE_12,
+        .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
+        .triggerTypeSelect      = DMA_TRIGGER_HIGH,
+    };
 
     switch(port)
     {
@@ -143,7 +168,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
                 case SPI_MODE_0:
                     clock_phase       = USCI_A_SPI_PHASE_DATA_CAPTURED_ONFIRST_CHANGED_ON_NEXT;
                     clock_polarity    = USCI_A_SPI_CLOCKPOLARITY_INACTIVITY_LOW;
-
                     break;
                 case SPI_MODE_1:
                     clock_phase       = USCI_A_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT;
@@ -168,13 +192,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
             if (USCI_A_SPI_initSlave(base_address, msb_first, clock_phase, clock_polarity) == STATUS_SUCCESS)
             {
-                switch(config.mode)
-                {
-                    case SPI_MODE_1:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_1;    break;
-                    case SPI_MODE_2:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;    break;
-                    case SPI_MODE_3:    HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_3;    break;
-                    default:                                                                break;
-                }
+                HWREG8(base_address + OFS_UCAxCTL0) |= UCMODE_2;
 
                 USCI_A_SPI_enable(base_address);
             }
@@ -241,6 +259,91 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
         else
         {
         }
+
+        switch(base_address)
+        {
+            case USCI_A0_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_17;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_16;
+
+                break;
+            case USCI_A1_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_21;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_20;
+
+                break;
+            case USCI_A2_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_13;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_12;
+
+                break;
+            case USCI_B0_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_19;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_18;
+
+                break;
+            case USCI_B1_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_23;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_22;
+
+                break;
+            case USCI_B2_BASE:
+                spi_slave_dma_param_tx.triggerSourceSelect = DMA_TRIGGERSOURCE_15;
+                spi_slave_dma_param_rx.triggerSourceSelect = DMA_TRIGGERSOURCE_14;
+
+                break;
+            default:
+                err = -1;
+                break;
+        }
+
+        DMA_init(&spi_slave_dma_param_tx);
+
+        DMA_setSrcAddress(DMA_CHANNEL_0, (uint32_t)(uintptr_t)spi_slave_dma_tx_data, DMA_DIRECTION_INCREMENT); // cppcheck-suppress misra-c2012-11.4
+
+        DMA_setDstAddress(DMA_CHANNEL_0, USCI_A_SPI_getTransmitBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+        DMA_clearInterrupt(DMA_CHANNEL_0);
+
+        DMA_enableInterrupt(DMA_CHANNEL_0);
+
+        DMA_enableTransfers(DMA_CHANNEL_0);
+
+        spi_slave_dma_rx_position = 0U;
+
+        for(i = 0U; i < 228U; i++)
+        {
+            spi_slave_dma_rx_data[i] = 0xFFU;
+            spi_slave_dma_tx_data[i] = 0xFFU;
+        }
+
+        spi_slave_dma_tx_data[0] = 0x7EU;
+        spi_slave_dma_tx_data[1] = 0x00U;
+        spi_slave_dma_tx_data[2] = 0x00U;
+        spi_slave_dma_tx_data[3] = 0x00U;
+        spi_slave_dma_tx_data[4] = 0x00U;
+        spi_slave_dma_tx_data[5] = 0x00U;
+        spi_slave_dma_tx_data[6] = 0x00U;
+
+        /* Next command preamble */
+        spi_slave_dma_tx_data[7] = 0x7EU;
+
+        DMA_init(&spi_slave_dma_param_rx);
+
+        DMA_setSrcAddress(DMA_CHANNEL_1, USCI_A_SPI_getReceiveBufferAddressForDMA(base_address), DMA_DIRECTION_UNCHANGED);
+
+        DMA_setDstAddress(DMA_CHANNEL_1, (uint32_t)(uintptr_t)spi_slave_dma_rx_data, DMA_DIRECTION_INCREMENT); // cppcheck-suppress misra-c2012-11.4
+
+        DMA_clearInterrupt(DMA_CHANNEL_1);
+
+        DMA_enableInterrupt(DMA_CHANNEL_1);
+
+        DMA_enableTransfers(DMA_CHANNEL_1);
+
+        spi_slave_dma_tx_position = 8U;
+
+        __bis_SR_register(LPM4_bits + GIE);
+
         if (err == 0)
         {
             switch(base_address)
@@ -262,6 +365,62 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     return err;
 }
 
+void spi_slave_dma_write(uint8_t *data, uint16_t len)
+{
+    uint16_t i = 0U;
+
+    for(i = 0U; i < len; i++)
+    {
+        spi_slave_dma_tx_data[spi_slave_dma_tx_position] = data[i];
+
+        spi_slave_dma_tx_position++;
+
+        if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
+        {
+            spi_slave_dma_tx_position = 0U;
+        }
+    }
+
+    spi_slave_dma_tx_data[spi_slave_dma_tx_position] = 0x7EU;
+
+    spi_slave_dma_tx_position++;
+
+    if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
+    {
+        spi_slave_dma_tx_position = 0U;
+    }
+}
+
+void spi_slave_dma_read(uint8_t *data, uint16_t len)
+{
+    uint16_t i = 0U;
+
+    if ((spi_slave_dma_rx_data[spi_slave_dma_rx_position] != 0xFFU))
+    {
+        for(i = 0U; i < len; i++)
+        {
+            data[i] = spi_slave_dma_rx_data[spi_slave_dma_rx_position];
+
+            spi_slave_dma_rx_data[spi_slave_dma_rx_position] = 0xFFU; /* Clear after read */
+
+            spi_slave_dma_rx_position++;
+
+            if (spi_slave_dma_rx_position > 227U)
+            {
+                spi_slave_dma_rx_position = 0U; /* Reset position after the end of the buffer */
+            }
+        }
+    }
+
+    else
+    {
+        for (i=0U; i < len; i++)
+        {
+            data[i] = 0xFFU;
+        }
+    }
+}
+
 static int spi_slave_setup_gpio(spi_port_t port)
 {
     int err = 0;
@@ -275,7 +434,8 @@ static int spi_slave_setup_gpio(spi_port_t port)
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P8, GPIO_PIN4 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN1);
             break;
         case SPI_PORT_2:
-            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN4);
+            GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P9, GPIO_PIN3);
             break;
         case SPI_PORT_3:
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2 + GPIO_PIN3);
@@ -316,8 +476,8 @@ int spi_slave_enable_isr(spi_port_t port)
 
             break;
         case SPI_PORT_2:
-            USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
-            USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
+            //USCI_A_SPI_clearInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
+            //USCI_A_SPI_enableInterrupt(USCI_A2_BASE, USCI_A_SPI_RECEIVE_INTERRUPT);
 
             break;
         case SPI_PORT_3:
@@ -555,7 +715,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
 {
     int err = 0;
     uint16_t i;
-    queue_t* queue;
+    queue_t *queue;
 
     switch(port)
     {
@@ -575,7 +735,7 @@ int spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len)
             break;
     }
 
-    for(i = 0; i < len; i++)
+    for(i = 0U; i < len; i++)
     {
         queue_push_back(queue, data[i]);
     }

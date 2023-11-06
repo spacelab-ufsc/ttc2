@@ -139,7 +139,7 @@ void si446x_power_on_reset(void)
     si446x_spi_write(buffer, 7);
     si446x_slave_disable();
 
-    si446x_delay_ms(200);
+    si446x_delay_ms(50);
 }
 
 bool si446x_tx_packet(uint8_t *data, uint8_t len)

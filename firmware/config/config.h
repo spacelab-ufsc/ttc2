@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.5
  * 
  * \date 2019/10/26
  * 
@@ -43,10 +43,14 @@
 #define CONFIG_TASK_SYSTEM_RESET_ENABLED                1
 #define CONFIG_TASK_RADIO_RESET_ENABLED                 1
 #define CONFIG_TASK_READ_SENSORS_ENABLED                1
-#define CONFIG_TASK_BEACON_ENABLED                      1
-#define CONFIG_TASK_UPLINK_ENABLED                      1
+#define CONFIG_TASK_BEACON_ENABLED                      0
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_EPS_ENABLED                         1
+#define CONFIG_TASK_EPS_SERVER_ENABLED                  0
+#define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
+#define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
+#define CONFIG_TASK_UPLINK_MANAGER_ENABLED              0
+#define CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED          1
+#define CONFIG_TASK_READ_ANTENNA_ENABLED                0
 
 /* Devices */
 #define CONFIG_DEV_MEDIA_INT_ENABLED                    1
@@ -55,12 +59,13 @@
 #define CONFIG_DEV_TEMP_SENSOR_ENABLED                  1
 #define CONFIG_DEV_RADIO_ENABLED                        1
 #define CONFIG_DEV_ANTENNA_ENABLED                      1
+#define CONFIG_DEV_OBDH_ENABLED                         1
 #define CONFIG_DEV_EPS_ENABLED                          1
 
 /* Debug and log messages */
 #define CONFIG_DRIVERS_DEBUG_ENABLED                    0
 
-#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"
+#define CONFIG_SATELLITE_CALLSIGN                       " PY0EFS"   /* The callsign field must be 7 characters long! */
 
 /* Packets IDs */
 #define CONFIG_PKT_ID_BEACON                            0x10
@@ -79,7 +84,7 @@
 #define CONFIG_ANTENNA_INDEP_DEPLOY_BURN_TIME_SEC       10U
 #define CONFIG_ANTENNA_SEQ_DEPLOY_BURN_TIME_SEC         20U
 #define CONFIG_ANTENNA_DEPLOYMENT_ATTEMPTS              10U
-#define CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN       45
+#define CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN       60U
 
 /* Memory addresses */
 #define CONFIG_MEM_ADR_SYS_TIME                         0

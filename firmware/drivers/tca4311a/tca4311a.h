@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.12
+ * \version 0.4.1
  * 
  * \date 2020/02/01/02
  * 
@@ -62,8 +62,8 @@ typedef struct
 typedef enum
 {
     TCA4311A_ERROR=-1,                  /**< Error during initialization. */
-    TCA4311A_READY,                     /**< The chip is not ready. */
-    TCA4311A_NOT_READY                  /**< The chip is ready. */
+    TCA4311A_READY,                     /**< The chip is ready. */
+    TCA4311A_NOT_READY                  /**< The chip is not ready. */
 } tca4311a_status_e;
 
 /**

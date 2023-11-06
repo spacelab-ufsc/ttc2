@@ -1,7 +1,7 @@
 /*
  * ttc_data.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,8 +24,9 @@
  * \brief TTC data structure definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.0.23
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 0.4.3
  * 
  * \date 2021/04/14
  * 
@@ -39,18 +40,29 @@
 
 #include <stdint.h>
 
+#include <system/system.h>
+#include <devices/antenna/antenna_data.h>
+#include <devices/radio/radio_data.h>
+
 /**
- * \brief Radio data.
+ * \brief Transmission buffer structure.
  */
 typedef struct
 {
-    uint16_t temperature;           /**< Temperature in Kelvin. */
-    uint16_t voltage;               /**< Input voltage in mV. */
-    uint16_t current;               /**< Input current in mA. */
-    uint16_t power;                 /**< Input power in mW. */
-    uint8_t last_valid_tm;          /**< Last valid command (uplink packet ID). */
-    uint16_t rssi;                  /**< RSSI of the last valid command. */
-} radio_data_t;
+    uint8_t packet_array[5][230];
+    uint16_t packet_sizes[5];
+    uint8_t position_to_write;
+    uint8_t position_to_read;
+} transmission_buf_t;
+
+/**
+ * \brief Antenna telemetry type.
+ */
+typedef struct
+{
+    sys_time_t timestamp;           /**< Timestamp of the Antenna data. */
+    antenna_data_t data;            /**< Antenna data. */
+} antenna_telemetry_t;
 
 /**
  * \brief TTC data.
@@ -64,15 +76,67 @@ typedef struct
     uint16_t power;                 /**< Input power in mW. */
     uint8_t last_reset_cause;       /**< Last uC reset cause code. */
     uint16_t reset_counter;         /**< uC reset counter. */
-    radio_data_t radio;             /**< Radio data. */
     uint8_t hw_version;             /**< Hardware version. */
     uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
+    uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
+    uint8_t ant_deploy_count;       /**< Number of antenna deployment tries TODO: */
+    bool ant_deploy_exec;           /**< The deployment has executed*/
+    uint8_t ant_deploy_hib_count;   /**< Hibernation count for deployment */
+    bool ant_deploy_hib_exec;       /**< Hibernation time has completed */
+    radio_data_t radio;             /**< Radio data. */
+    antenna_telemetry_t antenna;    /**< Antenna data. */
+    transmission_buf_t down_buf;    /**< Downlink Buffer */
+    transmission_buf_t up_buf;      /**< Uplink Buffer */
 } ttc_data_t;
 
 /**
  * \brief TTC data buffer.
  */
 extern ttc_data_t ttc_data_buf;
+
+/**
+ * \brief Add a packet to the TX queue.
+ *
+ * \param[in] packet to be sent.
+ *
+ * \param[in] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void downlink_add_packet(uint8_t *packet, uint16_t packet_size);
+
+/**
+ * \brief Returns the next packet in queue to be sent.
+ *
+ * \param[in] packet to be sent.
+ *
+ * \param[in] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size);
+
+/**
+ * \brief Add a packet to the RX queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_add_packet(uint8_t *packet, uint16_t packet_size);
+
+/**
+ * \brief Returns the next received packet in queue.
+ *
+ * \param[out] received packet.
+ *
+ * \param[out] packet_size is the size of the packet.
+ *
+ * \return None.
+ */
+void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size);
 
 #endif /* TTC_DATA_H_ */
 

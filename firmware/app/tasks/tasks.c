@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.3
  * 
  * \date 2019/11/02
  * 
@@ -46,9 +46,13 @@
 #include "radio_reset.h"
 #include "read_sensors.h"
 #include "beacon.h"
-#include "uplink.h"
 #include "time_control.h"
 #include "eps_server.h"
+#include "obdh_server.h"
+#include "downlink_manager.h"
+#include "uplink_manager.h"
+#include "antenna_deployment.h"
+#include "read_antenna.h"
 
 void create_tasks(void)
 {
@@ -118,15 +122,6 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_BEACON_ENABLED */
 
-#if defined(CONFIG_TASK_UPLINK_ENABLED) && (CONFIG_TASK_UPLINK_ENABLED == 1)
-    xTaskCreate(vTaskUplink, TASK_UPLINK_NAME, TASK_UPLINK_STACK_SIZE, NULL, TASK_UPLINK_PRIORITY, &xTaskUplinkHandle);
-
-    if (xTaskUplinkHandle == NULL)
-    {
-        /* Error creating the uplink task */
-    }
-#endif /* CONFIG_TASK_UPLINK_ENABLED */
-
 #if defined(CONFIG_TASK_TIME_CONTROL_ENABLED) && (CONFIG_TASK_TIME_CONTROL_ENABLED == 1)
     xTaskCreate(vTaskTimeControl, TASK_TIME_CONTROL_NAME, TASK_TIME_CONTROL_STACK_SIZE, NULL, TASK_TIME_CONTROL_PRIORITY, &xTaskTimeControlHandle);
 
@@ -136,14 +131,61 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_TIME_CONTROL_ENABLED */
 
-#if defined(CONFIG_TASK_EPS_ENABLED) && (CONFIG_TASK_EPS_ENABLED == 1)
+#if defined(CONFIG_TASK_EPS_SERVER_ENABLED) && (CONFIG_TASK_EPS_SERVER_ENABLED == 1)
     xTaskCreate(vTaskEpsServer, TASK_EPS_SERVER_NAME, TASK_EPS_SERVER_STACK_SIZE, NULL, TASK_EPS_SERVER_PRIORITY, &xTaskEpsServerHandle);
 
     if (xTaskEpsServerHandle == NULL)
     {
         /* Error creating the eps server task */
     }
-#endif /* CONFIG_TASK_EPS_ENABLED */
+#endif /* CONFIG_TASK_EPS_SERVER_ENABLED */
+
+#if defined(CONFIG_TASK_OBDH_SERVER_ENABLED) && (CONFIG_TASK_OBDH_SERVER_ENABLED == 1)
+    xTaskCreate(vTaskObdhServer, TASK_OBDH_SERVER_NAME, TASK_OBDH_SERVER_STACK_SIZE, NULL, TASK_OBDH_SERVER_PRIORITY, &xTaskObdhServerHandle);
+
+    if (xTaskObdhServerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_OBDH_SERVER_ENABLED */
+
+#if defined(CONFIG_TASK_DOWNLINK_MANAGER_ENABLED) && (CONFIG_TASK_DOWNLINK_MANAGER_ENABLED == 1)
+    xTaskCreate(vTaskDownlinkManager, TASK_DOWNLINK_MANAGER_NAME, TASK_DOWNLINK_MANAGER_STACK_SIZE, NULL, TASK_DOWNLINK_MANAGER_PRIORITY, &xTaskDownlinkManagerHandle);
+
+    if (xTaskDownlinkManagerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_DOWNLINK_MANAGER_ENABLED */
+
+#if defined(CONFIG_TASK_UPLINK_MANAGER_ENABLED) && (CONFIG_TASK_UPLINK_MANAGER_ENABLED == 1)
+    xTaskCreate(vTaskUplinkManager, TASK_UPLINK_MANAGER_NAME, TASK_UPLINK_MANAGER_STACK_SIZE, NULL, TASK_UPLINK_MANAGER_PRIORITY, &xTaskUplinkManagerHandle);
+
+    if (xTaskUplinkManagerHandle == NULL)
+    {
+        /* Error creating the eps server task */
+    }
+#endif /* CONFIG_TASK_UPLINK_MANAGER_ENABLED */
+
+
+#if defined(CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED) && (CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED == 1)
+    xTaskCreate(vTaskAntennaDeployment, TASK_ANTENNA_DEPLOYMENT_NAME, TASK_ANTENNA_DEPLOYMENT_STACK_SIZE, NULL, TASK_ANTENNA_DEPLOYMENT_PRIORITY, &xTaskAntennaDeploymentHandle);
+
+    if (xTaskAntennaDeploymentHandle == NULL)
+    {
+        /* Error creating the antenna deployment task */
+    }
+#endif /* CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED */
+
+
+#if defined(CONFIG_TASK_READ_ANTENNA_ENABLED) && (CONFIG_TASK_READ_ANTENNA_ENABLED == 1)
+    xTaskCreate(vTaskReadAntenna, TASK_READ_ANTENNA_NAME, TASK_READ_ANTENNA_STACK_SIZE, NULL, TASK_READ_ANTENNA_PRIORITY, &xTaskReadAntennaHandle);
+
+    if (xTaskReadAntennaHandle == NULL)
+    {
+        /* Error creating the read Antenna task */
+    }
+#endif /* CONFIG_TASK_READ_ANTENNA_ENABLED */
 
     create_event_groups();
 }

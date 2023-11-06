@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 0.4.3
  *
  * \date 2023/03/03
  *
@@ -36,9 +36,8 @@
 #include <system/sys_log/sys_log.h>
 #include <devices/eps/eps.h>
 #include <devices/radio/radio.h>
-#include <devices/eps/eps.h>
 #include <system/cmdpr.h>
-#include <drivers/uart/uart.h>
+#include <app/structs/ttc_data.h>
 
 #include "eps_server.h"
 #include "startup.h"
@@ -53,11 +52,11 @@ void vTaskEpsServer(void)
     /* Delay before the first cycle */
     vTaskDelay(pdMS_TO_TICKS(TASK_EPS_SERVER_INITIAL_DELAY_MS));
 
-    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server");
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Initializing the EPS server...");
     sys_log_new_line();
 
     eps_request_t eps_request = {0};
-    eps_request.command = 0x00; /* No command */
+    eps_request.command = 0x00U;    /* No command */
 
     while(1)
     {
@@ -66,38 +65,47 @@ void vTaskEpsServer(void)
         /* Receiving data from eps */
         eps_read_request(&eps_request);
 
-        if (eps_request.command == CMDPR_CMD_TRANSMIT_PACKET)
+        switch(eps_request.command)
         {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
-            sys_log_print_uint(eps_request.data.data_packet.len);
-            sys_log_print_msg(" bytes!");
-            sys_log_new_line();
+            case CMDPR_CMD_TRANSMIT_PACKET:
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received command to transmit ");
+                sys_log_print_uint(eps_request.data.data_packet.len);
+                sys_log_print_msg(" bytes!");
+                sys_log_new_line();
 
-            /* TODO: Implement data processing and radio link */
-            sys_log_print_str("Packet: ");
-            for (int i = 0; i < eps_request.data.data_packet.len; i++)
-            {
-                sys_log_print_hex(eps_request.data.data_packet.packet[i]);
-                sys_log_print_str("|");
-            }
-            sys_log_new_line();
-        }
-        else if (eps_request.command == 0x00)
-        {
-            /* No request */
-        }
-        else
-        {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command (");
-            sys_log_print_hex(eps_request.command);
-            sys_log_print_str(").");
-            sys_log_new_line();
+                sys_log_print_str("Packet: ");
 
-            eps_flush_request(&eps_request);
+                uint16_t i = 0;
+
+                for(i = 0; i < eps_request.data.data_packet.len; i++)
+                {
+                    sys_log_print_hex(eps_request.data.data_packet.packet[i]);
+                    sys_log_print_str("|");
+                }
+
+                sys_log_new_line();
+
+                downlink_add_packet(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
+
+                break;
+
+            case 0x00:
+                /* No request */
+                break;
+
+            default:
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_EPS_SERVER_NAME, "Received invalid command (");
+                sys_log_print_hex(eps_request.command);
+                sys_log_print_str(").");
+                sys_log_new_line();
+
+                eps_flush_request(&eps_request);
+
+                break;
         }
 
         /* Resetting command */
-        eps_request.command = 0x00;
+        eps_request.command = 0x00U;
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_EPS_SERVER_PERIOD_MS));
     }

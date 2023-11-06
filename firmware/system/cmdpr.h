@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.4
+ * \version 0.4.5
  *
  * \date 2023/02/22
  *
@@ -46,11 +46,11 @@
 #define CMDPR_CMD_READ_FIRST_PACKET          0x04U       /**< Read first available packet */
 
 /* CMDPR Parameters */
-#define CMDPR_PARAM_HW_VER                   0x00U       /**< Device ID (0xCC2A or 0xCC2B) */
-#define CMDPR_PARAM_FW_VER                   0x01U       /**< Hardware version */
-#define CMDPR_PARAM_COUNTER                  0x02U       /**< Firmware version */
-#define CMDPR_PARAM_RST_COUNTER              0x03U       /**< Time counter in millseconds */
-#define CMDPR_PARAM_DEVICE_ID                0x04U       /**< Reset counter */
+#define CMDPR_PARAM_DEVICE_ID                0x00U       /**< Hardware version */
+#define CMDPR_PARAM_HW_VER                   0x01U       /**< Firmware version */
+#define CMDPR_PARAM_FW_VER                   0x02U       /**< Device ID (0xCC2A or 0xCC2B) */
+#define CMDPR_PARAM_COUNTER                  0x03U       /**< Time counter in milliseconds */
+#define CMDPR_PARAM_RST_COUNTER              0x04U       /**< Reset counter */
 #define CMDPR_PARAM_LAST_RST_CAUSE           0x05U       /**< Last reset cause */
 #define CMDPR_PARAM_UC_VOLTAGE               0x06U       /**< Input voltage of the uC in mV */
 #define CMDPR_PARAM_UC_CURRENT               0x07U       /**< Input current of the uC in mA */

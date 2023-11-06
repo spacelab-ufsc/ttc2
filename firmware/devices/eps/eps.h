@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 0.4.1
  *
  * \date 2023/02/25
  *
@@ -40,6 +40,8 @@
 #include <system/cmdpr.h>
 
 typedef cmdpr_package_t eps_request_t;
+
+#define EPS_MODULE_NAME         "EPS"
 
 /**
  * \brief EPS initialization.
