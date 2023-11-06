@@ -1,7 +1,7 @@
 /*
  * isis_antenna_i2c.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.4
+ * \version 0.4.1
  * 
  * \date 2021/10/10
  * 
@@ -60,7 +60,7 @@ int isis_antenna_i2c_init(void)
     ants_config.en_pin              = ISIS_ANTENNA_I2C_EN_PIN;
     ants_config.ready_pin           = ISIS_ANTENNA_I2C_RDY_PIN;
 
-    if (tca4311a_init(ants_config, false) == TCA4311A_NOT_READY)
+    if (tca4311a_init(ants_config, false) == TCA4311A_READY)
     {
         err = 0;
     }
@@ -93,7 +93,7 @@ int isis_antenna_i2c_write(uint8_t *data, uint16_t len)
                 {
                     isis_antenna_delay_ms(1);
 
-                    if (tca4311a_disable(ants_config) == TCA4311A_NOT_READY)
+                    if (tca4311a_disable(ants_config) == TCA4311A_READY)
                     {
                         err = 0;
 
@@ -148,7 +148,7 @@ int isis_antenna_i2c_read(uint8_t *data, uint16_t len)
                 {
                     isis_antenna_delay_ms(1);
 
-                    if (tca4311a_disable(ants_config) == TCA4311A_NOT_READY)
+                    if (tca4311a_disable(ants_config) == TCA4311A_READY)
                     {
                         err = 0;
 

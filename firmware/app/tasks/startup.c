@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.3.5
+ * \version 0.4.5
  * 
  * \date 2019/12/04
  * 
@@ -46,6 +46,8 @@
 #include <devices/antenna/antenna.h>
 #include <devices/media/media.h>
 #include <devices/eps/eps.h>
+#include <app/structs/ttc_data.h>
+#include <devices/obdh/obdh.h>
 
 #include <ngham/ngham.h>
 
@@ -88,6 +90,11 @@ void vTaskStartup(void)
     sys_log_print_hex(system_get_reset_cause());
     sys_log_new_line();
 
+    /* TTC parameters */
+    ttc_data_buf.hw_version = 0x04;
+    ttc_data_buf.fw_version = 0x00000400;
+    ttc_data_buf.device_id = 0xCC2B;
+
 #if defined(CONFIG_DEV_MEDIA_INT_ENABLED) && (CONFIG_DEV_MEDIA_INT_ENABLED == 1)
     /* Internal non-volatile memory initialization */
     if (media_init(MEDIA_INT_FLASH) != 0)
@@ -129,8 +136,10 @@ void vTaskStartup(void)
 #endif /* CONFIG_DEV_RADIO_ENABLED */
 
     /* NGHam initialization */
-    ngham_init_arrays();
-    ngham_init();
+    if (ngham_init() != 0)
+    {
+        error_counter++;
+    }
 
     /* Antenna device initialization */
 #if defined(CONFIG_DEV_ANTENNA_ENABLED) && (CONFIG_DEV_ANTENNA_ENABLED == 1)
@@ -146,6 +155,13 @@ void vTaskStartup(void)
         error_counter++;
     }
 #endif /* CONFIG_DEV_EPS_ENABLED */
+
+#if defined(CONFIG_DEV_OBDH_ENABLED) && (CONFIG_DEV_OBDH_ENABLED == 1)
+    if (obdh_init() != 0)
+    {
+        error_counter++;
+    }
+#endif /* CONFIG_DEV_OBDH_ENABLED */
 
     if (error_counter > 0U)
     {

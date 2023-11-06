@@ -190,3 +190,62 @@ The TTC module operates accordingly to the flowchart from Figure \ref{fig:ttc_fl
         \label{fig:ttc_flowchart}
     \end{center}
 \end{figure}
+
+\section{Server Paramater}
+
+There are two main serial ports accessible to communicate with the TTC module a UART that is accessible only for the radio 1 and can only transmit packages. The other port is an SPI and is possible to communicate individually with each microcontroller and you can requisite all the commands and parameters (see Tables \ref{tab:commands} and \ref{tab:ttc2-variables}). The protocol communication is described below.
+
+\subsection{EPS Server}
+The EPS Server is in RX mode and only the Transmit packet command (ID=3) is available. To transmit a package the first byte shall be the command (0x03) followed by the packet. The UART configuration is resumed on Table \ref{tab:eps_config}. This serial port can be accessed via the pin 5 of the PC104-H2 pin 7 is connected to TX but is not utilized, see Table \ref{tab:pc104-pinout}.
+
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{clll}
+        \toprule[1.5pt]
+        \textbf{Configuration Parameter} & \textbf{Value}\\
+        \midrule
+        Clock               & 1 MHz       \\
+        Baud Rate           & 115200 bps  \\
+        Data Bits           & 8           \\
+        Parity              & No parity   \\
+        Stop Bits           & 1           \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+    \caption{EPS Server configuration parameter.}
+    \label{tab:eps_config}
+\end{table}
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{figures/eps_communication.drawio.png}
+        \caption{EPS Server communication diagram description.}
+        \label{fig:eps-server-communication}
+    \end{center}
+\end{figure}
+
+\subsection{OBDH Server}
+The OBDH Server can be used for full communication and all the commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by response (except for command Write parameter ID=2 that only uses a request). For commands that need a response it is required to leave a interval of at least 100ms from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and sincronize wrong transactions. When each side is communicating the listening side needs to send 0x00 while the other side transmits.
+All the request have seven bytes length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size accordingly to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in spi mode 0 and was tested with 1 MHz clock.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=1\textwidth]{figures/obdh_communication.drawio.png}
+        \caption{OBDH Server communication diagram description.}
+        \label{fig:obdh-server-communication}
+    \end{center}
+\end{figure}
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{clll}
+        \toprule[1.5pt]
+        \textbf{Configuration Parameter} & \textbf{Value}\\
+        \midrule
+        Mode                & 0                 \\
+        Clock               & 200 kHz to 1 MHz  \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+    \caption{OBDH Server configuration parameter.}
+    \label{tab:eps_config}
+\end{table}

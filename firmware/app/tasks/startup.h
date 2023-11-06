@@ -43,7 +43,7 @@
 
 #define TASK_STARTUP_NAME                   "Startup"
 #define TASK_STARTUP_STACK_SIZE             500
-#define TASK_STARTUP_PRIORITY               5
+#define TASK_STARTUP_PRIORITY               6
 
 /* Status done bit position */
 #define TASK_STARTUP_DONE                   2

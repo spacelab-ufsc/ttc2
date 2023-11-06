@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.12
+ * \version 0.4.5
  * 
  * \date 2019/10/27
  * 
@@ -115,8 +115,7 @@ int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms)
 
 int radio_available(void)
 {
-    /*TODO */
-    return -1;
+    return si446x_gpio_get_pin(SI446X_GPIO_NIRQ);
 }
 
 int radio_sleep(void)
