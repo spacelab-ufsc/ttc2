@@ -108,12 +108,12 @@ void si446x_reg_config(void)
     /* Set RF parameter like frequency, data rate, etc. */
     si446x_set_config(SI446X_CONFIGURATION_DATA, sizeof(SI446X_CONFIGURATION_DATA));
 
+
     uint8_t buf[2];
 
     /* Frequency adjust (Tested manually) */
     buf[0] = SI446X_XO_TUNE_REG_VALUE;
     si446x_set_properties(SI446X_PROPERTY_GLOBAL_XO_TUNE, buf, 1);
-
     /* TX/RX shares 128 bytes FIFO */
     buf[0] = 0x10;
     si446x_set_properties(SI446X_PROPERTY_GLOBAL_CONFIG, buf, 1);
@@ -464,9 +464,10 @@ void si446x_set_config(const uint8_t *parameters, uint16_t para_len)
         cmd_len = parameters[pos++] - 1;            /* Get command len */
         cmd = parameters[pos++];                    /* Get command */
         memcpy(buffer, parameters + pos, cmd_len);  /* Get parameters */
-
+        si446x_delay_ms(10);
         si446x_set_cmd(cmd, buffer, cmd_len);
         pos += cmd_len;
+
     }
 }
 
