@@ -36,7 +36,7 @@
 #include <system/sys_log/sys_log.h>
 #include <devices/radio/radio.h>
 #include <structs/ttc_data.h>
-
+#include <ngham/ngham.h>
 #include "uplink_manager.h"
 #include "startup.h"
 
@@ -61,14 +61,23 @@ void vTaskUplinkManager(void)
     ttc_data_buf.up_buf.position_to_write = 0;
 
     uint16_t rx_size = 230;
-    uint8_t rx_packet[230];
-    uint8_t pop_rx_packet[230];
+    uint8_t rx_packet[230] = {0};
 
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
 
-        /* TODO */
+        if (radio_available() == 0)
+        {
+            radio_recv(rx_packet, 230, 100);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package:");
+            sys_log_dump_hex(rx_packet, 230);
+            sys_log_new_line();
+
+            //ngham_decode(rx_packet); /* TODO */
+
+            uplink_add_packet(rx_packet, 220);
+        }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }
