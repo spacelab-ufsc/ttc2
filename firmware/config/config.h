@@ -24,6 +24,7 @@
  * \brief Configuration parameters definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
  * \version 0.4.5
  * 
@@ -35,6 +36,9 @@
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
+
+/* Targets the radio module, it can be '0' or '1'*/
+#define RADIO_MODULE                                    1
 
 /* Tasks */
 #define CONFIG_TASK_STARTUP_ENABLED                     1
