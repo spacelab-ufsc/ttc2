@@ -62,13 +62,6 @@ void vTaskObdhServer(void)
     obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
-    uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
-    uint8_t buffer3[10] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
-
-    uplink_add_packet(buffer2, 6);
-    uplink_add_packet(buffer3, 10);
-
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
