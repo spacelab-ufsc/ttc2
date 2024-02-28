@@ -39,6 +39,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/* Mutex config. */
+#define SI446X_MUTEX_WAIT_TIME_MS      100
+
 /**
  * \brief Si446x modes.
  */

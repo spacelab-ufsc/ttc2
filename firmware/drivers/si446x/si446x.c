@@ -65,6 +65,9 @@ int si446x_init(void)
     sys_log_new_line();
 #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
 
+    /* Create si446x mutex */
+    si446x_mutex_create();
+
     si446x_gpio_init();
 
     si446x_spi_init();
