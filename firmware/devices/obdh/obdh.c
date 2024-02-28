@@ -282,7 +282,7 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
 
                 break;
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
-                obdh_response->data.param_16 = *(ttc_data_buf->radio.last_rx_packet_bytes);
+                obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
 
                 break;
             default:
