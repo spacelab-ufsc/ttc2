@@ -64,26 +64,36 @@ int radio_init(void)
 
 int radio_send(uint8_t *data, uint16_t len)
 {
-    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmitting ");
-    sys_log_print_uint(len);
-    sys_log_print_msg(" byte(s)...");
-    sys_log_new_line();
-
     int err = -1;
 
-    led_set(LED_DOWNLINK);
-
-    if(si446x_tx_long_packet(data, len))
+    if (si446x_mutex_take() == 0)
     {
+        sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Transmitting ");
+        sys_log_print_uint(len);
+        sys_log_print_msg(" byte(s)...");
+        sys_log_new_line();
+
+        led_set(LED_DOWNLINK);
+
+        if(si446x_tx_long_packet(data, len))
+        {
+            led_clear(LED_DOWNLINK);
+
+            if(si446x_rx_init())
+            {
+                err = 0;
+            }
+        }
+
         led_clear(LED_DOWNLINK);
 
-        if(si446x_rx_init())
-        {
-            err = 0;
-        }
+        si446x_mutex_give();
     }
-
-    led_clear(LED_DOWNLINK);
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
+    }
 
     return err;
 }
@@ -94,20 +104,30 @@ int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms)
 
     uint16_t i = 0;
 
-    for(i = 0; i < (timeout_ms/100); i++)
+    if (si446x_mutex_take() == 0)
     {
-        if (si446x_wait_nirq())
+        for(i = 0; i < (timeout_ms/100); i++)
         {
-            res = (int)si446x_rx_packet(data, len);
+            if (si446x_wait_nirq())
+            {
+                res = (int)si446x_rx_packet(data, len);
 
-            si446x_clear_interrupts();
+                si446x_clear_interrupts();
 
-            si446x_rx_init();
+                si446x_rx_init();
 
-            break;
+                break;
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(500));
         }
 
-        vTaskDelay(pdMS_TO_TICKS(500));
+        si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
     }
 
     return res;
@@ -120,7 +140,21 @@ int radio_available(void)
 
 int radio_sleep(void)
 {
-    return (int)si446x_enter_standby_mode();
+    int err = -1;
+
+    if (si446x_mutex_take() == 0)
+    {
+    err = si446x_enter_standby_mode();
+
+    si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
+    }
+
+    return err;
 }
 
 int radio_get_temperature(radio_temp_t *temp)
