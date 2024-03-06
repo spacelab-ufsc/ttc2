@@ -81,8 +81,10 @@ static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
 
-static uint8_t spi_slave_dma_tx_data[228] = {0};
-static uint8_t spi_slave_dma_rx_data[228] = {0};
+#define DMA_TRANSFER_SIZE 15
+
+static uint8_t spi_slave_dma_tx_data[DMA_TRANSFER_SIZE] = {0};
+static uint8_t spi_slave_dma_rx_data[DMA_TRANSFER_SIZE] = {0};
 
 static uint16_t spi_slave_dma_tx_position;
 static uint16_t spi_slave_dma_rx_position;
@@ -100,7 +102,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     static DMA_initParam spi_slave_dma_param_tx = {
         .channelSelect          = DMA_CHANNEL_0,
         .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
-        .transferSize           = 228,
+        .transferSize           = DMA_TRANSFER_SIZE,
         .triggerSourceSelect    = DMA_TRIGGERSOURCE_13,
         .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
         .triggerTypeSelect      = DMA_TRIGGER_HIGH,
@@ -109,7 +111,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     static DMA_initParam spi_slave_dma_param_rx = {
         .channelSelect          = DMA_CHANNEL_1,
         .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
-        .transferSize           = 228,
+        .transferSize           = DMA_TRANSFER_SIZE,
         .triggerSourceSelect    = DMA_TRIGGERSOURCE_12,
         .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
         .triggerTypeSelect      = DMA_TRIGGER_HIGH,
@@ -310,8 +312,9 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
         DMA_enableTransfers(DMA_CHANNEL_0);
 
         spi_slave_dma_rx_position = 0U;
+        spi_slave_dma_tx_position = 8U;
 
-        for(i = 0U; i < 228U; i++)
+        for(i = 0U; i < DMA_TRANSFER_SIZE; i++)
         {
             spi_slave_dma_rx_data[i] = 0xFFU;
             spi_slave_dma_tx_data[i] = 0xFFU;
@@ -339,8 +342,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
         DMA_enableInterrupt(DMA_CHANNEL_1);
 
         DMA_enableTransfers(DMA_CHANNEL_1);
-
-        spi_slave_dma_tx_position = 8U;
 
         __bis_SR_register(LPM4_bits + GIE);
 
@@ -373,9 +374,7 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len)
     {
         spi_slave_dma_tx_data[spi_slave_dma_tx_position] = data[i];
 
-        spi_slave_dma_tx_position++;
-
-        if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
+        if (++spi_slave_dma_tx_position > (DMA_TRANSFER_SIZE - 1U)) /* Reset position after the end of the buffer */
         {
             spi_slave_dma_tx_position = 0U;
         }
@@ -383,9 +382,7 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len)
 
     spi_slave_dma_tx_data[spi_slave_dma_tx_position] = 0x7EU;
 
-    spi_slave_dma_tx_position++;
-
-    if (spi_slave_dma_tx_position > 227U) /* Reset position after the end of the buffer */
+    if (++spi_slave_dma_tx_position > (DMA_TRANSFER_SIZE - 1U)) /* Reset position after the end of the buffer */
     {
         spi_slave_dma_tx_position = 0U;
     }
@@ -403,9 +400,7 @@ void spi_slave_dma_read(uint8_t *data, uint16_t len)
 
             spi_slave_dma_rx_data[spi_slave_dma_rx_position] = 0xFFU; /* Clear after read */
 
-            spi_slave_dma_rx_position++;
-
-            if (spi_slave_dma_rx_position > 227U)
+            if (++spi_slave_dma_rx_position > (DMA_TRANSFER_SIZE - 1U))
             {
                 spi_slave_dma_rx_position = 0U; /* Reset position after the end of the buffer */
             }
