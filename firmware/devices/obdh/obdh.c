@@ -74,7 +74,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
     uint8_t request[7] = {0};
 
     spi_slave_dma_read(request, 7);
-
+    /*TODO: Check here for preamble!*/
     obdh_request->command = request[1];
 
     if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00)) /* Received a request */
@@ -307,27 +307,28 @@ int obdh_flush_request(obdh_request_t *obdh_request)
 static int obdh_write_parameter(obdh_response_t *obdh_response)
 {
     int err = 0;
-    uint8_t response[6] = {0};
+    uint8_t response[7] = {0};
 
-    response[0] = obdh_response->command;
-    response[1] = obdh_response->parameter;
+    response[0] = 0x7EU;
+    response[1] = obdh_response->command;
+    response[2] = obdh_response->parameter;
 
     switch(cmdpr_param_size(obdh_response->parameter))
     {
         case 1:
-            response[2] = obdh_response->data.param_8;
+            response[3] = obdh_response->data.param_8;
 
             break;
         case 2:
-            response[2] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
-            response[3] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
+            response[3] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
+            response[4] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
 
             break;
         case 4:
-            response[2] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
-            response[3] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
-            response[4] = (uint8_t)((obdh_response->data.param_32 >> 8) & 0xFFU);
-            response[5] = (uint8_t)(obdh_response->data.param_32 & 0xFFU);
+            response[3] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
+            response[4] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
+            response[5] = (uint8_t)((obdh_response->data.param_32 >> 8) & 0xFFU);
+            response[6] = (uint8_t)(obdh_response->data.param_32 & 0xFFU);
 
             break;
         default:
@@ -340,7 +341,7 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
 
     if (err == 0)
     {
-        spi_slave_dma_write(response, 6);
+        spi_slave_dma_write(response, 7);
     }
     else
     {
@@ -355,7 +356,9 @@ void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-
     uint8_t buffer[230];
     uint8_t i;
 
-    for (i = 0U; i < 230U; i++)
+    buffer[0] = 0x7EU;
+
+    for (i = 1U; i < number_of_bytes; i++)
     {
         buffer[i] = 0x00U;
     }
@@ -366,13 +369,29 @@ void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-
 static int obdh_write_packet(obdh_response_t *obdh_response)
 {
     int err = 0;
+    uint16_t buffer_size;
+    buffer_size = obdh_response->data.data_packet.len + 2;
 
-    spi_slave_dma_write(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
+    uint8_t buffer[buffer_size];
+
+    buffer[0] = 0x7EU;
+    buffer[1] = 0x04U;
+
+    for (uint16_t i = 2; i < buffer_size; i++)
+    {
+        buffer[i] = obdh_response->data.data_packet.packet[i-2];
+    }
+
+    spi_slave_dma_change_transfer_size(buffer_size);
+
+    spi_slave_dma_write(buffer, buffer_size);
 
     sys_log_print_str("Packet:");
 
     sys_log_dump_hex(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
     sys_log_new_line();
+
+    vTaskDelay(pdMS_TO_TICKS(100));
 
     return err;
 }
