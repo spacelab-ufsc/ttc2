@@ -84,6 +84,8 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len);
  */
 void spi_slave_dma_read(uint8_t *data, uint16_t len);
 
+void spi_slave_dma_change_transfer_size(uint16_t transfer_size);
+
 /**
  * \brief Enables SPI Slave port interruption.
  *
