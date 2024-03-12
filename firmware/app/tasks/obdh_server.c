@@ -62,9 +62,6 @@ void vTaskObdhServer(void)
     obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
-    uint8_t transmission_buffer[70U];
-    uint8_t transmission_buffer_p;
-
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
@@ -123,30 +120,15 @@ void vTaskObdhServer(void)
 
                     uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
 
-                    spi_slave_dma_change_transfer_size((obdh_response.data.data_packet.len + 2));
+                    obdh_send_response(&obdh_response);
 
-                    transmission_buffer[0] = 0x7EU;
-                    transmission_buffer[1] = 0x04U;
-
-                    for (transmission_buffer_p = 0U; transmission_buffer_p < obdh_response.data.data_packet.len; transmission_buffer_p++)
-                    {
-                        transmission_buffer[transmission_buffer_p + 2] = obdh_response.data.data_packet.packet[transmission_buffer_p];
-                    }
-
-                    spi_slave_dma_write(transmission_buffer, (obdh_response.data.data_packet.len + 2));
-
-                    vTaskDelay(pdMS_TO_TICKS(130));
-
-                    spi_slave_dma_read(NULL, (obdh_response.data.data_packet.len + 2));
-
-                    spi_slave_dma_change_transfer_size(7U);
                     obdh_write_read_bytes(7U);
-
 
                     break;
                 case 0x00:
                     /* Read mode */
                     obdh_write_read_bytes(7U);
+
                     break;
                 default:
                     break;
