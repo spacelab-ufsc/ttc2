@@ -87,9 +87,6 @@ static int spi_slave_setup_gpio(spi_port_t port);
 static uint8_t spi_slave_dma_tx_data[70U] = {0U};
 static uint8_t spi_slave_dma_rx_data[70U] = {0U};
 
-static uint16_t spi_slave_dma_tx_position;
-static uint16_t spi_slave_dma_rx_position;
-
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
     int err = 0;
@@ -311,9 +308,6 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
         DMA_enableInterrupt(DMA_CHANNEL_0);
 
         DMA_enableTransfers(DMA_CHANNEL_0);
-
-        spi_slave_dma_rx_position = 0U;
-        spi_slave_dma_tx_position = 8U;
 
         for(i = 0U; i < DMA_RX_TRANSFER_SIZE; i++)
         {
