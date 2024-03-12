@@ -368,30 +368,33 @@ void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-
 
 static int obdh_write_packet(obdh_response_t *obdh_response)
 {
-    int err = 0;
-    uint16_t buffer_size;
-    buffer_size = obdh_response->data.data_packet.len + 2;
+    int err = -1;
 
-    uint8_t buffer[buffer_size];
+    uint8_t transmission_buffer[70U];
+    uint8_t transmission_buffer_p;
 
-    buffer[0] = 0x7EU;
-    buffer[1] = 0x04U;
-
-    for (uint16_t i = 2; i < buffer_size; i++)
+    if((obdh_response->data.data_packet.len + 2) < 70U)
     {
-        buffer[i] = obdh_response->data.data_packet.packet[i-2];
+        spi_slave_dma_change_transfer_size((obdh_response->data.data_packet.len + 2));
+
+        transmission_buffer[0] = 0x7EU;
+        transmission_buffer[1] = 0x04U;
+
+        for (transmission_buffer_p = 0U; transmission_buffer_p < obdh_response->data.data_packet.len; transmission_buffer_p++)
+        {
+            transmission_buffer[transmission_buffer_p + 2] = obdh_response->data.data_packet.packet[transmission_buffer_p];
+        }
+
+        spi_slave_dma_write(transmission_buffer, (obdh_response->data.data_packet.len + 2));
+
+        vTaskDelay(pdMS_TO_TICKS(130));
+
+        spi_slave_dma_read(NULL, (obdh_response->data.data_packet.len + 2));
+
+        spi_slave_dma_change_transfer_size(7U);
+
+        err = 0;
     }
-
-    spi_slave_dma_change_transfer_size(buffer_size);
-
-    spi_slave_dma_write(buffer, buffer_size);
-
-    sys_log_print_str("Packet:");
-
-    sys_log_dump_hex(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
-    sys_log_new_line();
-
-    vTaskDelay(pdMS_TO_TICKS(100));
 
     return err;
 }
