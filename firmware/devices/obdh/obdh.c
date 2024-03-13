@@ -114,20 +114,26 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                 obdh_request->data.data_packet.len = request[2];
 
-                obdh_write_read_bytes(request[2]+2U);
+                spi_slave_dma_change_transfer_size((request[2] + 3U));
 
-                vTaskDelay(pdMS_TO_TICKS(100));
+                obdh_write_read_bytes((request[2] + 3U));
 
-                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
+                vTaskDelay(pdMS_TO_TICKS(130));
+
+                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len + 3U));
+
+                /* Removing protocol bytes */
+                for (uint16_t i = 0; i < (uint16_t)(request[2]); i++)
+                {
+                    obdh_request->data.data_packet.packet[i] = obdh_request->data.data_packet.packet[i+3U];
+                }
 
                 sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
                 sys_log_print_uint(obdh_request->data.data_packet.len);
                 sys_log_print_msg(" bytes.");
                 sys_log_new_line();
 
-                sys_log_print_str("Packet: ");
-                sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
-                sys_log_new_line();
+                spi_slave_dma_change_transfer_size(7U);
 
                 break;
             case CMDPR_CMD_READ_FIRST_PACKET:
@@ -282,6 +288,8 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
 
                 break;
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
+                /* Update rx packet bytes */
+                ttc_data_buf->radio.last_rx_packet_bytes = ttc_data_buf->up_buf.packet_sizes[ttc_data_buf->up_buf.position_to_read];
                 obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
 
                 break;
