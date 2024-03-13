@@ -112,7 +112,7 @@ void vTaskObdhServer(void)
                 case CMDPR_CMD_TRANSMIT_PACKET:
                     obdh_write_read_bytes(7);
 
-                    downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
+                    downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
                     break;
                 case CMDPR_CMD_READ_FIRST_PACKET:
