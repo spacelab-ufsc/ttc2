@@ -88,11 +88,6 @@ void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 
     ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write] = packet_size;
 
-    if (ttc_data_buf.radio.rx_packet_counter == 0U)
-    {
-        ttc_data_buf.radio.last_rx_packet_bytes = packet_size;
-    }
-
     for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write]; i++)
     {
         ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_write][i] = packet[i];
@@ -129,9 +124,6 @@ void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size)
         {
             ttc_data_buf.up_buf.position_to_read = 0;
         }
-
-        /* Update rx packet bytes */
-        ttc_data_buf.radio.last_rx_packet_bytes = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
     }
 }
 
