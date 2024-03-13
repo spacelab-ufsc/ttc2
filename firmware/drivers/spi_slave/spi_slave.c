@@ -84,8 +84,8 @@ static int spi_slave_setup_gpio(spi_port_t port);
 #define DMA_TX_TRANSFER_SIZE 7
 #define DMA_RX_TRANSFER_SIZE 7
 
-static uint8_t spi_slave_dma_tx_data[70U] = {0U};
-static uint8_t spi_slave_dma_rx_data[70U] = {0U};
+static uint8_t spi_slave_dma_tx_data[230U] = {0U};
+static uint8_t spi_slave_dma_rx_data[230U] = {0U};
 
 int spi_slave_init(spi_port_t port, spi_config_t config)
 {
