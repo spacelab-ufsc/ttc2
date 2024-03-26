@@ -74,15 +74,7 @@ void vTaskEpsServer(void)
                 sys_log_new_line();
 
                 sys_log_print_str("Packet: ");
-
-                uint16_t i = 0;
-
-                for(i = 0; i < eps_request.data.data_packet.len; i++)
-                {
-                    sys_log_print_hex(eps_request.data.data_packet.packet[i]);
-                    sys_log_print_str("|");
-                }
-
+                sys_log_dump_hex(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
                 sys_log_new_line();
 
                 downlink_add_packet(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);

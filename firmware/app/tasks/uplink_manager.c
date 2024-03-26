@@ -68,7 +68,7 @@ void vTaskUplinkManager(void)
 
         if (radio_available() == 0U)
         {
-            radio_recv(rx_packet, 230U, 100U);
+            radio_recv(rx_packet, 80U, 100U);
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package:");
             sys_log_dump_hex(rx_packet, 230U);
             sys_log_new_line();
