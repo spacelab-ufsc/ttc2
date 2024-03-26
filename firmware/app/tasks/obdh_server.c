@@ -91,12 +91,12 @@ void vTaskObdhServer(void)
                     switch(obdh_request.data.param_8)
                     {
                         case 0x00:
-                            sys_log_print_msg("Turned on.");
+                            sys_log_print_msg("Turned off.");
                             ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                             break;
                         case 0x01:
-                            sys_log_print_msg("Turned off.");
+                            sys_log_print_msg("Turned on.");
                             ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                             break;
