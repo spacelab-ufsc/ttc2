@@ -390,7 +390,7 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
 
         for (transmission_buffer_p = 0U; transmission_buffer_p < obdh_response->data.data_packet.len; transmission_buffer_p++)
         {
-            transmission_buffer[transmission_buffer_p + 2] = obdh_response->data.data_packet.packet[transmission_buffer_p];
+            transmission_buffer[transmission_buffer_p + 2U] = obdh_response->data.data_packet.packet[transmission_buffer_p];
         }
 
         spi_slave_dma_write(transmission_buffer, (obdh_response->data.data_packet.len + 2));
