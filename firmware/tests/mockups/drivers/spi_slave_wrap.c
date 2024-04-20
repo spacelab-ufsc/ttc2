@@ -127,11 +127,16 @@ int __wrap_spi_slave_flush(spi_port_t port)
     return mock_type(int);
 }
 
-uint16_t spi_slave_bytes_not_sent(spi_port_t port)
+uint16_t __wrap_spi_slave_bytes_not_sent(spi_port_t port)
 {
     check_expected(port);
 
     return mock_type(uint16_t);
+}
+
+void __wrap_spi_slave_dma_change_transfer_size(uint16_t transfer_size)
+{
+    check_expected(transfer_size);
 }
 
 /** \} End of spi_slave_wrap group */

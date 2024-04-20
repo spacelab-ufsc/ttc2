@@ -349,4 +349,14 @@ void __wrap_si446x_delay_us(uint32_t us)
     check_expected(us);
 }
 
+int __wrap_si446x_mutex_take(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_si446x_mutex_give(void)
+{
+    return mock_type(int);
+}
+
 /** \} End of si446x_wrap group */

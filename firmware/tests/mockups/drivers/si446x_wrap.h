@@ -128,6 +128,10 @@ void __wrap_si446x_delay_ms(uint16_t ms);
 
 void __wrap_si446x_delay_us(uint32_t us);
 
+int __wrap_si446x_mutex_give(void);
+
+int __wrap_si446x_mutex_take(void);
+
 #endif /* SI446X_WRAP_H_ */
 
 /** \} End of si446x_wrap group */
