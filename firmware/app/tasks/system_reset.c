@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 0.5.1
  * 
- * \date 2020/01/12
+ * \date 2024/04/22
  * 
  * \addtogroup system_reset
  * \{

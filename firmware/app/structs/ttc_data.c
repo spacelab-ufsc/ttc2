@@ -26,9 +26,9 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 0.5.1
  * 
- * \date 2021/04/14
+ * \date 2024/04/22
  * 
  * \addtogroup ttc_data
  * \{

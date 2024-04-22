@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.5.1
  * 
- * \date 2021/09/04
+ * \date 2024/04/22
  * 
  * \defgroup si446x_unit_test Si446x
  * \ingroup tests

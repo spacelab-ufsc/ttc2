@@ -25,9 +25,9 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.4.5
+ * \version 0.5.1
  * 
- * \date 2021/08/25
+ * \date 2024/04/22
  * 
  * \defgroup spi_slave_wrap SPI Slave Wrap
  * \ingroup tests
