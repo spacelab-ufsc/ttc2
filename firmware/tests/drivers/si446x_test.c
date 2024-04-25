@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.5.1
  * 
- * \date 2021/09/04
+ * \date 2024/04/22
  * 
  * \defgroup si446x_unit_test Si446x
  * \ingroup tests
@@ -44,7 +44,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <config/radio_config_Si4463.h>
+#include <config/config.h>
+
+#if defined(RADIO_MODULE) && (RADIO_MODULE == 0)
+#include <config/uhf_radio_config_Si4463.h>
+
+#elif defined(RADIO_MODULE) && (RADIO_MODULE == 1)
+#include <config/vhf_radio_config_Si4463.h>
+#endif
+
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
 #include <drivers/si446x/si446x.h>

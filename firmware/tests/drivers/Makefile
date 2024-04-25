@@ -34,8 +34,8 @@ isis_antenna_test: $(BUILD_DIR)/isis_antenna.o $(BUILD_DIR)/isis_antenna_delay.o
 	$(CC) $(ISIS_ANTENNA_TEST_FLAGS) $(BUILD_DIR)/isis_antenna.o $(BUILD_DIR)/isis_antenna_delay.o $(BUILD_DIR)/isis_antenna_i2c.o $(BUILD_DIR)/isis_antenna_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/tca4311a_wrap.o $(BUILD_DIR)/task.o -o $(BUILD_DIR)/$(TARGET_ISIS_ANTENNA) -lm -lcmocka
 
 .PHONY: si446x_test
-si446x_test: $(BUILD_DIR)/si446x.o $(BUILD_DIR)/si446x_delay.o $(BUILD_DIR)/si446x_gpio.o $(BUILD_DIR)/si446x_spi.o $(BUILD_DIR)/si446x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_wrap.o $(BUILD_DIR)/gpio_wrap.o $(BUILD_DIR)/task.o
-	$(CC) $(SI446X_TEST_FLAGS) $(BUILD_DIR)/si446x.o $(BUILD_DIR)/si446x_delay.o $(BUILD_DIR)/si446x_gpio.o $(BUILD_DIR)/si446x_spi.o $(BUILD_DIR)/si446x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_wrap.o $(BUILD_DIR)/gpio_wrap.o $(BUILD_DIR)/task.o -o $(BUILD_DIR)/$(TARGET_SI446X) -lm -lcmocka
+si446x_test: $(BUILD_DIR)/si446x.o $(BUILD_DIR)/si446x_delay.o $(BUILD_DIR)/si446x_gpio.o $(BUILD_DIR)/si446x_spi.o $(BUILD_DIR)/si446x_mutex.o $(BUILD_DIR)/si446x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_wrap.o $(BUILD_DIR)/gpio_wrap.o $(BUILD_DIR)/task.o $(BUILD_DIR)/semphr.o
+	$(CC) $(SI446X_TEST_FLAGS) $(BUILD_DIR)/si446x.o $(BUILD_DIR)/si446x_delay.o $(BUILD_DIR)/si446x_gpio.o $(BUILD_DIR)/si446x_spi.o $(BUILD_DIR)/si446x_mutex.o $(BUILD_DIR)/si446x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/spi_wrap.o $(BUILD_DIR)/gpio_wrap.o $(BUILD_DIR)/task.o $(BUILD_DIR)/semphr.o -o $(BUILD_DIR)/$(TARGET_SI446X) -lm -lcmocka
 
 .PHONY: ina22x_test
 ina22x_test: $(BUILD_DIR)/ina22x.o $(BUILD_DIR)/ina22x_test.o $(BUILD_DIR)/sys_log_wrap.o $(BUILD_DIR)/i2c_wrap.o
@@ -65,6 +65,9 @@ $(BUILD_DIR)/si446x_delay.o: ../../drivers/si446x/si446x_delay.c
 	$(CC) $(SI446X_TEST_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/si446x_gpio.o: ../../drivers/si446x/si446x_gpio.c
+	$(CC) $(SI446X_TEST_FLAGS) -c $< -o $@
+
+$(BUILD_DIR)/si446x_mutex.o: ../../drivers/si446x/si446x_mutex.c
 	$(CC) $(SI446X_TEST_FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/si446x_spi.o: ../../drivers/si446x/si446x_spi.c
@@ -118,6 +121,9 @@ $(BUILD_DIR)/tca4311a_wrap.o: ../mockups/drivers/tca4311a_wrap.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(BUILD_DIR)/task.o: ../freertos_sim/task.c
+	$(CC) $(FLAGS) -c $< -o $@
+
+$(BUILD_DIR)/semphr.o: ../freertos_sim/semphr.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 .PHONY: clean

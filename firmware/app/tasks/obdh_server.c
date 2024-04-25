@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 0.5.1
  *
- * \date 2023/03/03
+ * \date 2024/04/22
  *
  * \addtogroup obdh_server
  * \{
@@ -62,13 +62,6 @@ void vTaskObdhServer(void)
     obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
-    uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
-    uint8_t buffer3[10] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
-
-    uplink_add_packet(buffer2, 6);
-    uplink_add_packet(buffer3, 10);
-
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
@@ -91,19 +84,19 @@ void vTaskObdhServer(void)
 
                     break;
                 case CMDPR_CMD_WRITE_PARAM:
-                    obdh_write_read_bytes(6);
+                    obdh_write_read_bytes(7);
 
                     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
 
                     switch(obdh_request.data.param_8)
                     {
                         case 0x00:
-                            sys_log_print_msg("Turned on.");
+                            sys_log_print_msg("Turned off.");
                             ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                             break;
                         case 0x01:
-                            sys_log_print_msg("Turned off.");
+                            sys_log_print_msg("Turned on.");
                             ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
 
                             break;
@@ -117,9 +110,9 @@ void vTaskObdhServer(void)
 
                     break;
                 case CMDPR_CMD_TRANSMIT_PACKET:
-                    obdh_write_read_bytes(6);
+                    obdh_write_read_bytes(7);
 
-                    downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
+                    downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
                     break;
                 case CMDPR_CMD_READ_FIRST_PACKET:
@@ -129,10 +122,13 @@ void vTaskObdhServer(void)
 
                     obdh_send_response(&obdh_response);
 
+                    obdh_write_read_bytes(7U);
+
                     break;
                 case 0x00:
                     /* Read mode */
-                    obdh_write_read_bytes(6);
+                    obdh_write_read_bytes(7U);
+
                     break;
                 default:
                     break;

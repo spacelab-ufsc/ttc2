@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 0.5.1
  *
- * \date 2023/04/03
+ * \date 2024/04/22
  *
  * \addtogroup uplink_manager
  * \{
@@ -36,7 +36,7 @@
 #include <system/sys_log/sys_log.h>
 #include <devices/radio/radio.h>
 #include <structs/ttc_data.h>
-
+#include <ngham/ngham.h>
 #include "uplink_manager.h"
 #include "startup.h"
 
@@ -53,22 +53,30 @@ void vTaskUplinkManager(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Initializing the Uplink Manager...");
     sys_log_new_line();
 
-    ttc_data_buf.radio.rx_fifo_counter = 0;
-    ttc_data_buf.radio.rx_packet_counter = 0;
-    ttc_data_buf.radio.last_rx_packet_bytes = &(ttc_data_buf.up_buf.packet_sizes);
+    ttc_data_buf.radio.rx_fifo_counter = 0U;
+    ttc_data_buf.radio.rx_packet_counter = 0U;
+    ttc_data_buf.radio.last_rx_packet_bytes = 0U;
 
-    ttc_data_buf.up_buf.position_to_read = 0;
-    ttc_data_buf.up_buf.position_to_write = 0;
+    ttc_data_buf.up_buf.position_to_read = 0U;
+    ttc_data_buf.up_buf.position_to_write = 0U;
 
-    uint16_t rx_size = 230;
-    uint8_t rx_packet[230];
-    uint8_t pop_rx_packet[230];
+    uint8_t rx_packet[230] = {0};
 
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
 
-        /* TODO */
+        if (radio_available() == 0U)
+        {
+            radio_recv(rx_packet, 80U, 100U);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package:");
+            sys_log_dump_hex(rx_packet, 230U);
+            sys_log_new_line();
+
+            /*TODO ngham_decode(rx_packet);*/
+
+            uplink_add_packet(rx_packet, 220U);
+        }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
     }

@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.5.1
  * 
- * \date 2021/04/27
+ * \date 2024/04/22
  * 
  * \defgroup si446x_wrap Si446x Wrap
  * \ingroup tests
@@ -127,6 +127,10 @@ void __wrap_si446x_delay_s(uint8_t s);
 void __wrap_si446x_delay_ms(uint16_t ms);
 
 void __wrap_si446x_delay_us(uint32_t us);
+
+int __wrap_si446x_mutex_give(void);
+
+int __wrap_si446x_mutex_take(void);
 
 #endif /* SI446X_WRAP_H_ */
 

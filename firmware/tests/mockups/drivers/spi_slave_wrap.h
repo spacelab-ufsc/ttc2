@@ -25,9 +25,9 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.4.5
+ * \version 0.5.1
  * 
- * \date 2021/08/25
+ * \date 2024/04/22
  * 
  * \defgroup spi_slave_wrap SPI Slave Wrap
  * \ingroup tests
@@ -58,7 +58,9 @@ int __wrap_spi_slave_write(spi_port_t port, uint8_t *data, uint16_t len);
 
 int __wrap_spi_slave_flush(spi_port_t port);
 
-uint16_t spi_slave_bytes_not_sent(spi_port_t port);
+uint16_t __wrap_spi_slave_bytes_not_sent(spi_port_t port);
+
+void __wrap_spi_slave_dma_change_transfer_size(uint16_t transfer_size);
 
 #endif /* SPI_WRAP_H_ */
 

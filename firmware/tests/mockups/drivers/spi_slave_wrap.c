@@ -25,9 +25,9 @@
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.4.5
+ * \version 0.5.1
  * 
- * \date 2022/05/22
+ * \date 2024/04/22
  * 
  * \addtogroup spi_slave_wrap
  * \{
@@ -127,11 +127,16 @@ int __wrap_spi_slave_flush(spi_port_t port)
     return mock_type(int);
 }
 
-uint16_t spi_slave_bytes_not_sent(spi_port_t port)
+uint16_t __wrap_spi_slave_bytes_not_sent(spi_port_t port)
 {
     check_expected(port);
 
     return mock_type(uint16_t);
+}
+
+void __wrap_spi_slave_dma_change_transfer_size(uint16_t transfer_size)
+{
+    check_expected(transfer_size);
 }
 
 /** \} End of spi_slave_wrap group */

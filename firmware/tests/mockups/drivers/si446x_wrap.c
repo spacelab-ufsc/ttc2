@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 0.5.1
  * 
- * \date 2021/04/27
+ * \date 2024/04/22
  * 
  * \addtogroup si446x_wrap
  * \{
@@ -347,6 +347,16 @@ void __wrap_si446x_delay_ms(uint16_t ms)
 void __wrap_si446x_delay_us(uint32_t us)
 {
     check_expected(us);
+}
+
+int __wrap_si446x_mutex_take(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_si446x_mutex_give(void)
+{
+    return mock_type(int);
 }
 
 /** \} End of si446x_wrap group */

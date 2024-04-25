@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 0.5.1
  *
- * \date 2023/03/03
+ * \date 2024/04/22
  *
  * \defgroup obdh OBDH
  * \ingroup tasks
@@ -41,7 +41,7 @@
 #include <task.h>
 
 #define TASK_OBDH_SERVER_NAME                "OBDH Server"       /**< Task name. */
-#define TASK_OBDH_SERVER_STACK_SIZE          4000                /**< Stack size in bytes. */
+#define TASK_OBDH_SERVER_STACK_SIZE          2000                /**< Stack size in bytes. */
 #define TASK_OBDH_SERVER_PRIORITY            5                   /**< Task priority. */
 #define TASK_OBDH_SERVER_PERIOD_MS           100                 /**< Task period in milliseconds. */
 #define TASK_OBDH_SERVER_INITIAL_DELAY_MS    200                 /**< Delay, in milliseconds, before the first execution. */
