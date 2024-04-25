@@ -60,7 +60,7 @@ void vTaskUplinkManager(void)
     ttc_data_buf.up_buf.position_to_read = 0U;
     ttc_data_buf.up_buf.position_to_write = 0U;
 
-    uint8_t rx_packet[230] = {0U};
+    uint8_t rx_packet[230] = {0};
 
     while(1)
     {
@@ -73,7 +73,7 @@ void vTaskUplinkManager(void)
             sys_log_dump_hex(rx_packet, 230U);
             sys_log_new_line();
 
-            //ngham_decode(rx_packet); /* TODO */
+            /*TODO ngham_decode(rx_packet);*/
 
             uplink_add_packet(rx_packet, 220U);
         }
