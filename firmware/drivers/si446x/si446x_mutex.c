@@ -34,6 +34,8 @@
  * \{
  */
 
+#include <stddef.h>
+
 #include <FreeRTOS.h>
 #include <semphr.h>
 
