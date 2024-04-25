@@ -25,9 +25,9 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.12
+ * \version 0.5.1
  * 
- * \date 2021/02/21
+ * \date 2024/04/25
  * 
  * \defgroup radio_unit_test Radio
  * \ingroup tests
@@ -63,6 +63,8 @@ static void radio_send_test(void **state)
     uint8_t data[50] = {0};
     uint16_t len = 50;
 
+    will_return(__wrap_si446x_mutex_take, 0);
+
     expect_value(__wrap_led_set, l, LED_DOWNLINK);
     will_return(__wrap_led_set, 0);
 
@@ -79,6 +81,8 @@ static void radio_send_test(void **state)
     expect_value(__wrap_led_clear, l, LED_DOWNLINK);
     will_return(__wrap_led_clear, 0);
 
+    will_return(__wrap_si446x_mutex_give, 0);
+
     assert_return_code(radio_send(data, len), 0);
 }
 
@@ -88,6 +92,8 @@ static void radio_recv_test(void **state)
     uint8_t len = 50;
     uint32_t timeout_ms = 100;
     uint16_t i;
+
+    will_return(__wrap_si446x_mutex_take, 0);
 
     will_return(__wrap_si446x_wait_nirq, true);
 
@@ -104,12 +110,18 @@ static void radio_recv_test(void **state)
 
     will_return(__wrap_si446x_rx_init, true);
 
+    will_return(__wrap_si446x_mutex_give, 0);
+
     assert_return_code(radio_recv(data, len, timeout_ms), len);
 }
 
 static void radio_sleep_test(void **state)
 {
+    will_return(__wrap_si446x_mutex_take, 0);
+
     will_return(__wrap_si446x_enter_standby_mode, 0);
+
+    will_return(__wrap_si446x_mutex_give, 0);
 
     assert_return_code(radio_sleep(), 0);
 }
