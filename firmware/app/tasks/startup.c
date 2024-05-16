@@ -92,8 +92,8 @@ void vTaskStartup(void)
 
     /* TTC parameters */
     ttc_data_buf.hw_version = 0x04;
-    ttc_data_buf.fw_version = 0x00000400;
-    ttc_data_buf.device_id = 0xCC2B;
+    ttc_data_buf.fw_version = 0x00000405;
+    ttc_data_buf.device_id = 0xCC2A + RADIO_MODULE;
 
 #if defined(CONFIG_DEV_MEDIA_INT_ENABLED) && (CONFIG_DEV_MEDIA_INT_ENABLED == 1)
     /* Internal non-volatile memory initialization */
