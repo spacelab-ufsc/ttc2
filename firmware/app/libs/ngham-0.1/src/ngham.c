@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
  * \version 0.1.0
- * 
+ *
  * \date 2023/03/12
  * 
  * \addtogroup ngham

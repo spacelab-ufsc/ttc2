@@ -24,10 +24,11 @@
  * \brief Reed-Solomon C library definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.1
  * 
- * \version 0.1.0
- * 
- * \date 2022/03/06
+ * \date 2024/05/09
  * 
  * \defgroup rsclib Reed Solomon C Library
  * \{
@@ -38,23 +39,23 @@
 
 #include <stdint.h>
 
-#define RSC_VERSION         "v0.1.0"
+#define RSC_VERSION         "v1.0.0"
 
 /**
  * \brief Reed-Solomon codec control block.
  */
 typedef struct
 {
-    int mm;                 /**< Bits per symbol */
-    int nn;                 /**< Symbols per block (= (1 << mm) - 1) */
+    uint32_t mm;                 /**< Bits per symbol */
+    uint32_t nn;            /**< Symbols per block (= (1 << mm) - 1) */
     uint8_t alpha_to[256];  /**< log lookup table */
     uint8_t index_of[256];  /**< Antilog lookup table */
     uint8_t genpoly[64];    /**< Generator polynomial */
-    int nroots;             /**< Number of generator roots = number of parity symbols */
-    int fcr;                /**< First consecutive root, index form */
-    int prim;               /**< Primitive element, index form */
-    int iprim;              /**< prim-th root of 1, index form */
-    int pad;                /**< Padding bytes in shortened block */
+    uint32_t nroots;             /**< Number of generator roots = number of parity symbols */
+    uint32_t fcr;                /**< First consecutive root, index form */
+    uint32_t prim;               /**< Primitive element, index form */
+    uint32_t iprim;              /**< prim-th root of 1, index form */
+    uint32_t pad;                /**< Padding bytes in shortened block */
 } reed_solomon_t;
 
 /**
@@ -76,7 +77,7 @@ typedef struct
  *
  * \return The status/error code.
  */
-int rsc_init(int symsize, int gfpoly, int fcr, int prim, int nroots, int pad, reed_solomon_t *rs);
+int rsc_init(uint32_t symsize, int gfpoly, uint32_t fcr, uint32_t prim, uint32_t nroots, uint32_t pad, reed_solomon_t *rs);
 
 /**
  * \brief Computes the parity data of a given byte sequence.
@@ -108,7 +109,7 @@ void rsc_encode(reed_solomon_t *rs, uint8_t *data, uint8_t *parity, uint8_t *par
  *
  * \return The status/error code.
  */
-int rsc_decode(reed_solomon_t *rs, uint8_t *pkt, uint8_t *data, uint8_t *err_pos, uint8_t *num_err);
+int rsc_decode(reed_solomon_t *rs, uint8_t *data, int *err_pos, int *num_err);
 
 #endif /* RSC_H_ */
 
