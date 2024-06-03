@@ -16,7 +16,7 @@
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with NGHam. If not, see <http://www.gnu.org/licenses/>.
+ * along with NGHam. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -62,7 +62,7 @@ const uint8_t ccsds_poly[255] = {0xFF, 0x48, 0x0E, 0xC0, 0x9A, 0x0D, 0x70, 0xBC,
 
 uint8_t ccsds_poly_pos = 0U;
 
-void ccsds_scrambler_init()
+void ccsds_scrambler_init(void)
 {
     ccsds_poly_pos = 0U;
 }

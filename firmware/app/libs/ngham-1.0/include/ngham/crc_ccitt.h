@@ -1,5 +1,5 @@
 /*
- * ccsds_scrambler.h
+ * crc_ccitt.h
  * 
  * Copyright The NGHam Contributors.
  * 
@@ -16,47 +16,51 @@
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with NGHam. If not, see <http://www.gnu.org/licenses/>.
+ * along with NGHam. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
 /**
- * \brief CCSDS scrambler definition.
+ * \brief CRC-CCITT definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.0.0
+ * \version 0.0.2
  * 
  * \date 2023/03/12
  * 
- * \defgroup ccsds-scrambler CCSDS Scrambler
+ * \defgroup crc-ccitt CRC-CCITT
  * \ingroup ngham
  * \{
  */
 
-#ifndef CCSDS_SCRAMBLER_H_
-#define CCSDS_SCRAMBLER_H_
+#ifndef CRC_CCITT_H_
+#define CRC_CCITT_H_
 
 #include <stdint.h>
 
-extern const uint8_t ccsds_poly[255];
+/**
+ * \brief Computes the CRC16-CCITT value of a single byte.
+ *
+ * \param[in] buf is the byte to compute the CRC.
+ *
+ * \param[in] crc is the value.
+ *
+ * \return The computed CRC16-CCITT value.
+ */
+uint16_t crc_ccitt_byte(uint8_t buf, uint16_t crc);
 
 /**
- * \brief .
+ * \brief Computes the CRC16-CCITT value of a sequence of bytes.
  *
- * \return .
+ * \param[in] buf is the array of bytes to compute the CRC.
+ *
+ * \param[in] buf_len is the number of bytes of the given array.
+ *
+ * \return The computed CRC16-CCITT value.
  */
-void ccsds_scrambler_init(void);
+uint16_t crc_ccitt(uint8_t *buf, uint16_t buf_len);
 
-/**
- * \brief .
- *
- * \param[in] data .
- *
- * \return .
- */
-uint8_t ccsds_scrambler_xor(uint8_t data);
+#endif /* CRC_CCITT_H_ */
 
-#endif /* CCSDS_SCRAMBLER_H_ */
-
-/**< \} End of ccsds-scrambler group */
+/**< \} End of crc-ccitt group */

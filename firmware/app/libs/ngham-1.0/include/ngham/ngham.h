@@ -16,7 +16,7 @@
  * GNU Lesser General Public License for more details.
  * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with NGHam. If not, see <http://www.gnu.org/licenses/>.
+ * along with NGHam. If not, see <http:/\/www.gnu.org/licenses/>.
  * 
  */
 
@@ -24,10 +24,11 @@
  * \brief NGHam library definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.0
+ * \version 1.0.0
  * 
- * \date 2023/03/12
+ * \date 2024/06/03
  * 
  * \defgroup ngham NGHam
  * \{
@@ -40,7 +41,7 @@
 
 #include "ngham_packets.h"
 
-#define NGHAM_VERSION                   "v0.1.0"
+#define NGHAM_VERSION                   "v1.0.0"
 
 #define NGH_PREAMBLE_SIZE               4U
 #define NGH_SYNC_SIZE                   4U
@@ -81,13 +82,21 @@ int ngham_init(void);
 int ngham_encode(uint8_t *data, uint16_t len, uint8_t flags, uint8_t *pkt, uint16_t *pkt_len);
 
 /**
- * \brief Decodes a given NGHam packet to data.
+ * \brief Encodes a given data into a NGHam packet.
  *
- * \param[in] d .
+ * Received packets are passed to this function - max. length 512B.
  *
- * \return None.
+ * \param[in] pkt is the array of bytes to be decoded.
+ *
+ * \param[in] pkt_len is number of bytes of the packet.
+ *
+ * \param[in,out] data is a pointer to store the decoded packet.
+ *
+ * \param[in,out] data_len is the number of bytes of the decoded packet.
+ *
+ * \return The status/error code.
  */
-void ngham_decode(uint8_t d);
+int ngham_decode(uint8_t* pkt, uint16_t pkt_len, uint8_t* data, uint16_t* data_len);
 
 #endif /* NGHAM_H_ */
 
