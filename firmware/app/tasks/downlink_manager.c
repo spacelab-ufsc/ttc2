@@ -37,6 +37,7 @@
 #include <system/sys_log/sys_log.h>
 #include <devices/radio/radio.h>
 #include <structs/ttc_data.h>
+#include <ngham/ngham.h>
 
 #include "downlink_manager.h"
 #include "startup.h"
