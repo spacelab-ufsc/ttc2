@@ -44,8 +44,8 @@
 #include <config/vhf_radio_config_Si4463.h>
 
 #else
-sys_log_print_event_from_module(SYS_LOG_ERROR, "Radio Configuration", "Failed to determine target radio!");
-sys_log_new_line();
+#error Define the target radio module on the configuration file (config/config.h)
+
 #endif /* CONFIG_DEV_RADIO_ENABLED */
 
 #include <system/sys_log/sys_log.h>
