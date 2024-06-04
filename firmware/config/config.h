@@ -38,7 +38,7 @@
 #define CONFIG_H_
 
 /* Targets the radio module, it can be '0' or '1'*/
-#define RADIO_MODULE                                    1
+#define RADIO_MODULE                                   -1
 
 /* Tasks */
 #define CONFIG_TASK_STARTUP_ENABLED                     1
@@ -49,10 +49,10 @@
 #define CONFIG_TASK_READ_SENSORS_ENABLED                1
 #define CONFIG_TASK_BEACON_ENABLED                      0
 #define CONFIG_TASK_TIME_CONTROL_ENABLED                1
-#define CONFIG_TASK_EPS_SERVER_ENABLED                  0
+#define CONFIG_TASK_EPS_SERVER_ENABLED                  1
 #define CONFIG_TASK_OBDH_SERVER_ENABLED                 1
 #define CONFIG_TASK_DOWNLINK_MANAGER_ENABLED            1
-#define CONFIG_TASK_UPLINK_MANAGER_ENABLED              0
+#define CONFIG_TASK_UPLINK_MANAGER_ENABLED              1
 #define CONFIG_TASK_ANTENNA_DEPLOYMENT_ENABLED          1
 #define CONFIG_TASK_READ_ANTENNA_ENABLED                0
 
