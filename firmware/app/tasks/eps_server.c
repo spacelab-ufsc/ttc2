@@ -73,10 +73,6 @@ void vTaskEpsServer(void)
                 sys_log_print_msg(" bytes!");
                 sys_log_new_line();
 
-                sys_log_print_str("Packet: ");
-                sys_log_dump_hex(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
-                sys_log_new_line();
-
                 downlink_add_packet(eps_request.data.data_packet.packet, eps_request.data.data_packet.len);
 
                 break;
