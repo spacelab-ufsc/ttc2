@@ -75,11 +75,17 @@ int obdh_read_request(obdh_request_t *obdh_request)
     int err = 0;
     uint8_t request[7] = {0};
 
-    spi_slave_dma_read(request, 7);
-    /*TODO: Check here for preamble!*/
+    spi_slave_dma_read(request, 7U);
+
+    /*Check for preamble */
+    if (request[0] != 0x7EU)
+    {
+        err = -1;
+        spi_slave_dma_change_transfer_size(7U);
+    }
     obdh_request->command = request[1];
 
-    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00)) /* Received a request */
+    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00) && (err != -1)) /* Received a request */
     {
         switch(obdh_request->command)
         {
