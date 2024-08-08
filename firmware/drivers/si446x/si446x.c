@@ -38,10 +38,10 @@
 #include <config/config.h>
 
 #if defined(RADIO_MODULE) && (RADIO_MODULE == 0)
-#include <config/uhf_radio_config_Si4463.h>
+#include <radio_0_config.h>
 
 #elif defined(RADIO_MODULE) && (RADIO_MODULE == 1)
-#include <config/vhf_radio_config_Si4463.h>
+#include <radio_1_config.h>
 
 #else
 #error Define the target radio module on the configuration file (config/config.h)
@@ -294,7 +294,7 @@ uint8_t si446x_rx_packet(uint8_t *rx_buf, uint8_t read_len)
 
 bool si446x_rx_init(void)
 {
-    uint8_t length = 50;
+    uint8_t length = 0x50;
 
     si446x_set_properties(SI446X_PROPERTY_PKT_FIELD_2_LENGTH_7_0, &length, 1);  /* Reload RX FIFO size */
     si446x_fifo_reset();                                                        /* Clear FIFO */
