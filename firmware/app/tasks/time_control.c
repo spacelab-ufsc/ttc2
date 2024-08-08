@@ -115,11 +115,18 @@ void vTaskTimeControl(void)
         if ((sys_tm % TIME_CONTROL_SAVE_PERIOD_SEC) == 0)
         {
             /* Save the current system time */
-//            if (time_control_save_sys_time(sys_tm) != 0)
-//            {
-//                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_TIME_CONTROL_NAME, "Error saving the system time!");
-//                sys_log_new_line();
-//            }
+            if (time_control_save_sys_time(sys_tm) != 0)
+            {
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_TIME_CONTROL_NAME, "Error saving the system time!");
+                sys_log_new_line();
+            }
+            else
+            {
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_TIME_CONTROL_NAME, "Saving system time (epoch): ");
+                sys_log_print_uint(sys_tm);
+                sys_log_print_msg(" sec");
+                sys_log_new_line();
+            }
         }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_TIME_CONTROL_PERIOD_MS));
@@ -171,12 +178,15 @@ static int time_control_save_sys_time(sys_time_t tm)
     buf[4] = (uint32_t)tm & 0xFFU;
     buf[5] = time_control_crc8(buf, 5U);
 
-    if (media_write(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, buf, 6U) != 0)
+    if (media_erase(TIME_CONTROL_MEDIA, MEDIA_ERASE_SECTOR, FLASH_SEG_A_ADR) != 0)
     {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_TIME_CONTROL_NAME, "Error writing the system time to the non-volatile memory!");
-        sys_log_new_line();
+        if (media_write(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, buf, 6U) != 0)
+        {
+            sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_TIME_CONTROL_NAME, "Error writing the system time to the non-volatile memory!");
+            sys_log_new_line();
 
-        err = -1;
+            err = -1;
+        }
     }
 
     return err;
