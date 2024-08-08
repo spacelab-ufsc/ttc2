@@ -39,6 +39,8 @@
 
 #include <stdint.h>
 
+#include <drivers/flash/flash.h>
+
 #define MEDIA_MODULE_NAME           "Media"
 
 /**
