@@ -44,15 +44,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <config/config.h>
-
-#if defined(RADIO_MODULE) && (RADIO_MODULE == 0)
-#include <config/uhf_radio_config_Si4463.h>
-
-#elif defined(RADIO_MODULE) && (RADIO_MODULE == 1)
-#include <config/vhf_radio_config_Si4463.h>
-#endif
-
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
 #include <drivers/si446x/si446x.h>
