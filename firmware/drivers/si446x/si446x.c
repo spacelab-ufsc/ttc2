@@ -37,11 +37,15 @@
 
 #include <config/config.h>
 
+
 #if defined(RADIO_MODULE) && (RADIO_MODULE == 0)
 #include <radio_0_config.h>
 
 #elif defined(RADIO_MODULE) && (RADIO_MODULE == 1)
 #include <radio_1_config.h>
+
+#elif defined(SI446X_TEST)
+#include <radio_0_config.h>
 
 #else
 #error Define the target radio module on the configuration file (config/config.h)
