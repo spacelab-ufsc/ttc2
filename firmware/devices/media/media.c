@@ -127,7 +127,7 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
     return err;
 }
 
-int media_erase(media_t med, media_erase_t type, uint32_t sector)
+int media_erase(media_t med, uint32_t sector)
 {
     int err = -1;
 
