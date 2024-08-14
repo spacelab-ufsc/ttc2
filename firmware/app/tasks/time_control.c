@@ -178,7 +178,7 @@ static int time_control_save_sys_time(sys_time_t tm)
     buf[4] = (uint32_t)tm & 0xFFU;
     buf[5] = time_control_crc8(buf, 5U);
 
-    if (media_erase(TIME_CONTROL_MEDIA, MEDIA_ERASE_SECTOR, FLASH_SEG_A_ADR) != 0)
+    if (media_erase(TIME_CONTROL_MEDIA, FLASH_SEG_A_ADR) != 0)
     {
         if (media_write(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, buf, 6U) != 0)
         {
