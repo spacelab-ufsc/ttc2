@@ -21,13 +21,13 @@
 %
 
 
-\chapter{Operation} \label{ch:operation}
+\chapter{Operation}\label{ch:operation} \label{ch:operation}
 
 This chapter describes general aspects of the TTC operation, like details of the used communication protocol, how to transmit a packet, how the telecommand reception works, and so on.
 
 \section{Packet transmission}
 
-To transmit a packet, the command ``Transmit Packet'' must be used (\autoref{sec:commands}). When the TTC receives this command through one of its command interfaces, a new NGHam packet is generated with the command content as the packet's payload. After the NGHam packet is generated, it is transmitted immediately through the air using the respective TTC's radio.
+    To transmit a packet, the command ``Transmit Packet'' must be used (\autoref{sec:commands}). When the TTC receives this command through one of its command interfaces, a new NGHam packet is generated with the command content as the packet's payload. After the NGHam packet is generated, it is transmitted immediately through the air using the respective TTC's radio.
 
 \section{Telecommand reception}
 
@@ -158,7 +158,7 @@ This field is reserved for the computed parity bytes of the Reed-Solomon coding 
         7 & RS(255, 233) & 32 \\
         \bottomrule[1.5pt]
     \end{tabular}
-    \caption{.}
+    \caption{NGHam parity sizes.}
     \label{tab:ngham-parity}
 \end{table}
 
@@ -191,7 +191,7 @@ The TTC module operates accordingly to the flowchart from Figure \ref{fig:ttc_fl
     \end{center}
 \end{figure}
 
-\section{Server Paramater}
+\section{Server Parameter}\label{sec:server_param}
 
 There are two main serial ports accessible to communicate with the TTC module a UART that is accessible only for the radio 1 and can only transmit packages. The other port is an SPI and is possible to communicate individually with each microcontroller and you can requisite all the commands and parameters (see Tables \ref{tab:commands} and \ref{tab:ttc2-variables}). The protocol communication is described below.
 
@@ -225,8 +225,8 @@ The EPS Server is in RX mode and only the Transmit packet command (ID=3) is avai
 \end{figure}
 
 \subsection{OBDH Server}
-The OBDH Server can be used for full communication and all the commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by response (except for command Write parameter ID=2 that only uses a request). For commands that need a response it is required to leave a interval of at least 100ms from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and sincronize wrong transactions. When each side is communicating the listening side needs to send 0x00 while the other side transmits.
-All the request have seven bytes length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size accordingly to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in spi mode 0 and was tested with 1 MHz clock.
+The OBDH Server can be used for full communication and all the commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by response (except for command Write parameter ID=2 that only uses a request). For commands that need a response it is required to leave a interval of at least 100ms from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and synchronize wrong transactions. When each side is communicating the listening side needs to send 0x00 while the other side transmits.
+All the request have seven bytes length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size accordingly to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in SPI mode 0 and was tested with 1 MHz clock.
 
 \begin{figure}[!ht]
     \begin{center}
