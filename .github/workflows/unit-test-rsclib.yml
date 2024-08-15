@@ -48,9 +48,9 @@ jobs:
 
       - name: Compile the test
         run: |
-          cd firmware/app/libs/rsclib-0.1/tests
+          cd firmware/app/libs/rsclib-1.0/tests
           cmake .
           make
 
       - name: Execute the test
-        run: ./firmware/app/libs/rsclib-0.1/tests/rsc_test
+        run: ./firmware/app/libs/rsclib-1.0/tests/rsc_test
