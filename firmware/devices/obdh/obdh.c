@@ -136,9 +136,9 @@ int obdh_read_request(obdh_request_t *obdh_request)
                     obdh_request->data.data_packet.packet[i] = obdh_request->data.data_packet.packet[i+3U];
                 }
 
-                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received: ");
                 sys_log_print_uint(obdh_request->data.data_packet.len);
-                sys_log_print_msg(" bytes.");
+                sys_log_print_msg(" bytes");
                 sys_log_new_line();
 
                 spi_slave_dma_change_transfer_size(7U);
@@ -147,7 +147,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
             case CMDPR_CMD_READ_FIRST_PACKET:
                 obdh_request->data.data_packet.len = request[2];
 
-                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received");
                 sys_log_new_line();
 
                 break;
