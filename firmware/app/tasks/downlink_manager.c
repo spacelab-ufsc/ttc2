@@ -76,18 +76,31 @@ void vTaskDownlinkManager(void)
 
         if ((ttc_data_buf.radio.tx_fifo_counter > 0) && (ttc_data_buf.radio.tx_enable == 1U))
         {
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Sending packet...");
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Sending packet:");
             sys_log_new_line();
 
             downlink_pop_packet(tx_pkt, &tx_pkt_len);
 
             if (ngham_encode(tx_pkt, tx_pkt_len, 0U, ngham_pkt, &ngham_pkt_len) == 0)
             {
-                radio_send(&ngham_pkt[8], ngham_pkt_len);   /* 8 = Removing preamble and sync word */
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Encoding packet...");
+                sys_log_new_line();
+
+                if (radio_send(&ngham_pkt[8], ngham_pkt_len) == 0)
+                {
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Packet successfully transmitted");
+                    sys_log_new_line();/* 8 = Removing preamble and sync word */
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_DOWNLINK_MANAGER_NAME, "Failed to transmit the packet");
+                    sys_log_new_line();
+
+                }
             }
             else
             {
-                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_DOWNLINK_MANAGER_NAME, "Error encoding a NGHam packet!");
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_DOWNLINK_MANAGER_NAME, "Error encoding a NGHam packet");
                 sys_log_new_line();
             }
         }

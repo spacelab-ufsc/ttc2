@@ -71,15 +71,32 @@ void vTaskUplinkManager(void)
 
         if (radio_available() == 0U)
         {
-            radio_recv(rx_packet, 80U, 100U);
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package:");
-
-            ngham_decode(rx_packet, 220, ngham_decoded_packet, &ngham_decoded_packet_len);
-
-            sys_log_dump_hex(ngham_decoded_packet, ngham_decoded_packet_len);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Receiving a new package:");
             sys_log_new_line();
 
-            uplink_add_packet(ngham_decoded_packet, ngham_decoded_packet_len);
+            if(radio_recv(rx_packet, 80U, 100U) > 0)
+            {
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Decoding packet...");
+                sys_log_new_line();
+
+                if(ngham_decode(rx_packet, 220, ngham_decoded_packet, &ngham_decoded_packet_len) == 0)
+                {
+                    uplink_add_packet(ngham_decoded_packet, ngham_decoded_packet_len);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Packet successfully received");
+                    sys_log_new_line();
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                    sys_log_new_line();
+                }
+            }
+            else
+            {
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                sys_log_new_line();
+            }
         }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));
