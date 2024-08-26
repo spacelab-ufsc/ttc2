@@ -1,4 +1,4 @@
-/*
+/* 
  * rsc.c
  * 
  * Copyright The RSCLib Contributors.
@@ -34,8 +34,8 @@
  * \{
  */
 
-#include "rsc/rsc.h"
 #include <string.h>
+#include "rsc/rsc.h"
 
 /**
  * \brief Computes the modulo of a given number.
@@ -46,6 +46,7 @@
  *
  * \return The computed modulo value of the given number.
  */
+
 static int modnn(reed_solomon_t *rs, int num);
 
 static int min(int a, int b);
@@ -188,7 +189,7 @@ void rsc_encode(reed_solomon_t *rs, uint8_t *data, uint8_t *parity, uint8_t *par
         {
             for(j = 0U; j < rs->nroots; j++)
             {
-                parity[j] ^= rs->alpha_to[modnn(rs, feedback + rs->genpoly[rs->nroots - j])];
+	            parity[j] ^= rs->alpha_to[modnn(rs, feedback + rs->genpoly[rs->nroots - j])];
             }
         }
         /* Shift */
@@ -382,7 +383,7 @@ int rsc_decode(reed_solomon_t *rs, uint8_t *data, int *err_pos, int *num_err)
         k =(int)(rs->iprim) - 1;
         for(i = 1; i <= (int)(rs->nn); i++)
         {
-            if (i != 1)
+            if (i != 1) 
             {
                 k = modnn(rs, k + (int)(rs->iprim));
             }
@@ -400,7 +401,7 @@ int rsc_decode(reed_solomon_t *rs, uint8_t *data, int *err_pos, int *num_err)
             if (q != 0U)
             {
                 continue;   /* Not a root */
-            }
+            }   
             /* store root (index-form) and error location number */
             root[count] = i;
             loc[count] = k;

@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/github/license/mgm8/rsclib?style=for-the-badge">
 </a>
 <a href="https://github.com/mgm8/rsclib/actions">
-    <img src="https://img.shields.io/github/workflow/status/mgm8/rsclib/Test?style=for-the-badge">
+    <img src="https://img.shields.io/github/actions/workflow/status/mgm8/rsclib/test.yml?style=for-the-badge">
 </a>
 
 ## Overview

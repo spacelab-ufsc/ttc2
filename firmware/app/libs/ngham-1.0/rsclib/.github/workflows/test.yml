@@ -48,9 +48,9 @@ jobs:
 
       - name: Compile the test
         run: |
-          cd tests
+          cd firmware/app/libs/ngham-1.0/rsclib/tests
           cmake .
           make
 
       - name: Execute the test
-        run: ./tests/rsc_test
+        run: ./firmware/app/libs/ngham-1.0/rsclib/tests/rsc_test
