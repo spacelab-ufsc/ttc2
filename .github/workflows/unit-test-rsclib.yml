@@ -1,32 +1,32 @@
 #
-# unit-test-rsclib.yml
+# test.yml
 # 
-# Copyright The TTC 2.0 Contributors.
+# Copyright The RSCLib Contributors.
 # 
-# This file is part of TTC 2.0.
+# This file is part of RSCLib.
 # 
-# TTC 2.0 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# RSCLib is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 # 
-# TTC 2.0 is distributed in the hope that it will be useful,
+# RSCLib is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
 # 
-# You should have received a copy of the GNU General Public License
-# along with TTC 2.0. If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public License
+# along with RSCLib. If not, see <http://www.gnu.org/licenses/>.
 # 
 #
 
-name: RSCLib unit tests
+name: Unit tests
 
 on:
   push:
-    branches: [dev_firmware]
+    branches: [dev]
   pull_request:
-    branches: [master, dev, dev_firmware]
+    branches: [main, dev]
 
   # 'workflow_dispatch' allows manual execution of this workflow under the repository's 'Actions' tab
   workflow_dispatch:
@@ -34,7 +34,7 @@ on:
 jobs:
 
   unit-tests:
-    name: RSCLib unit tests
+    name: Unit tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -48,9 +48,9 @@ jobs:
 
       - name: Compile the test
         run: |
-          cd firmware/app/libs/rsclib-1.0/tests
+          cd firmware/app/libs/ngham-1.0/rsclib/tests
           cmake .
           make
 
       - name: Execute the test
-        run: ./firmware/app/libs/rsclib-1.0/tests/rsc_test
+        run: ./firmware/app/libs/ngham-1.0/rsclib/tests/rsc_test

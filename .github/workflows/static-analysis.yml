@@ -81,7 +81,11 @@ jobs:
         run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/ --suppress=misra-c2012-19.2
 
       - name: Execute CppCheck on libraries files
-        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/libs/
+        run: |
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/libs/fsp/
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/libs/fsat_pkt/
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py -I$PWD/firmware/app/libs/ngham-1.0/rsclib/include/ $PWD/firmware/app/libs/ngham-1.0/rsclib/src/*
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py --inline-suppr -I$PWD/firmware/app/libs/ngham-1.0/include/ngham/ -I$PWD/firmware/app/libs/ngham-1.0/include/ $PWD/firmware/app/libs/ngham-1.0/src/* --suppress=misra-c2012-8.4
 
       - name: Execute CppCheck on main files
         run: cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/main.c firmware/version.h
