@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
- *
+ * 
  * \version 1.0.0
  * 
  * \date 2024/06/03
@@ -129,15 +129,15 @@ int ngham_encode(uint8_t *data, uint16_t len, uint8_t flags, uint8_t *pkt, uint1
     uint16_t d_len = 0U;
     uint8_t codeword_start = 0U;
 
-    /* Check size and find control block for smallest possible RS codeword */
-    if (!((len == 0U) || (len > NGH_PL_SIZE[NGH_SIZES - 1U])))
+	/* Check size and find control block for smallest possible RS codeword */
+	if (!((len == 0U) || (len > NGH_PL_SIZE[NGH_SIZES - 1U])))
     {
         while(len > NGH_PL_SIZE[size_nr])
         {
             size_nr++;
         }
 
-       /* Insert preamble, sync and size-tag */
+	   /* Insert preamble, sync and size-tag */
         if (NGHAM_FOUR_LEVEL_MODULATION == 1)
         {
             codeword_start = NGH_PREAMBLE_SIZE_FOUR_LEVEL + NGH_SYNC_SIZE_FOUR_LEVEL + NGH_SIZE_TAG_SIZE;
@@ -263,14 +263,14 @@ static int ngham_decode_byte(uint8_t d, uint8_t* buf)
     int8_t errors;
     uint32_t num_errors = 0U;
     int err = -1;
-    uint16_t i;
 
     switch(decoder_state)
     {
         case NGH_STATE_SIZE_TAG:
             size_tag = 0U;
+            /* No break because fall-through is intended */
 
-        case NGH_STATE_SIZE_TAG_2:
+        case NGH_STATE_SIZE_TAG_2: // cppcheck-suppress misra-c2012-16.3
             size_tag <<= 8U;
             size_tag |= d;
             decoder_state++;
@@ -360,7 +360,7 @@ static uint8_t ngham_tag_check(uint32_t x, uint32_t y)
     uint32_t diff = x ^ y;
     uint8_t res = 0;
 
-    if (diff != 0U)
+	if (diff != 0U)
     {
         for(j = 0U; j < 24U; j++)
         {

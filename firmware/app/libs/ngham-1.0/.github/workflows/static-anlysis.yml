@@ -1,0 +1,53 @@
+#
+# static-analysis.yml
+# 
+# Copyright The NGHam Contributors.
+# 
+# This file is part of NGHam.
+# 
+# NGHam is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# NGHam is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with NGHam. If not, see <http://www.gnu.org/licenses/>.
+# 
+#
+
+name: Static Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, dev]
+
+  # 'workflow_dispatch' allows manual execution of this workflow under the repository's 'Actions' tab
+  workflow_dispatch:
+
+jobs:
+
+  cppcheck-analysis:
+    name: cppcheck-analysis
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install CppCheck
+        run: sudo apt install -y cppcheck
+
+      - name: Execute CppCheck on header files
+        run: cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py $PWD/include/ngham/*
+
+      - name: Execute CppCheck on source files
+        run: cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py --inline-suppr -I$PWD/include/ngham/ -I$PWD/include/ $PWD/src/* --suppress=misra-c2012-8.4

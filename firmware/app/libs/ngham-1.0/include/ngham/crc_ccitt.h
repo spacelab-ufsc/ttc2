@@ -24,10 +24,11 @@
  * \brief CRC-CCITT definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.2
+ * \version 1.0.0
  * 
- * \date 2023/03/12
+ * \date 2024/08/26
  * 
  * \defgroup crc-ccitt CRC-CCITT
  * \ingroup ngham
@@ -35,7 +36,7 @@
  */
 
 #ifndef CRC_CCITT_H_
-#define CRC_CCITT_H_
+#define	CRC_CCITT_H_
 
 #include <stdint.h>
 

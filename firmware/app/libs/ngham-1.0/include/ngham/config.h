@@ -24,10 +24,11 @@
  * \brief Configuration parameters.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.0
+ * \version 1.0.0
  * 
- * \date 2023/06/15
+ * \date 2024/08/26
  * 
  * \defgroup config Configuration
  * \ingroup ngham

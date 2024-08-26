@@ -24,7 +24,7 @@ name: Unit tests
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
   pull_request:
     branches: [main, dev]
 
@@ -42,22 +42,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
+
 
       - name: Install dependencies
         run: |
           sudo apt install -y cmake libcmocka0 libcmocka-dev
-          git clone https://github.com/mgm8/rsclib.git
-          cd rsclib
-          mkdir build
-          cd build
-          cmake ..
-          make
-          sudo make install
+          mkdir firmware/app/libs/ngham-1.0/tests/build_tests
+          cd firmware/app/libs/ngham-1.0/tests/build_tests
+          cmake ../
 
       - name: Compile the test
         run: |
-          cd tests
-          make
+          cd firmware/app/libs/ngham-1.0/tests/build_tests
+          cmake --build .
 
       - name: Execute the test
-        run: ./tests/ngham_unit_test
+        run: ./firmware/app/libs/ngham-1.0/tests/build_tests/ngham_test

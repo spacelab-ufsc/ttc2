@@ -24,10 +24,11 @@
  * \brief CCSDS scrambler definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.0
+ * \version 1.0.0
  * 
- * \date 2023/03/12
+ * \date 2024/08/26
  * 
  * \defgroup ccsds-scrambler CCSDS Scrambler
  * \ingroup ngham

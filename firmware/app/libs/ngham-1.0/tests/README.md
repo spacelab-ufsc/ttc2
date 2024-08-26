@@ -5,10 +5,11 @@
 * CMake
 
 ## Compiling and building
-
 ```
-cmake .
-make
+mkdir build_tests
+cd build_tests
+cmake ../
+cmake --build .
 ```
 
 ## Executing the test

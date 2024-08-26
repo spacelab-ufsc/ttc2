@@ -16,7 +16,6 @@ Main features:
 
 [Youtube video: NGHam demonstration with Owl VHF and TDMA](http://youtu.be/_96td-Y-LLA)
 
-
 ![NGHam radio protocol (NGHam RF) block schematic](https://github.com/skagmo/ngham/blob/master/documentation/img/ngham_block_v4.png?raw=true)
 
 ![NGHam protocol stack explanation](https://github.com/skagmo/ngham/blob/master/documentation/img/ngham_protocol_stack.png?raw=true)
@@ -41,6 +40,12 @@ Not finished:
 | File/folder       | Description |
 |:-----------       |:----------- |
 | ngham_extension.h        | An extension of the payload field in the NGHam radio protocol (enabled by a flag in the NGHam header).  |
+
+Cloning
+This NGHam implementation uses a GitHub submodule. To successfully clone the repository, the  ``--recurse-submodules`` flag is required.
+```
+git clone https://github.com/miguelboing/ngham.git --recurse-submodules
+```
 
 Usage (for NGHam RF protocol):
 
