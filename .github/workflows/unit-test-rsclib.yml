@@ -20,13 +20,14 @@
 # 
 #
 
-name: Unit tests
+name: RSCLib Unit tests
 
 on:
   push:
-    branches: [dev]
+    branches: [ dev_firmware ]
   pull_request:
-    branches: [main, dev]
+    branches: [ master, dev, dev_firmware]
+
 
   # 'workflow_dispatch' allows manual execution of this workflow under the repository's 'Actions' tab
   workflow_dispatch:
