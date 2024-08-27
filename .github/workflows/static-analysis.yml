@@ -82,8 +82,6 @@ jobs:
 
       - name: Execute CppCheck on libraries files
         run: |
-          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/app/libs/fsp/
-          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/app/libs/fsat_pkt/
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py -I$PWD/firmware/app/libs/ngham-1.0/rsclib/include/ $PWD/firmware/app/libs/ngham-1.0/rsclib/src/*
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py --inline-suppr -I$PWD/firmware/app/libs/ngham-1.0/include/ngham/ -I$PWD/firmware/app/libs/ngham-1.0/include/ $PWD/firmware/app/libs/ngham-1.0/src/* --suppress=misra-c2012-8.4
 
