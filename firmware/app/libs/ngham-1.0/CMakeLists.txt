@@ -7,10 +7,13 @@ endif()
 
 project(ngham C)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+add_subdirectory(rsclib)
 
-add_library(ngham STATIC ${CMAKE_SOURCE_DIR}/src/ngham.c)
-add_library(crc_ccitt STATIC ${CMAKE_SOURCE_DIR}/src/crc_ccitt.c)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/rsclib/include)
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
+
+add_library(ngham STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/ngham.c ${CMAKE_CURRENT_SOURCE_DIR}/src/ngham_packets.c ${CMAKE_CURRENT_SOURCE_DIR}/src/crc_ccitt.c ${CMAKE_CURRENT_SOURCE_DIR}/src/ccsds_scrambler.c ${CMAKE_CURRENT_SOURCE_DIR}/src/ngham_packets.c)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
 install(TARGETS ngham DESTINATION lib)
