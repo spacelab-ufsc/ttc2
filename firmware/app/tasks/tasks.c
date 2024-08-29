@@ -45,7 +45,6 @@
 #include "system_reset.h"
 #include "radio_reset.h"
 #include "read_sensors.h"
-#include "beacon.h"
 #include "time_control.h"
 #include "eps_server.h"
 #include "obdh_server.h"
@@ -113,14 +112,6 @@ void create_tasks(void)
     }
 #endif /* CONFIG_TASK_READ_SENSORS_ENABLED */
 
-#if defined(CONFIG_TASK_BEACON_ENABLED) && (CONFIG_TASK_BEACON_ENABLED == 1)
-    xTaskCreate(vTaskBeacon, TASK_BEACON_NAME, TASK_BEACON_STACK_SIZE, NULL, TASK_BEACON_PRIORITY, &xTaskBeaconHandle);
-
-    if (xTaskBeaconHandle == NULL)
-    {
-        /* Error creating the beacon task */
-    }
-#endif /* CONFIG_TASK_BEACON_ENABLED */
 
 #if defined(CONFIG_TASK_TIME_CONTROL_ENABLED) && (CONFIG_TASK_TIME_CONTROL_ENABLED == 1)
     xTaskCreate(vTaskTimeControl, TASK_TIME_CONTROL_NAME, TASK_TIME_CONTROL_STACK_SIZE, NULL, TASK_TIME_CONTROL_PRIORITY, &xTaskTimeControlHandle);

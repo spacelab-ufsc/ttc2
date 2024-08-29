@@ -88,8 +88,6 @@ static void obdh_read_request_test(void **state)
 
     generate_random_request(request);
 
-    obdh_request.command = request[1];
-
     expect_value(__wrap_spi_slave_dma_read, len, 7);
 
     for(i = 0; i < 7; i++)
@@ -97,7 +95,17 @@ static void obdh_read_request_test(void **state)
         will_return(__wrap_spi_slave_dma_read, request[i]);
     }
 
-    if ((obdh_request.command != 0xFF) && (obdh_request.command != 0x00)) /* Received a request */
+    /*Check for preamble */
+    if (request[0] != 0x7EU)
+    {
+        err = -1;
+
+        expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, 7U);
+    }
+
+    obdh_request.command = request[1];
+
+    if ((obdh_request.command != 0xFF) && (obdh_request.command != 0x00) && (err != -1)) /* Received a request */
     {
         switch(obdh_request.command)
         {
@@ -128,21 +136,20 @@ static void obdh_read_request_test(void **state)
                 {
                     buffer[i] = 0x00U;
                 }
-
-                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, request[2] + 3);
-
+        
                 dummy = request[2] + 3U;
 
+                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, dummy);
+        
                 expect_memory(__wrap_spi_slave_dma_write, data, buffer, (int)dummy);
                 expect_value(__wrap_spi_slave_dma_write, len, dummy);
 
                 /* Create a random packet */
                 generate_random_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
-                dummy = obdh_request.data.data_packet.len + 3;
+                expect_value(__wrap_spi_slave_dma_read, len, (int)dummy);
 
-                expect_value(__wrap_spi_slave_dma_read, len, dummy);
-                for(i = 0; i < dummy; i++)
+                for(i = 0U; i < dummy; i++)
                 {
                     will_return(__wrap_spi_slave_dma_read, obdh_request.data.data_packet.packet[i]); 
                 }
@@ -178,9 +185,6 @@ static void obdh_send_response_test(void **state)
     uint8_t transmission_buffer_p;
 
     generate_random_response(&(obdh_response));
-
-    printf("obdh_command: %d\n", obdh_response.command);
-    printf("obdh_param:%d\n", obdh_response.parameter);
 
     response[0] = 0x7EU;
     response[1] = obdh_response.command;

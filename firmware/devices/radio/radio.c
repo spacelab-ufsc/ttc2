@@ -112,6 +112,11 @@ int radio_recv(uint8_t *data, uint16_t len, uint32_t timeout_ms)
             {
                 res = (int)si446x_rx_packet(data, len);
 
+                sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Received ");
+                sys_log_print_uint(res);
+                sys_log_print_msg(" byte(s)...");
+                sys_log_new_line();
+
                 si446x_clear_interrupts();
 
                 si446x_rx_init();

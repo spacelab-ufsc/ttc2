@@ -44,7 +44,7 @@
 #include <devices/temp_sensor/temp_sensor.h>
 #include <drivers/adc/adc.h>
 
-#define TEMP_SENSOR_ADC_PORT            ADC_PORT_5
+#define TEMP_SENSOR_ADC_PORT            ADC_PORT_0
 #define TEMP_SENSOR_ADC_MIN_VAL         0
 #define TEMP_SENSOR_ADC_MAX_VAL         0xFFF       /* 12-bit precision = 0xFFF */
 #define TEMP_SENSOR_ADC_MREF_VAL        6.5999999

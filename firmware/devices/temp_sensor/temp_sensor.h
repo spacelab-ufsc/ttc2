@@ -41,7 +41,7 @@
 
 #define TEMP_SENSOR_MODULE_NAME     "Temperature Sensor"
 
-#define TEMP_SENSOR_ADC_PORT        ADC_PORT_5                  /**< Temperature sensors ADC port (channel). */
+#define TEMP_SENSOR_ADC_PORT        ADC_PORT_0                  /**< Temperature sensors ADC port (channel). */
 
 /**
  * \brief Temperature sensor device initialization routine.

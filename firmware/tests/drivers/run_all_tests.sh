@@ -4,3 +4,4 @@
 ./si446x_unit_test
 ./tca4311a_unit_test
 ./ina22x_unit_test
+./tps382x_unit_test

@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.5.1
+ * \version 0.5.2
  *
- * \date 2024/04/22
+ * \date 2024/06/03
  *
  * \addtogroup uplink_manager
  * \{
@@ -37,6 +37,7 @@
 #include <devices/radio/radio.h>
 #include <structs/ttc_data.h>
 #include <ngham/ngham.h>
+
 #include "uplink_manager.h"
 #include "startup.h"
 
@@ -61,6 +62,8 @@ void vTaskUplinkManager(void)
     ttc_data_buf.up_buf.position_to_write = 0U;
 
     uint8_t rx_packet[230] = {0};
+    uint8_t ngham_decoded_packet[220] = {0};
+    uint16_t ngham_decoded_packet_len = 0;
 
     while(1)
     {
@@ -68,14 +71,32 @@ void vTaskUplinkManager(void)
 
         if (radio_available() == 0U)
         {
-            radio_recv(rx_packet, 80U, 100U);
-            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Received a new package:");
-            sys_log_dump_hex(rx_packet, 230U);
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Receiving a new package:");
             sys_log_new_line();
 
-            /*TODO ngham_decode(rx_packet);*/
+            if(radio_recv(rx_packet, 80U, 100U) > 0)
+            {
+                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Decoding packet...");
+                sys_log_new_line();
 
-            uplink_add_packet(rx_packet, 220U);
+                if(ngham_decode(rx_packet, 220, ngham_decoded_packet, &ngham_decoded_packet_len) == 0)
+                {
+                    uplink_add_packet(ngham_decoded_packet, ngham_decoded_packet_len);
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Packet successfully received");
+                    sys_log_new_line();
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                    sys_log_new_line();
+                }
+            }
+            else
+            {
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                sys_log_new_line();
+            }
         }
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_UPLINK_MANAGER_PERIOD_MS));

@@ -44,9 +44,11 @@ xTaskHandle xTaskSystemResetHandle;
 
 void vTaskSystemReset(void)
 {
+    TickType_t reset_period_ticks = pdMS_TO_TICKS_LONG((TickType_t) TASK_SYSTEM_RESET_PERIOD_MS);
+
     while(1)
     {
-        vTaskDelay(pdMS_TO_TICKS_LONG(TASK_SYSTEM_RESET_PERIOD_MS));
+        vTaskDelay(pdMS_TO_TICKS_LONG(reset_period_ticks));
 
         sys_log_print_event_from_module(SYS_LOG_INFO, TASK_SYSTEM_RESET_NAME, "Restarting the system...");
         sys_log_new_line();

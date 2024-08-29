@@ -39,6 +39,8 @@
 
 #include <stdint.h>
 
+#include <drivers/flash/flash.h>
+
 #define MEDIA_MODULE_NAME           "Media"
 
 /**
@@ -131,7 +133,7 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-int media_erase(media_t med, media_erase_t type, uint32_t sector);
+int media_erase(media_t med, uint32_t sector);
 
 #endif /* MEDIA_H_ */
 
