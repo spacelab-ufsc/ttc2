@@ -139,7 +139,7 @@ static int time_control_load_sys_time(sys_time_t *tm)
 
     uint8_t buf[6] = {0};
 
-    if (media_read(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, buf, 6U) == 0)
+    if (media_read(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, FLASH_SEG_A_ADR, buf, 6U) == 0)
     {
         if ((buf[0] == TIME_CONTROL_MEM_ID) && (time_control_crc8(buf, 5U) == buf[5]))
         {
@@ -180,7 +180,7 @@ static int time_control_save_sys_time(sys_time_t tm)
 
     if (media_erase(TIME_CONTROL_MEDIA, FLASH_SEG_A_ADR) == 0)
     {
-        if (media_write(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, buf, 6U) != 0)
+        if (media_write(TIME_CONTROL_MEDIA, CONFIG_MEM_ADR_SYS_TIME, FLASH_SEG_A_ADR, buf, 6U) != 0)
         {
             sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_TIME_CONTROL_NAME, "Error writing the system time to the non-volatile memory!");
             sys_log_new_line();
