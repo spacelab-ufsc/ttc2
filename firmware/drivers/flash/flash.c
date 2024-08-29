@@ -42,7 +42,7 @@ static long *current_flash_ptr;
 
 int flash_init(void)
 {
-    return 0;
+    return flash_mutex_create();
 }
 
 void flash_write(uint8_t *data, uint16_t len)
