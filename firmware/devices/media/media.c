@@ -60,18 +60,18 @@ int media_init(media_t med)
     return err;
 }
 
-int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
+int media_write(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len)
 {
     int err = -1;
+    uint16_t i = 0U;
 
     switch(med)
     {
         case MEDIA_INT_FLASH:
         {
             /* Address index */
-            uintptr_t adr_idx = adr + FLASH_SEG_A_ADR;
+            uintptr_t adr_idx = adr + sector;
 
-            uint16_t i = 0;
             for(i=0; i<len; ++i)
             {
                 uintptr_t adr_counter = adr_idx + i;
@@ -93,7 +93,7 @@ int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
     return err;
 }
 
-int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
+int media_read(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len)
 {
     int err = -1;
 
@@ -104,7 +104,7 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
         case MEDIA_INT_FLASH:
         {
             /* Address index */
-            uintptr_t adr_idx = adr + FLASH_SEG_A_ADR;
+            uintptr_t adr_idx = adr + sector;
 
             for(i=0; i<len; ++i)
             {
