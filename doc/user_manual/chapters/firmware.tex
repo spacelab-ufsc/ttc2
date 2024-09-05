@@ -15,7 +15,7 @@
 %
 % \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
 %
-% \version 0.3.0
+% \version 1.0.0
 %
 % \date 2021/05/12
 %
@@ -160,7 +160,7 @@ Each variable can be read or written using the commands ``Read Parameter'' and/o
 
 \section{Layers}
 
-The firmware flow of development goes from the low-level implementation (far right), with HA layer being register-level operation, to Tasks Layer with very abstract and high-level code.
+The firmware flow of development goes from the low-level implementation (far right), with HAL being register-level operation, to Tasks Layer with very abstract and high-level code.
 
 \subsection{Hardware Abstraction Layer}
 
@@ -216,7 +216,7 @@ Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction laye
         Watchdog Reset         & 1  & 0       & 100       & 150  \\
         \bottomrule[1.5pt]
     \end{tabular}
-    \caption{List of TTC 2.0 Tasks with configuration parameters.}
+    \caption{List of TTC 2.0 tasks with configuration parameters.}
     \label{tab:firmware-tasks}
 \end{table}
 
@@ -244,4 +244,4 @@ The Libraries are used for algorithm purposes and are not related to any hardwar
 
 \subsection{Tests}
 
-Tests are used to verify and validate the Drivers and Devices' developed functionality. There are three types of tests: the static test uses the MISRA C: 2012 \cite{misrac2012} guidelines to check for C safety standards, the unitary tests use the Cmocka\footnote{\href{https://cmocka.org/}{https://cmocka.org/}} library with mockups of the hardware, to validate the module in an algorithmic level, and the last test verifies the integration between hardware and firmware.
+Tests are used to verify and validate the Drivers and Devices' developed functionality. There are three types of tests: the static test uses the MISRA-C: 2012 \cite{misrac2012} guidelines to check for C safety standards, the unitary tests use the Cmocka\footnote{\href{https://cmocka.org/}{https://cmocka.org/}} library with mockups of the hardware, to validate the module in an algorithmic level, and the last test verifies the integration between hardware and firmware.

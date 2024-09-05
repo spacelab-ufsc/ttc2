@@ -15,13 +15,13 @@
 %
 % \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
 %
-% \version 0.3.0
+% \version 1.0.0
 %
 % \date 2022/10/09
 %
 
 
-\chapter{Operation}\label{ch:operation} \label{ch:operation}
+\chapter{Operation} \label{ch:operation}
 
 This chapter describes general aspects of the TTC operation, like details of the used communication protocol, how to transmit a packet, how the telecommand reception works, and so on.
 
@@ -35,7 +35,7 @@ When a new valid telecommand is received, it is stored in an internal queue with
 
 A telecommand is only stored if it is a valid NGHam packet, and only the payload of the NGHam packet is stored. Each telecommand can be up to 220 bytes long, according to the NGHam protocol definitions.
 
-The received and stored telecommand can be read with the command read packet, as described in \autoref{sec:commands}. After a telecommand is read, it is deleted from the internal queue of the TTC module. The number of available telecommands and the length in bytes of the first queue position can be read using the command ``Read Parameter'', as also described in \autoref{sec:commands} and \ref{sec:variables}.
+The received and stored telecommand can be read with the command read packet, as described in \autoref{sec:commands}. After a telecommand is read, it is deleted from the internal queue of the TTC module. The number of available telecommands and the length in bytes of the first queue position can be read using the command ``Read Parameter'', as also described in Sections \ref{sec:commands} and \ref{sec:variables}.
 
 \section{Communication protocol}
 
@@ -131,9 +131,7 @@ There is a checksum field after the payload data to ensure data correctness and 
     \item \textbf{Final XOR value}: 0xFFFF
 \end{itemize}
 
-The CRC16 value is computed from the header and the payload fields.
-
-If the CRC16 value is correct, the Reed-Solomon chain is skipped, and the packet is directly considered valid. This way, the checksum field also allows a performance improvement.
+The CRC16 value is computed from the header and the payload fields. If the CRC16 value is correct, the Reed-Solomon chain is skipped, and the packet is directly considered valid. This way, the checksum field also allows a performance improvement.
 
 \paragraph{Padding}
 
@@ -191,17 +189,18 @@ The TTC module operates accordingly to the flowchart from Figure \ref{fig:ttc_fl
     \end{center}
 \end{figure}
 
-\section{Server Parameter}\label{sec:server_param}
+\section{Server parameter}\label{sec:server_param}
 
 There are two main serial ports accessible to communicate with the TTC module a UART that is accessible only for the radio 1 and can only transmit packages. The other port is an SPI and is possible to communicate individually with each microcontroller and you can requisite all the commands and parameters (see Tables \ref{tab:commands} and \ref{tab:ttc2-variables}). The protocol communication is described below.
 
-\subsection{EPS Server}
+\subsection{EPS server}
+
 The EPS Server is in RX mode and only the Transmit packet command (ID=3) is available. To transmit a package the first byte shall be the command (0x03) followed by the packet. The UART configuration is resumed on Table \ref{tab:eps_config}. This serial port can be accessed via the pin 5 of the PC104-H2 pin 7 is connected to TX but is not utilized, see Table \ref{tab:pc104-pinout}.
 
 
 \begin{table}[!ht]
     \centering
-    \begin{tabular}{clll}
+    \begin{tabular}{lc}
         \toprule[1.5pt]
         \textbf{Configuration Parameter} & \textbf{Value}\\
         \midrule
@@ -224,7 +223,8 @@ The EPS Server is in RX mode and only the Transmit packet command (ID=3) is avai
     \end{center}
 \end{figure}
 
-\subsection{OBDH Server}
+\subsection{OBDH server}
+
 The OBDH Server can be used for full communication and all the commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by response (except for command Write parameter ID=2 that only uses a request). For commands that need a response it is required to leave a interval of at least 100ms from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and synchronize wrong transactions. When each side is communicating the listening side needs to send 0x00 while the other side transmits.
 All the request have seven bytes length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size accordingly to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in SPI mode 0 and was tested with 1 MHz clock.
 
@@ -238,12 +238,12 @@ All the request have seven bytes length including the preamble, the response for
 
 \begin{table}[!ht]
     \centering
-    \begin{tabular}{clll}
+    \begin{tabular}{lc}
         \toprule[1.5pt]
         \textbf{Configuration Parameter} & \textbf{Value}\\
         \midrule
-        Mode                & 0                 \\
-        Clock               & 200 kHz to 1 MHz  \\
+        Mode  & 0                \\
+        Clock & 200 kHz to 1 MHz \\
         \bottomrule[1.5pt]
     \end{tabular}
     \caption{OBDH Server configuration parameter.}
