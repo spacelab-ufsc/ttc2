@@ -120,6 +120,10 @@ static void obdh_read_request_test(void **state)
                 {
                     obdh_request.data.param_8 = request[3];
                 }
+                else if (obdh_request.parameter == CMDPR_PARAM_RESET_DEVICE)
+                {
+                    obdh_request.data.param_8 = request[3];
+                }
                 else
                 {
                     err = -1;
