@@ -1,5 +1,5 @@
 SRC=main
-VERSION=v0.5
+VERSION=v1.0
 TARGET=slb-ttc2-doc-$(VERSION)
 
 ifndef BUILD_DIR
