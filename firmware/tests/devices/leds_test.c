@@ -51,8 +51,8 @@
 #define LED_UPLINK_NUM              3
 
 /* GPIO configuration */
-#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_28
-#define LED_FAULT_GPIO_PIN          GPIO_PIN_27
+#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_27
+#define LED_FAULT_GPIO_PIN          GPIO_PIN_28
 #define LED_DOWNLINK_GPIO_PIN       GPIO_PIN_30
 #define LED_UPLINK_GPIO_PIN         GPIO_PIN_29
 
