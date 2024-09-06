@@ -93,4 +93,19 @@ void __wrap_flash_erase(uint32_t *region)
     return;
 }
 
+int __wrap_flash_mutex_create(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_flash_mutex_take(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_flash_mutex_give(void)
+{
+    return mock_type(int);
+}
+
 /** \} End of flash_wrap group */

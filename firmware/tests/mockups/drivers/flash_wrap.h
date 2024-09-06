@@ -55,6 +55,12 @@ uint32_t __wrap_flash_read_long(uint32_t *addr);
 
 void __wrap_flash_erase(uint32_t *region);
 
+int __wrap_flash_mutex_create(void);
+
+int __wrap_flash_mutex_give(void);
+
+int __wrap_flash_mutex_take(void);
+
 #endif /* FLASH_WRAP_H_ */
 
 /** \} End of flash_wrap group */
