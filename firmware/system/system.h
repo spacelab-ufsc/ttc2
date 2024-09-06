@@ -70,6 +70,13 @@ typedef uint8_t sys_hw_version_t;
 void system_reset(void);
 
 /**
+ * \brief System reset count. Load and update the reset count at the internal flash memory.
+ *
+ * \return The status/error code.
+ */
+int system_reset_count(void);
+
+/**
  * \brief Gets the last reset cause code.
  *
  * This function reads the value of the reset interrupt vector (SYSRSTIV).

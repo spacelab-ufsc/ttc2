@@ -35,10 +35,59 @@
 
 #include <msp430.h>
 #include <drivers/gpio/gpio.h>
+#include <devices/media/media.h>
+#include <app/structs/ttc_data.h>
 
 #include "system.h"
 
 static sys_time_t sys_time = 0;
+
+#define SYSTEM_CRC8_INITIAL_VAL   0x00U       /* CRC8-CCITT initial value. */
+#define SYSTEM_CRC8_POLYNOMIAL    0x07U       /* CRC8-CCITT polynomial. */
+
+static uint8_t system_crc8(uint8_t *data, uint8_t len);
+
+int system_reset_count(void)
+{
+    int err = -1;
+
+    uint8_t buf[3] = {0};
+
+    /* Getting the previous reset count parameter */
+    if (media_read(MEDIA_INT_FLASH, 0U, FLASH_SEG_B_ADR, buf, 3U) == 0)
+    {
+        if (buf[2] == system_crc8(buf, 2U))
+        {
+            ttc_data_buf.reset_counter = (uint16_t)(buf[0]) | ((uint16_t)(buf[1]) << 8U);
+
+            err = 0;
+
+            if (ttc_data_buf.reset_counter == UINT16_MAX)
+            {
+                ttc_data_buf.reset_counter = 0U;
+            }
+        }
+    }
+
+    if (err != 0)
+    {
+        /* Failed to get last reset counter, reseting the parameter... */
+        ttc_data_buf.reset_counter = 0U;
+    }
+
+    ttc_data_buf.reset_counter++;
+
+    if (media_erase(MEDIA_INT_FLASH, FLASH_SEG_B_ADR) == 0)
+    {
+        buf[0] = (uint8_t)(ttc_data_buf.reset_counter & 0xFF);
+        buf[1] = (uint8_t)(ttc_data_buf.reset_counter >> 8U);
+        buf[2] = system_crc8(buf, 2U);
+
+        err = media_write(MEDIA_INT_FLASH, 0U, FLASH_SEG_B_ADR, buf, 3U);
+    }
+
+    return err;
+}
 
 void system_reset(void)
 {
@@ -49,7 +98,7 @@ void system_reset(void)
 
 uint8_t system_get_reset_cause(void)
 {
-    return (SYSRSTIV & 0xFF);
+    return (uint8_t)(SYSRSTIV & 0xFF);
 }
 
 void system_set_time(sys_time_t tm)
@@ -97,4 +146,24 @@ sys_hw_version_t system_get_hw_version(void)
     return res;
 }
 
+static uint8_t system_crc8(uint8_t *data, uint8_t len)
+{
+    uint8_t crc = SYSTEM_CRC8_INITIAL_VAL;
+
+    uint8_t i = 0U;
+    for(i = 0; i < len; i++)
+    {
+        crc ^= data[i];
+
+        uint8_t j = 0U;
+        for (j = 0U; j < 8U; j++)
+        {
+            crc = (crc << 1) ^ ((crc & 0x80U) ? SYSTEM_CRC8_POLYNOMIAL : 0U);
+        }
+
+        crc &= 0xFFU;
+    }
+
+    return crc;
+}
 /** \} End of system group */
