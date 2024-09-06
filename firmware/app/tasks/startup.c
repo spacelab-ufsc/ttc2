@@ -64,6 +64,11 @@ void vTaskStartup(void)
     /* Logger device initialization */
     sys_log_init();
 
+    /* Print the TTC radio module */
+    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "Booting TTC Module ");
+    sys_log_print_uint((uint32_t)RADIO_MODULE);
+    sys_log_new_line();
+
     /* Print the FreeRTOS version */
     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "FreeRTOS ");
     sys_log_print_msg(tskKERNEL_VERSION_NUMBER);
@@ -163,10 +168,26 @@ void vTaskStartup(void)
     }
 #endif /* CONFIG_DEV_OBDH_ENABLED */
 
+    /* Checking and updating the reset counter parameter */
+    if (system_reset_count() == 0)
+    {
+        sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "Reset counter: ");
+        sys_log_print_uint((uint32_t)(ttc_data_buf.reset_counter));
+        sys_log_new_line();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "Failed to access last reset counter");
+        sys_log_new_line();
+    }
+
+
     if (error_counter > 0U)
     {
-        sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "Boot completed with ");
-        sys_log_print_uint(error_counter);
+        sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_STARTUP_NAME, "TTC Radio Module ");
+        sys_log_print_uint((uint32_t)RADIO_MODULE);
+        sys_log_print_msg(" booted with ");
+        sys_log_print_uint((uint32_t)error_counter);
         sys_log_print_msg(" ERROR(S)!");
         sys_log_new_line();
 
@@ -174,7 +195,9 @@ void vTaskStartup(void)
     }
     else
     {
-        sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "Boot completed with SUCCESS!");
+        sys_log_print_event_from_module(SYS_LOG_INFO, TASK_STARTUP_NAME, "Successfully booted TTC Radio Module ");
+        sys_log_print_uint((uint32_t)RADIO_MODULE);
+        sys_log_print_msg("!");
         sys_log_new_line();
 
         led_clear(LED_FAULT);
