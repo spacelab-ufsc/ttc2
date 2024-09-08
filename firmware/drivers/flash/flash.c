@@ -1,7 +1,7 @@
 /*
  * flash.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.8
+ * \version 0.5.2
  * 
  * \date 2020/03/17
  * 
@@ -42,7 +42,7 @@ static long *current_flash_ptr;
 
 int flash_init(void)
 {
-    return 0;
+    return flash_mutex_create();
 }
 
 void flash_write(uint8_t *data, uint16_t len)

@@ -28,7 +28,7 @@ POWER_SENSOR_TEST_FLAGS=$(FLAGS),--wrap=ina22x_init,--wrap=ina22x_configuration,
 
 LEDS_TEST_FLAGS=$(FLAGS),--wrap=gpio_init,--wrap=gpio_set_state,--wrap=gpio_get_state,--wrap=gpio_toggle
 
-MEDIA_TEST_FLAGS=$(FLAGS),--wrap=flash_init,--wrap=flash_write,--wrap=flash_write_single,--wrap=flash_read_single,--wrap=flash_write_long,--wrap=flash_read_long,--wrap=flash_erase
+MEDIA_TEST_FLAGS=$(FLAGS),--wrap=flash_init,--wrap=flash_write,--wrap=flash_write_single,--wrap=flash_read_single,--wrap=flash_write_long,--wrap=flash_read_long,--wrap=flash_erase,--wrap=flash_mutex_create,--wrap=flash_mutex_take,--wrap=flash_mutex_give
 
 OBDH_TEST_FLAGS=$(FLAGS),--wrap=spi_slave_init,--wrap=spi_slave_dma_write,--wrap=spi_slave_dma_read,--wrap=spi_slave_enable_isr,--wrap=spi_slave_disable_isr,--wrap=spi_slave_read_available,--wrap=spi_slave_read,--wrap=spi_slave_write,--wrap=spi_slave_flush,--wrap=spi_slave_bytes_not_sent,--wrap=spi_slave_dma_change_transfer_size
 

@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 0.5.2
  *
  * \date 2023/02/22
  *
@@ -70,6 +70,7 @@
 #define CMDPR_PARAM_PACKETS_AV_FIFO_TX       0x15U       /**< TX packets available in the FIFO buffer */
 #define CMDPR_PARAM_PACKETS_AV_FIFO_RX       0x16U       /**< RX packets available in the FIFO buffer */
 #define CMDPR_PARAM_N_BYTES_FIRST_AV_RX      0x17U       /**< Number of bytes of the first available packet in the RX buffer */
+#define CMDPR_PARAM_RESET_DEVICE             0x18U       /**< Resets the TTC module */
 
 /**
  * \brief CMDPR data packet.

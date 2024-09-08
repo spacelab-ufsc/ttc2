@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.2.11
+ * \version 0.5.2
  * 
  * \date 2020/01/20
  * 
@@ -33,14 +33,24 @@
  * \{
  */
 
+#include <config/config.h>
 #include <system/sys_log/sys_log.h>
 #include <drivers/gpio/gpio.h>
 
 #include "leds.h"
 
 /* GPIO configuration */
+/* TTC 2.0 Radio Module 0 has inverted silk screen labels, this is a manual firmware fix. */
+#if defined(RADIO_MODULE) && (RADIO_MODULE == 1)
 #define LED_SYSTEM_PIN          GPIO_PIN_28
 #define LED_FAULT_PIN           GPIO_PIN_27
+
+#else
+#define LED_SYSTEM_PIN          GPIO_PIN_27
+#define LED_FAULT_PIN           GPIO_PIN_28
+
+#endif
+
 #define LED_DOWNLINK_PIN        GPIO_PIN_30
 #define LED_UPLINK_PIN          GPIO_PIN_29
 

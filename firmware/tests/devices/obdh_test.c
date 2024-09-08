@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.5.1
+ * \version 0.5.2
  *
  * \date 2024/04/22
  *
@@ -117,6 +117,10 @@ static void obdh_read_request_test(void **state)
                 obdh_request.parameter = request[2];
 
                 if (obdh_request.parameter == CMDPR_PARAM_TX_ENABLE)
+                {
+                    obdh_request.data.param_8 = request[3];
+                }
+                else if (obdh_request.parameter == CMDPR_PARAM_RESET_DEVICE)
                 {
                     obdh_request.data.param_8 = request[3];
                 }
