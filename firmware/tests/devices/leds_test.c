@@ -24,10 +24,11 @@
  * \brief Unit test of the LEDs device.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.5.2
- * 
- * \date 2021/02/16
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup leds_unit_test LEDs
  * \ingroup tests

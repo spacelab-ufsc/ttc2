@@ -24,10 +24,10 @@
  * \brief SPI Slave driver wrap definition.
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
- * 
- * \version 0.5.1
- * 
- * \date 2024/04/22
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup spi_slave_wrap SPI Slave Wrap
  * \ingroup tests

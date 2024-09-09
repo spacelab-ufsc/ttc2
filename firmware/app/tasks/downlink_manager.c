@@ -26,9 +26,9 @@
  * \author Miguel Boing <miguelboing13@gmail.com>
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
- * \date 2023/03/03
+ * \date 2024/09/09
  *
  * \addtogroup downlink_manager
  * \{

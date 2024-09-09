@@ -24,10 +24,10 @@
  * \brief FreeRTOS semphr simulation definition.
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
- * 
- * \version 5.1.0
- * 
- * \date 2024/04/25
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup semphr_sim FreeRTOS semphr
  * \ingroup tests

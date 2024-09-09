@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.5.1
+ * \version 1.0.0
  *
- * \date 2024/04/22
+ * \date 2024/09/09
  *
  * \defgroup obdh OBDH
  * \ingroup tasks

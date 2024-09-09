@@ -24,10 +24,11 @@
  * \brief Temperature sensor device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.6
- * 
- * \date 2020/03/17
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup temp_sensor
  * \{

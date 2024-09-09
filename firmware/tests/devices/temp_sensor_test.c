@@ -24,10 +24,11 @@
  * \brief Unit test of the temperature sensor device.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.5
- * 
- * \date 2021/02/13
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup temp_sensor_unit_test Temperature Sensor
  * \ingroup tests

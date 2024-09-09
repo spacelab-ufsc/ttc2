@@ -24,10 +24,11 @@
  * \brief Tasks implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.4.3
- * 
- * \date 2019/11/02
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup tasks
  * \{

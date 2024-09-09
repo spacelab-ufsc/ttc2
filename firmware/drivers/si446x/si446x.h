@@ -24,10 +24,11 @@
  * \brief Si446x driver definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.4.3
+ * \version 1.0.0
  * 
- * \date 2017/06/01
+ * \date 2024/09/09
  * 
  * \defgroup si446x Si446x
  * \{

@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
- * \date 2020/07/24
+ * \date 2024/09/09
  *
  * \defgroup radio_data Data
  * \ingroup radio

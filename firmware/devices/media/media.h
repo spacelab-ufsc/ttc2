@@ -24,10 +24,11 @@
  * \brief Media device definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.5.2
- * 
- * \date 2020/04/21
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup media Media
  * \ingroup devices

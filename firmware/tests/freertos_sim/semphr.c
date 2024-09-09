@@ -23,10 +23,10 @@
  * \brief FreeRTOS semphr simulation implementation.
  * 
  * \author Miguel Boing <miguelboing13@gmail.com>
- * 
- * \version 0.5.1
- * 
- * \date 2024/04/25
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup semphr_sim
  * \{

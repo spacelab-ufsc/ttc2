@@ -24,10 +24,11 @@
  * \brief Radio device definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.5.1
- * 
- * \date 2024/04/22
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup radio Radio
  * \ingroup devices

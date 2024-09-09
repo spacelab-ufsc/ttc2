@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.5.2
+ * \version 1.0.0
  *
- * \date 2023/02/22
+ * \date 2024/09/09
  *
  * \defgroup cmdpr CMDPR
  * \ingroup system
