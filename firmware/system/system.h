@@ -1,7 +1,7 @@
 /*
  * system.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,10 +24,11 @@
  * \brief System layer definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.0.3
- * 
- * \date 2020/01/25
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup system System
  * \{
@@ -68,6 +69,13 @@ typedef uint8_t sys_hw_version_t;
  * \return None.
  */
 void system_reset(void);
+
+/**
+ * \brief System reset count. Load and update the reset count at the internal flash memory.
+ *
+ * \return The status/error code.
+ */
+int system_reset_count(void);
 
 /**
  * \brief Gets the last reset cause code.

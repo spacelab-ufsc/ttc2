@@ -24,10 +24,11 @@
  * \brief Unit test of the temperature sensor device.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.5
- * 
- * \date 2021/02/13
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup temp_sensor_unit_test Temperature Sensor
  * \ingroup tests
@@ -44,7 +45,7 @@
 #include <devices/temp_sensor/temp_sensor.h>
 #include <drivers/adc/adc.h>
 
-#define TEMP_SENSOR_ADC_PORT            ADC_PORT_5
+#define TEMP_SENSOR_ADC_PORT            ADC_PORT_0
 #define TEMP_SENSOR_ADC_MIN_VAL         0
 #define TEMP_SENSOR_ADC_MAX_VAL         0xFFF       /* 12-bit precision = 0xFFF */
 #define TEMP_SENSOR_ADC_MREF_VAL        6.5999999

@@ -24,23 +24,34 @@
  * \brief System LEDs implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.2.11
- * 
- * \date 2020/01/20
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup leds
  * \{
  */
 
+#include <config/config.h>
 #include <system/sys_log/sys_log.h>
 #include <drivers/gpio/gpio.h>
 
 #include "leds.h"
 
 /* GPIO configuration */
+/* TTC 2.0 Radio Module 0 has inverted silk screen labels, this is a manual firmware fix. */
+#if defined(RADIO_MODULE) && (RADIO_MODULE == 1)
 #define LED_SYSTEM_PIN          GPIO_PIN_28
 #define LED_FAULT_PIN           GPIO_PIN_27
+
+#else
+#define LED_SYSTEM_PIN          GPIO_PIN_27
+#define LED_FAULT_PIN           GPIO_PIN_28
+
+#endif
+
 #define LED_DOWNLINK_PIN        GPIO_PIN_30
 #define LED_UPLINK_PIN          GPIO_PIN_29
 

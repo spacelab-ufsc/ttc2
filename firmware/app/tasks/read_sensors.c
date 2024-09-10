@@ -25,14 +25,16 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
- * 
- * \version 0.2.4
- * 
- * \date 2020/07/12
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup read_sensors
  * \{
  */
+
+#include <system/sys_log/sys_log.h>
 
 #include <devices/temp_sensor/temp_sensor.h>
 #include <devices/power_sensor/power_sensor.h>
@@ -58,9 +60,14 @@ void vTaskReadSensors(void)
         power_sensor_data_t pwr_sensor_buf;
 
         /* uC temperature */
-        if (temp_sensor_read_raw(&buf) == 0)
+        if (temp_sensor_read_k(&buf) == 0)
         {
             ttc_data_buf.temperature = buf;
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current uC temperature: ");
+            sys_log_print_uint((uint32_t)buf);
+            sys_log_print_msg(" K");
+            sys_log_new_line();
+
         }
 
         /* uC  current, voltage and power*/

@@ -24,10 +24,11 @@
  * \brief Unit test of the LEDs device.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.2.12
- * 
- * \date 2021/02/16
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup leds_unit_test LEDs
  * \ingroup tests
@@ -51,8 +52,8 @@
 #define LED_UPLINK_NUM              3
 
 /* GPIO configuration */
-#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_28
-#define LED_FAULT_GPIO_PIN          GPIO_PIN_27
+#define LED_SYSTEM_GPIO_PIN         GPIO_PIN_27
+#define LED_FAULT_GPIO_PIN          GPIO_PIN_28
 #define LED_DOWNLINK_GPIO_PIN       GPIO_PIN_30
 #define LED_UPLINK_GPIO_PIN         GPIO_PIN_29
 

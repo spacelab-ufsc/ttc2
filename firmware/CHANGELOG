@@ -1,3 +1,23 @@
+v1.0 - 2024/09/09
+
+- si446x improvements
+- RX implementation
+- OBDH device and server improvements
+- NGHam decoder implementation
+- Improvements for spi_slave
+- Fixes for Time control task
+- Adding reset command
+- Reset counter implementation
+- Fixing temperature sensors bugs
+- Fixes for flash driver
+- Improvements for media device
+- Flash mutex implementation
+- Firmware fix for LED label bug
+- Updates for unitary tests
+- General fixes and improvements
+
+===========================================
+
 v0.5 - 2023/11/01
 
 - Improving ttc struct

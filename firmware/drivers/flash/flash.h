@@ -1,7 +1,7 @@
 /*
  * flash.h
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,10 +24,11 @@
  * \brief Flash driver definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.0.5
+ * \version 1.0.0
  * 
- * \date 2020/03/17
+ * \date 2024/09/09
  * 
  * \defgroup flash Flash
  * \ingroup drivers
@@ -59,11 +60,18 @@
 
 #define FLASH_MASS_ERASE            0X00FFFFFF
 
-/* Overflow flag message adress */
+/* Overflow flag message address */
 #define FLASH_OVERFLOW_FLAG_ADDR    0x00026000
 
 /* Last adress that can write a data(beyond this will enter the overflow) */
 #define FLASH_LAST_WRITE_ADDR       0x00087FFF
+
+/* Mutex config. */
+#define FLASH_MUTEX_WAIT_TIME_MS      100
+
+/* Flash module name */
+#define FLASH_MODULE_NAME             "Flash"
+
 
 /**
  * \brief Flash memory initialization.
@@ -131,6 +139,27 @@ uint32_t flash_read_long(uint32_t *addr);
  * \return None.
  */
 void flash_erase(uint32_t *region);
+
+/**
+ * \brief Creates a mutex to use the flash chip.
+ *
+ * \return The status/error code.
+ */
+int flash_mutex_create(void);
+
+/**
+ * \brief Holds the resource (flash chip).
+ *
+ * \return The status/error code.
+ */
+int flash_mutex_take(void);
+
+/**
+ * \brief Frees the resource (flash chip).
+ *
+ * \return The status/error code.
+ */
+int flash_mutex_give(void);
 
 #endif /* FLASH_H_ */
 

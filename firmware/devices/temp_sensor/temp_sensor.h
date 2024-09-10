@@ -24,10 +24,11 @@
  * \brief Temperature sensor device definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.3
- * 
- * \date 2020/03/17
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup temp_sensor Temperature Sensor
  * \ingroup devices
@@ -41,7 +42,7 @@
 
 #define TEMP_SENSOR_MODULE_NAME     "Temperature Sensor"
 
-#define TEMP_SENSOR_ADC_PORT        ADC_PORT_5                  /**< Temperature sensors ADC port (channel). */
+#define TEMP_SENSOR_ADC_PORT        ADC_PORT_0                  /**< Temperature sensors ADC port (channel). */
 
 /**
  * \brief Temperature sensor device initialization routine.

@@ -24,50 +24,74 @@
  * \brief Si446x mutex functions implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.4.5
+ * \version 1.0.0
  * 
- * \date 2023/04/13
+ * \date 2024/09/09
  * 
  * \addtogroup si446x
  * \{
  */
 
+#include <stddef.h>
+
 #include <FreeRTOS.h>
 #include <semphr.h>
+
+#include <system/sys_log/sys_log.h>
 
 #include "si446x.h"
 #include "si446x_config.h"
 
-static SemaphoreHandle_t si446x_semaphore = NULL;
-
-#define SI446X_MUTEX_WAIT_TIME_MS 100;
+static SemaphoreHandle_t si446x_mutex = NULL;
 
 int si446x_mutex_create(void)
 {
-    return 0;
+    int err = 0;
+
+    si446x_mutex = xSemaphoreCreateMutex();
+
+    if (si446x_mutex == NULL)
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, SI446X_MODULE_NAME, "Error creating a mutex!");
+        sys_log_new_line();
+
+        err = -1;
+    }
+
+    return err;
 }
 
 int si446x_mutex_take(void)
 {
     int err = -1;
 
-    //if (si446x_semaphore != NULL)
-    //{
+    if (si446x_mutex != NULL)
+    {
         /* See if we can obtain the semaphore. If the semaphore is not */
-        /* available wait SYS_LOG_MUTEX_WAIT_TIME_MS ms to see if it becomes free */
-       // if (xSemaphoreTake(si446x_semaphore, pdMS_TO_TICKS(SI446X_MUTEX_WAIT_TIME_MS)) == pdTRUE)
-        //{
-         //   err = 0;
-        //}
-    //}
+        /* available wait SI446X_MUTEX_WAIT_TIME_MS ms to see if it becomes free */
+        if (xSemaphoreTake(si446x_mutex, pdMS_TO_TICKS(SI446X_MUTEX_WAIT_TIME_MS)) == pdTRUE)
+        {
+            err = 0;
+        }
+    }
 
     return err;
 }
 
 int si446x_mutex_give(void)
 {
-    return 0;
+    int err = -1;
+
+    if (si446x_mutex != NULL)
+    {
+        xSemaphoreGive(si446x_mutex);
+
+        err = 0;
+    }
+
+    return err;
 }
 
 /**< \} End of si446x group */

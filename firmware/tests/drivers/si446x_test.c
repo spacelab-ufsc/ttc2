@@ -24,10 +24,11 @@
  * \brief Unit test of the Si446x driver.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.23
- * 
- * \date 2021/09/04
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup si446x_unit_test Si446x
  * \ingroup tests
@@ -44,7 +45,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <config/radio_config_Si4463.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/spi/spi.h>
 #include <drivers/si446x/si446x.h>

@@ -24,10 +24,11 @@
  * \brief Version control file.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.5.0
- * 
- * \date 2021/04/04
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup version Version control
  * \{
@@ -36,9 +37,9 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define FIRMWARE_VERSION            "0.5.0"
+#define FIRMWARE_VERSION            "1.0.0"
 
-#define FIRMWARE_STATUS             "Development"
+#define FIRMWARE_STATUS             "Production"
 
 #define FIRMWARE_AUTHOR             "SpaceLab-UFSC"
 

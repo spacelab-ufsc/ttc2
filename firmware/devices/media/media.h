@@ -24,10 +24,11 @@
  * \brief Media device definition.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.19
- * 
- * \date 2020/04/21
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \defgroup media Media
  * \ingroup devices
@@ -38,6 +39,8 @@
 #define MEDIA_H_
 
 #include <stdint.h>
+
+#include <drivers/flash/flash.h>
 
 #define MEDIA_MODULE_NAME           "Media"
 
@@ -83,13 +86,15 @@ int media_init(media_t med);
  *
  * \param[in] adr is the address to write data.
  *
+ * \param[in] sector is the sector number to write.
+ *
  * \param[in] data is an array of bytes to write.
  *
  * \param[in] len is the number of bytes to write.
  *
  * \return The status/error code.
  */
-int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
+int media_write(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len);
 
 /**
  * \brief Reads data from a given address of a media device.
@@ -102,13 +107,15 @@ int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
  *
  * \param[in] adr is the address to read.
  *
+ * \param[in] sector is the sector number to read.
+ *
  * \param[in,out] data is a pointer to store the read data.
  *
  * \param[in] len is the number of bytes to read starting at addr.
  *
  * \return The status/error code.
  */
-int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
+int media_read(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len);
 
 /**
  * \brief Erases a memory region from a media device.
@@ -131,7 +138,7 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len);
  *
  * \return The status/error code.
  */
-int media_erase(media_t med, media_erase_t type, uint32_t sector);
+int media_erase(media_t med, uint32_t sector);
 
 #endif /* MEDIA_H_ */
 

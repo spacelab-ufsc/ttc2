@@ -24,10 +24,11 @@
  * \brief Si446x driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.2.10
+ * \version 1.0.0
  * 
- * \date 2017/06/01
+ * \date 2024/09/09
  * 
  * \addtogroup si446x
  * \{
@@ -36,7 +37,22 @@
 #include <string.h>
 
 #include <config/config.h>
-#include <config/radio_config_Si4463.h>
+
+
+#if defined(RADIO_MODULE) && (RADIO_MODULE == 0)
+#include <radio_0_config.h>
+
+#elif defined(RADIO_MODULE) && (RADIO_MODULE == 1)
+#include <radio_1_config.h>
+
+#elif defined(SI446X_TEST)
+#include <radio_0_config.h>
+
+#else
+#error Define the target radio module on the configuration file (config/config.h)
+
+#endif /* CONFIG_DEV_RADIO_ENABLED */
+
 #include <system/sys_log/sys_log.h>
 
 #include "si446x.h"
@@ -53,6 +69,9 @@ int si446x_init(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, SI446X_MODULE_NAME, "Initializing device...");
     sys_log_new_line();
 #endif /* CONFIG_DRIVERS_DEBUG_ENABLED */
+
+    /* Create si446x mutex */
+    si446x_mutex_create();
 
     si446x_gpio_init();
 
@@ -108,12 +127,12 @@ void si446x_reg_config(void)
     /* Set RF parameter like frequency, data rate, etc. */
     si446x_set_config(SI446X_CONFIGURATION_DATA, sizeof(SI446X_CONFIGURATION_DATA));
 
+
     uint8_t buf[2];
 
     /* Frequency adjust (Tested manually) */
     buf[0] = SI446X_XO_TUNE_REG_VALUE;
     si446x_set_properties(SI446X_PROPERTY_GLOBAL_XO_TUNE, buf, 1);
-
     /* TX/RX shares 128 bytes FIFO */
     buf[0] = 0x10;
     si446x_set_properties(SI446X_PROPERTY_GLOBAL_CONFIG, buf, 1);
@@ -280,7 +299,7 @@ uint8_t si446x_rx_packet(uint8_t *rx_buf, uint8_t read_len)
 
 bool si446x_rx_init(void)
 {
-    uint8_t length = 50;
+    uint8_t length = 0x50;
 
     si446x_set_properties(SI446X_PROPERTY_PKT_FIELD_2_LENGTH_7_0, &length, 1);  /* Reload RX FIFO size */
     si446x_fifo_reset();                                                        /* Clear FIFO */
@@ -464,9 +483,10 @@ void si446x_set_config(const uint8_t *parameters, uint16_t para_len)
         cmd_len = parameters[pos++] - 1;            /* Get command len */
         cmd = parameters[pos++];                    /* Get command */
         memcpy(buffer, parameters + pos, cmd_len);  /* Get parameters */
-
+        si446x_delay_ms(10);
         si446x_set_cmd(cmd, buffer, cmd_len);
         pos += cmd_len;
+
     }
 }
 

@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
- * \date 2022/05/21
+ * \date 2024/09/09
  *
  * \defgroup spi_slave SPI_SLAVE
  * \ingroup drivers
@@ -83,6 +83,8 @@ void spi_slave_dma_write(uint8_t *data, uint16_t len);
  * \return None.
  */
 void spi_slave_dma_read(uint8_t *data, uint16_t len);
+
+void spi_slave_dma_change_transfer_size(uint16_t transfer_size);
 
 /**
  * \brief Enables SPI Slave port interruption.
