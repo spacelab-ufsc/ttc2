@@ -24,10 +24,11 @@
  * \brief Media device implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.19
- * 
- * \date 2020/07/21
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup media
  * \{
@@ -60,60 +61,75 @@ int media_init(media_t med)
     return err;
 }
 
-int media_write(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
+int media_write(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len)
 {
     int err = -1;
+    uint16_t i = 0U;
 
     switch(med)
     {
         case MEDIA_INT_FLASH:
         {
-            /* Address index */
-            uint32_t adr_idx = adr + FLASH_SEG_A_ADR;
-
-            uint16_t i = 0;
-            for(i=0; i<len; i+=4U)
+            if (flash_mutex_take() == 0)
             {
-                uint32_t adr_counter = adr_idx + i;
+                /* Address index */
+                uintptr_t adr_idx = adr + sector;
 
-                flash_write_long((uint32_t)data[i], &adr_counter);
+                for(i=0; i<len; ++i)
+                {
+                    uintptr_t adr_counter = adr_idx + i;
+
+                    flash_write_single(data[i], adr_counter);
+                }
+
+                err = flash_mutex_give();
+            }
+            else
+            {
+                sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Couldn't get mutex control.");
+                sys_log_new_line();
             }
 
-            err = 0;
-
             break;
-        }
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to write!");
             sys_log_new_line();
 
             break;
+        }
     }
 
     return err;
 }
 
-int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
+int media_read(media_t med, uint32_t adr, uint32_t sector, uint8_t *data, uint16_t len)
 {
     int err = -1;
+    uint16_t i = 0;
 
     switch(med)
     {
         case MEDIA_INT_FLASH:
         {
-            /* Address index */
-            uint32_t adr_idx = adr + FLASH_SEG_A_ADR;
-
-            uint16_t i = 0;
-            for(i=0; i<len; i+=4U)
+            if (flash_mutex_take() == 0)
             {
-                uint32_t adr_counter = adr_idx + i;
+                /* Address index */
+                uintptr_t adr_idx = adr + sector;
 
-                data[i] = (uint8_t)flash_read_long(&adr_counter);
+                for(i=0; i<len; ++i)
+                {
+                    uintptr_t adr_counter = adr_idx + i;
+
+                    data[i] = flash_read_single(adr_counter);
+                }
+
+                err = flash_mutex_give();
             }
-
-            err = 0;
-
+            else
+            {
+                sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Couldn't get mutex control.");
+                sys_log_new_line();
+            }
             break;
         }
         default:
@@ -126,30 +142,34 @@ int media_read(media_t med, uint32_t adr, uint8_t *data, uint16_t len)
     return err;
 }
 
-int media_erase(media_t med, media_erase_t type, uint32_t sector)
+int media_erase(media_t med, uint32_t sector)
 {
     int err = -1;
 
     switch(med)
     {
         case MEDIA_INT_FLASH:
-        {
-            uint8_t sector_conv = UINT8_MAX;
-            if (sector > UINT8_MAX)
+            if (flash_mutex_take() == 0)
             {
-                sector_conv = UINT8_MAX;
+                if ((sector == FLASH_SEG_A_ADR) || (sector == FLASH_SEG_B_ADR))
+                {
+                    flash_erase((uintptr_t)sector);
+                    err = flash_mutex_give();
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Erasing invalid sector!");
+                    sys_log_new_line();
+                }
+
             }
             else
             {
-                sector_conv = (uint8_t)sector;
+                sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Couldn't get mutex control.");
+                sys_log_new_line();
             }
 
-            flash_write_single(0xFF, &sector_conv);
-
-            err = 0;
-
             break;
-        }
         default:
             sys_log_print_event_from_module(SYS_LOG_ERROR, MEDIA_MODULE_NAME, "Invalid storage media to erase!");
             sys_log_new_line();

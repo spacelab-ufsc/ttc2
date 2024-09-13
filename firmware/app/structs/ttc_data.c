@@ -26,9 +26,9 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
- * 
- * \date 2021/04/14
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup ttc_data
  * \{
@@ -42,11 +42,11 @@ ttc_data_t ttc_data_buf;
 
 void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
-    uint16_t i = 0;
+    uint16_t i = 0U;
 
     ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write] = packet_size;
 
-    for(i = 0; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
+    for(i = 0U; i <ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_write]; i++)
     {
         ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_write][i] = packet[i];
     }
@@ -54,34 +54,37 @@ void downlink_add_packet(uint8_t *packet, uint16_t packet_size)
     ttc_data_buf.radio.tx_fifo_counter++;
     ttc_data_buf.radio.tx_packet_counter++;
 
-    if (++ttc_data_buf.down_buf.position_to_write >= 5)
+    if (++ttc_data_buf.down_buf.position_to_write >= 5U)
     {
-        ttc_data_buf.down_buf.position_to_write = 0;
+        ttc_data_buf.down_buf.position_to_write = 0U;
     }
 }
 
 void downlink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
-    uint16_t i = 0;
+    uint16_t i = 0U;
 
-    *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
-
-    for(i = 0; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
+    if (ttc_data_buf.radio.tx_fifo_counter > 0U)
     {
-        packet[i] = ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_read][i];
-    }
+        *packet_size = ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read];
 
-    ttc_data_buf.radio.tx_fifo_counter--;
+        for(i = 0U; i < ttc_data_buf.down_buf.packet_sizes[ttc_data_buf.down_buf.position_to_read]; i++)
+        {
+            packet[i] = ttc_data_buf.down_buf.packet_array[ttc_data_buf.down_buf.position_to_read][i];
+        }
 
-    if (++ttc_data_buf.down_buf.position_to_read >= 5)
-    {
-        ttc_data_buf.down_buf.position_to_read = 0;
+        ttc_data_buf.radio.tx_fifo_counter--;
+
+        if (++ttc_data_buf.down_buf.position_to_read >= 5U)
+        {
+            ttc_data_buf.down_buf.position_to_read = 0U;
+        }
     }
 }
 
 void uplink_add_packet(uint8_t *packet, uint16_t packet_size)
 {
-    uint16_t i = 0;
+    uint16_t i = 0U;
 
     ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_write] = packet_size;
 
@@ -103,26 +106,25 @@ void uplink_pop_packet(uint8_t *packet, uint16_t *packet_size)
 {
     uint16_t i = 0;
 
-    *packet_size = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
-
-    for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]; i++)
+    if (ttc_data_buf.radio.rx_fifo_counter > 0U)
     {
-        packet[i] = ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i];
-        ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i] = 0xFF; /* Remove packet after a read */
+        *packet_size = ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read];
+
+        for(i = 0; i < ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]; i++)
+        {
+            packet[i] = ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i];
+            ttc_data_buf.up_buf.packet_array[ttc_data_buf.up_buf.position_to_read][i] = 0xFF; /* Remove packet after a read */
+        }
+
+        ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read] = 0x00; /* 0x00 means that there is no package in this position */
+
+        ttc_data_buf.radio.rx_fifo_counter--;
+
+        if (++ttc_data_buf.up_buf.position_to_read >= 5)
+        {
+            ttc_data_buf.up_buf.position_to_read = 0;
+        }
     }
-
-    ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read] = 0xFF; /* 0xFF means that there is no package in this position */
-
-    ttc_data_buf.radio.rx_fifo_counter--;
-
-    if (++ttc_data_buf.up_buf.position_to_read >= 5)
-    {
-        ttc_data_buf.up_buf.position_to_read = 0;
-    }
-
-    /* Update rx packet bytes */
-    ttc_data_buf.radio.last_rx_packet_bytes = &(ttc_data_buf.up_buf.packet_sizes[ttc_data_buf.up_buf.position_to_read]);
-
 }
 
 /** \} End of ttc_data group */

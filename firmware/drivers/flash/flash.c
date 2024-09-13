@@ -1,7 +1,7 @@
 /*
  * flash.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,14 +24,16 @@
  * \brief Flash driver implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
+ * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 0.1.8
+ * \version 1.0.0
  * 
- * \date 2020/03/17
+ * \date 2024/09/09
  * 
  * \addtogroup flash
  * \{
  */
+
 
 #include <msp430.h>
 
@@ -41,7 +43,7 @@ static long *current_flash_ptr;
 
 int flash_init(void)
 {
-    return 0;
+    return flash_mutex_create();
 }
 
 void flash_write(uint8_t *data, uint16_t len)
@@ -133,6 +135,7 @@ uint32_t flash_read_long(uint32_t *addr)
 void flash_erase(uint32_t *region)
 {
     uint32_t *erase_ptr = region;
+    uintptr_t seg = region;
 
     if ((FCTL3 & LOCKA) > 0)
     {
@@ -143,7 +146,7 @@ void flash_erase(uint32_t *region)
         FCTL3 = FWKEY;                      /* Clear Lock bit */
     }
 
-    switch(*region)
+    switch(seg)
     {
         case FLASH_BANK_0_ADR:  FCTL1 = FWKEY | MERAS;          break;
         case FLASH_BANK_1_ADR:  FCTL1 = FWKEY | MERAS;          break;

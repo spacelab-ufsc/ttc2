@@ -1,7 +1,7 @@
 /*
  * flash_wrap.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -24,10 +24,11 @@
  * \brief Flash driver wrap implementation.
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
- * 
- * \version 0.1.5
- * 
- * \date 2021/08/07
+ * \author Miguel Boing <miguelboing13@gmail.com>
+ *
+ * \version 1.0.0
+ *
+ * \date 2024/09/09
  * 
  * \addtogroup flash_wrap
  * \{
@@ -91,6 +92,21 @@ void __wrap_flash_erase(uint32_t *region)
     check_expected_ptr(region);
 
     return;
+}
+
+int __wrap_flash_mutex_create(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_flash_mutex_take(void)
+{
+    return mock_type(int);
+}
+
+int __wrap_flash_mutex_give(void)
+{
+    return mock_type(int);
 }
 
 /** \} End of flash_wrap group */

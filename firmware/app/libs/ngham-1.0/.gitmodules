@@ -1,0 +1,3 @@
+[submodule "rsclib"]
+	path = rsclib
+	url = https://github.com/miguelboing/rsclib

@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.3.5
+ * \version 1.0.0
  *
- * \date 2023/03/03
+ * \date 2024/09/09
  *
  * \defgroup eps EPS
  * \ingroup tasks
@@ -41,9 +41,9 @@
 #include <task.h>
 
 #define TASK_EPS_SERVER_NAME                "EPS Server"        /**< Task name. */
-#define TASK_EPS_SERVER_STACK_SIZE          2000                /**< Stack size in bytes. */
-#define TASK_EPS_SERVER_PRIORITY            4                   /**< Task priority. */
-#define TASK_EPS_SERVER_PERIOD_MS           250                 /**< Task period in milliseconds. */
+#define TASK_EPS_SERVER_STACK_SIZE          1000                /**< Stack size in bytes. */
+#define TASK_EPS_SERVER_PRIORITY            3                   /**< Task priority. */
+#define TASK_EPS_SERVER_PERIOD_MS           750                 /**< Task period in milliseconds. */
 #define TASK_EPS_SERVER_INITIAL_DELAY_MS    1000                /**< Delay, in milliseconds, before the first execution. */
 #define TASK_EPS_SERVER_INIT_TIMEOUT_MS     10000               /**< Wait time to initialize the task in milliseconds. */
 

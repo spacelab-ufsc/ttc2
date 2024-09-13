@@ -25,9 +25,9 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
- * \date 2023/03/03
+ * \date 2024/09/09
  *
  * \addtogroup obdh_server
  * \{
@@ -62,85 +62,101 @@ void vTaskObdhServer(void)
     obdh_response_t obdh_response = {0};
     obdh_request.command = 0x00U;   /* No command */
 
-    uint8_t buffer1[7] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint8_t buffer2[7] = {0x22, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
-    uint8_t buffer3[10] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
-
-    uplink_add_packet(buffer2, 6);
-    uplink_add_packet(buffer3, 10);
-
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
 
         /* Receiving data from obdh */
-        obdh_read_request(&obdh_request);
-
-        if (obdh_request.command != 0xFF)
+        if (obdh_read_request(&obdh_request) != -1)
         {
-            taskENTER_CRITICAL();
-
-            switch(obdh_request.command)
+            if (obdh_request.command != 0xFF)
             {
-                case CMDPR_CMD_READ_PARAM:
-                    obdh_response.command = obdh_request.command;
-                    obdh_response.parameter = obdh_request.parameter;
-                    obdh_write_response_param(&ttc_data_buf, &obdh_response);
+                taskENTER_CRITICAL();
 
-                    obdh_send_response(&obdh_response);
+                switch(obdh_request.command)
+                {
+                    case CMDPR_CMD_READ_PARAM:
+                        obdh_response.command = obdh_request.command;
+                        obdh_response.parameter = obdh_request.parameter;
+                        obdh_write_response_param(&ttc_data_buf, &obdh_response);
 
-                    break;
-                case CMDPR_CMD_WRITE_PARAM:
-                    obdh_write_read_bytes(6);
+                        obdh_send_response(&obdh_response);
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
+                        break;
+                    case CMDPR_CMD_WRITE_PARAM:
+                        obdh_write_read_bytes(7);
 
-                    switch(obdh_request.data.param_8)
-                    {
-                        case 0x00:
-                            sys_log_print_msg("Turned on.");
-                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+                        switch(obdh_request.parameter)
+                        {
+                        case CMDPR_PARAM_TX_ENABLE:
+                            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "TX is now ");
+
+                            switch(obdh_request.data.param_8)
+                            {
+                            case 0x00:
+                                sys_log_print_msg("Turned off.");
+                                ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                                break;
+                            case 0x01:
+                                sys_log_print_msg("Turned on.");
+                                ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+
+                                break;
+                            default:
+
+                                sys_log_print_msg("Invalid mode: ");
+                                sys_log_print_uint(obdh_request.data.param_8);
+
+                                break;
+                            }
+
+                            sys_log_new_line();
 
                             break;
-                        case 0x01:
-                            sys_log_print_msg("Turned off.");
-                            ttc_data_buf.radio.tx_enable = obdh_request.data.param_8;
+                        case CMDPR_PARAM_RESET_DEVICE:
 
+                            if (obdh_request.data.param_8 == 0x01)
+                            {
+                                sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to reset system...");
+                                system_reset();
+                            }
                             break;
+
                         default:
-                            sys_log_print_msg("Invalid mode: ");
-                            sys_log_print_uint(obdh_request.data.param_8);
+                            sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_OBDH_SERVER_NAME, "Invalid write parameter.");
 
                             break;
-                    }
-                    sys_log_new_line();
+                        }
+                        break;
+                    case CMDPR_CMD_TRANSMIT_PACKET:
+                        obdh_write_read_bytes(7);
 
-                    break;
-                case CMDPR_CMD_TRANSMIT_PACKET:
-                    obdh_write_read_bytes(6);
+                        downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
-                    downlink_add_packet(obdh_request.data.data_packet.packet, (obdh_request.data.data_packet.len)+3);
+                        break;
+                    case CMDPR_CMD_READ_FIRST_PACKET:
+                        obdh_response.command = obdh_request.command;
 
-                    break;
-                case CMDPR_CMD_READ_FIRST_PACKET:
-                    obdh_response.command = obdh_request.command;
+                        uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
 
-                    uplink_pop_packet(obdh_response.data.data_packet.packet, &(obdh_response.data.data_packet.len));
+                        obdh_send_response(&obdh_response);
 
-                    obdh_send_response(&obdh_response);
+                        obdh_write_read_bytes(7U);
 
-                    break;
-                case 0x00:
-                    /* Read mode */
-                    obdh_write_read_bytes(6);
-                    break;
-                default:
-                    break;
+                        break;
+                    case 0x00:
+                        /* Read mode */
+                        obdh_write_read_bytes(7U);
+
+                        break;
+                    default:
+                        break;
+                }
+
+                taskEXIT_CRITICAL();
             }
-
-            taskEXIT_CRITICAL();
         }
-
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_OBDH_SERVER_PERIOD_MS));
     }
 }

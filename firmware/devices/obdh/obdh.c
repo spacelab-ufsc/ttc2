@@ -25,13 +25,15 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
- * \date 2023/02/12
+ * \date 2024/09/11
  *
  * \addtogroup obdh
  * \{
  */
+
+#include <stddef.h>
 
 #include <FreeRTOS.h>
 #include <task.h>
@@ -73,11 +75,17 @@ int obdh_read_request(obdh_request_t *obdh_request)
     int err = 0;
     uint8_t request[7] = {0};
 
-    spi_slave_dma_read(request, 7);
+    spi_slave_dma_read(request, 7U);
 
+    /*Check for preamble */
+    if (request[0] != 0x7EU)
+    {
+        err = -1;
+        spi_slave_dma_change_transfer_size(7U);
+    }
     obdh_request->command = request[1];
 
-    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00)) /* Received a request */
+    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00) && (err != -1)) /* Received a request */
     {
         switch(obdh_request->command)
         {
@@ -96,14 +104,14 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 sys_log_print_hex(obdh_request->parameter);
                 sys_log_new_line();
 
-                if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
+                if ((obdh_request->parameter == CMDPR_PARAM_TX_ENABLE) || (obdh_request->parameter == CMDPR_PARAM_RESET_DEVICE))
                 {
                     obdh_request->data.param_8 = request[3];
                 }
                 else
                 {
                     sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
-                    sys_log_print_hex(request[3]);
+                    sys_log_print_hex(request[2]);
                     sys_log_new_line();
 
                     err = -1;
@@ -114,26 +122,32 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                 obdh_request->data.data_packet.len = request[2];
 
-                obdh_write_read_bytes(request[2]+2U);
+                spi_slave_dma_change_transfer_size((request[2] + 3U));
 
-                vTaskDelay(pdMS_TO_TICKS(100));
+                obdh_write_read_bytes((request[2] + 3U));
 
-                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len)+3);
+                vTaskDelay(pdMS_TO_TICKS(130));
 
-                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received:");
+                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len + 3U));
+
+                /* Removing protocol bytes */
+                for (uint16_t i = 0; i < (uint16_t)(request[2]); i++)
+                {
+                    obdh_request->data.data_packet.packet[i] = obdh_request->data.data_packet.packet[i+3U];
+                }
+
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received: ");
                 sys_log_print_uint(obdh_request->data.data_packet.len);
-                sys_log_print_msg(" bytes.");
+                sys_log_print_msg(" bytes");
                 sys_log_new_line();
 
-                sys_log_print_str("Packet: ");
-                sys_log_dump_hex(&(obdh_request->data.data_packet.packet[3]), obdh_request->data.data_packet.len);
-                sys_log_new_line();
+                spi_slave_dma_change_transfer_size(7U);
 
                 break;
             case CMDPR_CMD_READ_FIRST_PACKET:
                 obdh_request->data.data_packet.len = request[2];
 
-                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received.");
+                sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Read packet command received");
                 sys_log_new_line();
 
                 break;
@@ -282,7 +296,9 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
 
                 break;
             case CMDPR_PARAM_N_BYTES_FIRST_AV_RX:
-                obdh_response->data.param_16 = *(ttc_data_buf->radio.last_rx_packet_bytes);
+                /* Update rx packet bytes */
+                ttc_data_buf->radio.last_rx_packet_bytes = ttc_data_buf->up_buf.packet_sizes[ttc_data_buf->up_buf.position_to_read];
+                obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
 
                 break;
             default:
@@ -307,27 +323,28 @@ int obdh_flush_request(obdh_request_t *obdh_request)
 static int obdh_write_parameter(obdh_response_t *obdh_response)
 {
     int err = 0;
-    uint8_t response[6] = {0};
+    uint8_t response[7] = {0};
 
-    response[0] = obdh_response->command;
-    response[1] = obdh_response->parameter;
+    response[0] = 0x7EU;
+    response[1] = obdh_response->command;
+    response[2] = obdh_response->parameter;
 
     switch(cmdpr_param_size(obdh_response->parameter))
     {
         case 1:
-            response[2] = obdh_response->data.param_8;
+            response[3] = obdh_response->data.param_8;
 
             break;
         case 2:
-            response[2] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
-            response[3] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
+            response[3] = (uint8_t)((obdh_response->data.param_16 >> 8) & 0xFFU);
+            response[4] = (uint8_t)(obdh_response->data.param_16 & 0xFFU);
 
             break;
         case 4:
-            response[2] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
-            response[3] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
-            response[4] = (uint8_t)((obdh_response->data.param_32 >> 8) & 0xFFU);
-            response[5] = (uint8_t)(obdh_response->data.param_32 & 0xFFU);
+            response[3] = (uint8_t)((obdh_response->data.param_32 >> 24) & 0xFFU);
+            response[4] = (uint8_t)((obdh_response->data.param_32 >> 16) & 0xFFU);
+            response[5] = (uint8_t)((obdh_response->data.param_32 >> 8) & 0xFFU);
+            response[6] = (uint8_t)(obdh_response->data.param_32 & 0xFFU);
 
             break;
         default:
@@ -340,7 +357,7 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
 
     if (err == 0)
     {
-        spi_slave_dma_write(response, 6);
+        spi_slave_dma_write(response, 7);
     }
     else
     {
@@ -355,7 +372,9 @@ void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-
     uint8_t buffer[230];
     uint8_t i;
 
-    for (i = 0U; i < 230U; i++)
+    buffer[0] = 0x7EU;
+
+    for (i = 1U; i < number_of_bytes; i++)
     {
         buffer[i] = 0x00U;
     }
@@ -365,14 +384,33 @@ void obdh_write_read_bytes(uint16_t number_of_bytes) // cppcheck-suppress misra-
 
 static int obdh_write_packet(obdh_response_t *obdh_response)
 {
-    int err = 0;
+    int err = -1;
 
-    spi_slave_dma_write(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
+    uint8_t transmission_buffer[70U];
+    uint8_t transmission_buffer_p;
 
-    sys_log_print_str("Packet:");
+    if((obdh_response->data.data_packet.len + 2) < 70U)
+    {
+        spi_slave_dma_change_transfer_size((obdh_response->data.data_packet.len + 2));
 
-    sys_log_dump_hex(obdh_response->data.data_packet.packet, obdh_response->data.data_packet.len);
-    sys_log_new_line();
+        transmission_buffer[0] = 0x7EU;
+        transmission_buffer[1] = 0x04U;
+
+        for (transmission_buffer_p = 0U; transmission_buffer_p < obdh_response->data.data_packet.len; transmission_buffer_p++)
+        {
+            transmission_buffer[transmission_buffer_p + 2U] = obdh_response->data.data_packet.packet[transmission_buffer_p];
+        }
+
+        spi_slave_dma_write(transmission_buffer, (obdh_response->data.data_packet.len + 2));
+
+        vTaskDelay(pdMS_TO_TICKS(130));
+
+        spi_slave_dma_read(NULL, (obdh_response->data.data_packet.len + 2));
+
+        spi_slave_dma_change_transfer_size(7U);
+
+        err = 0;
+    }
 
     return err;
 }

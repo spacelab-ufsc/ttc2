@@ -15,7 +15,7 @@
 %
 % \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
 %
-% \version 0.3.0
+% \version 1.0.0
 %
 % \date 2021/05/12
 %
@@ -39,54 +39,53 @@ The product tree of the firmware part of the TTC 2.0 module is available in \aut
 
 \section{Commands} \label{sec:commands}
 
-To externally control and access the TTC module, some commands are available through the serial interfaces of the board. The commands are almost identical for both microcontrollers (except the command answering behavior) and are available on all interfaces. A list with the commands is available in \autoref{tab:commands}. The format of the commands' answers can be seen in \autoref{tab:commands-ans}.
+To externally control and access the TTC module, some commands are available through the serial interfaces of the board. The commands are almost identical for both microcontrollers (except the command answering behavior) and are available on all interfaces. A list with the commands is available in \autoref{tab:commands}. The format of the commands answers can be seen in \autoref{tab:commands-ans}.
 
 \begin{table}[!ht]
     \centering
+    \scriptsize
     \begin{tabular}{clll}
         \toprule[1.5pt]
         \textbf{ID} & \textbf{Name} & \textbf{Content} & \textbf{Interface}\\
         \midrule
         0   & NOP               & None                                           & SPI \\
-        1   & Read parameter    & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI \\
-        2   & Write parameter   & Parameter ID (1B) + Value (4B) + Checksum (2B) & SPI \\
-        3   & Transmit packet   & Packet data (1-220B) + Checksum (2B)           & SPI/UART \\
-        4   & Receive packet    & Packet data (1-220B) + Checksum (2B)           & SPI \\
+        1   & Read parameter     & Command ID (1B) + Parameter ID (1B)   & SPI \\
+        2   & Write parameter   & Command ID (1B) + Parameter ID (1B) + Value (4B) & SPI \\
+        3   & Transmit packet   & Command ID (1B) + Packet length (1B)  + Packet (1-220B)         & SPI/UART \\
+        4   & Receive packet    & Command ID (1B)      & SPI \\
         \bottomrule[1.5pt]
     \end{tabular}
-    \caption{List of commands.}
+    \caption{List of command's requests.}
     \label{tab:commands}
 \end{table}
 
 \begin{table}[!ht]
     \centering
+    \scriptsize
     \begin{tabular}{cll}
         \toprule[1.5pt]
         \textbf{ID} & \textbf{Name} & \textbf{Content}\\
         \midrule
-        1   & Read parameter    & Parameter ID (1B) + Value (4B) + Checksum (2B) \\
+        1   & Read parameter    & Command ID (1B) + Parameter ID (1B) + Value (4B) \\
         2   & Write parameter   & None \\
         3   & Transmit packet   & None \\
-        4   & Receive packet    & Packet data (1-220B) + Checksum (2B) \\
+        4   & Receive packet    & Command ID (1B) + Packet(1-220B) \\
         \bottomrule[1.5pt]
     \end{tabular}
     \caption{Format of the command's answers.}
     \label{tab:commands-ans}
 \end{table}
 
-All commands are composed of an ID field (1 byte), the content of the command, and a checksum at the end of the command (2 bytes). The used checksum algorithm is the CRC16-CCITT\nomenclature{\textbf{CRC}}{\textit{Cyclic Redundancy Check.}} \nomenclature{\textbf{CCITT}}{\textit{Comité Consultatif International Téléphonique et Télégraphique.}} (initial value = 0x0000, polynomial = 0x1021). The CRC value is calculated with the entire packet (ID field + command content).
-
-A description of each command is available below:
+A description of each command is available below and the details about the protocol communication are available at \autoref{sec:server_param}.
 
 \begin{itemize}
-    \item NOP (No Operation, ID = 1): This command does nothing on the TTC; it is used for reading operations on the SPI interface when an answer to a telecommand is required.
-    \item Read parameter/variable (ID = 1): This command is used to read a parameter or variable of the TTC module. It is composed of the command ID (1 byte), the parameter ID (1 byte), and the checksum value (2 bytes). After receiving the command, the answer with the parameter's value can be read with the NOP command (using the SPI interface, with the UART interface, the answer is immediately transmitted). The answer is composed of the command ID (1 byte), the parameter ID (1 byte), the parameter or variable value (4 bytes), and the checksum value (2 bytes).
-    \item Write parameter/variable (ID = 2): This command is used to write a value to a given parameter or variable when allowed. It is composed of the command ID (1 byte), the parameter ID (1 byte), the new value of the parameter (4 bytes), and the checksum value (2 bytes). This command has no answer.
-    \item Transmit packet (ID = 3): This command is used to transmit a packet through the radio link of each microcontroller. It is composed of the command ID (1 byte), the payload of the packet (1 to 220 bytes), and the checksum value (2 bytes). After receiving it, the TTC immediately transmits a new NGHam packet if the transmissions are enabled. This command has no answer.
-    \item Receive packet (ID = 4): This command is used to read a received packet through the radio link (stored in the internal FIFO of the microcontrollers of the TTC). It comprises just the command ID (1 byte) and the checksum value (2 bytes). After receiving it, the TTC immediately allows access to the first available packet. The answer to this command, composed of the command ID (1 byte), the packet content (1 to 220 bytes), and the checksum value (2 bytes) can be read using the NOP command.
+    \item Read parameter/variable (ID = 1): This command is used to read a parameter or variable of the TTC module (see \autoref{tab:ttc2-variables}).
+    \item Write parameter/variable (ID = 2): This command is used to write a value to a given parameter or variable when allowed (see \autoref{tab:ttc2-variables}).
+    \item Transmit packet (ID = 3): This command is used to transmit a packet through the radio link of each microcontroller.
+    \item Receive packet (ID = 4): This command is used to read a received packet through the radio link (stored in the internal FIFO of the microcontrollers of the TTC).
 \end{itemize}
 
-\section{Variables and Parameters} \label{sec:variables}
+\section{Variables and Parameters}\label{sec:variables}
 
 A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals can be seen in \autoref{tab:ttc2-variables}.
 
@@ -96,7 +95,7 @@ A list of all the variables of TTC with their identification number (ID) and var
     \midrule
     0   & Device ID (0xCC2A or 0xCC2B)                                      & uint16 & R \\
     1   & Hardware version                                                  & uint8  & R \\
-    2   & Firmware version (ex.: ``v1.2.3''' = 0x00010203)                  & uint32 & R \\
+    2   & Firmware version (ex.: ``v1.2.3'' = 0x00010203)                  & uint32 & R \\
     3   & Time counter in milliseconds                                       & uint32 & R \\
     4   & Reset counter                                                     & uint16 & R \\
     \multirow{18}{*}{5} & Last reset cause: & \multirow{18}{*}{uint8} & \multirow{18}{*}{R} \\
@@ -151,6 +150,7 @@ A list of all the variables of TTC with their identification number (ID) and var
     21  & TX packets available in the FIFO buffer                           & uint8  & R \\
     22  & RX packets available in the FIFO buffer                           & uint8  & R \\
     23  & Number of bytes of the first available packet in the RX buffer    & uint16 & R \\
+    24  & Reset TTC 2.0 Module (1=starts reset sequence)                    & uint8  & W \\
     \bottomrule[1.5pt]
     \caption{Variables and parameters of the TTC 2.0.}
     \label{tab:ttc2-variables}
@@ -160,9 +160,9 @@ Each variable can be read or written using the commands ``Read Parameter'' and/o
 
 \section{Layers}
 
-The firmware flow of development goes from the low-level implementation (far right), with HA layer being register-level operation, to Tasks Layer with very abstract and high-level code.
+The firmware flow of development goes from the low-level implementation (far right), with HAL being register-level operation, to Tasks Layer with very abstract and high-level code.
 
-\subsection{Hardware Abstraction Layer (HAL)}
+\subsection{Hardware Abstraction Layer}
 
 The HAL layer is the API DriverLib developed by Texas Instruments; it includes register manipulating functions to accelerate development. The TTC 2.0 uses HAL to handle GPIO operations and serial communications such as SPI, UART, and I$^2$C.
 
@@ -185,7 +185,7 @@ The System layer is used for housekeeping and management routines; it contains t
 \begin{figure}[!ht]
 	\begin{center}
 		\includegraphics[width=0.65\textwidth]{figures/ttc2-terminal-log.png}
-		\caption{Example of log feedback received from TTC 2.0 during debug.}
+		\caption{Example of log feedback received from TTC 2.0}
 		\label{fig:log_info}
 	\end{center}
 \end{figure}
@@ -199,39 +199,42 @@ Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction laye
 
     \begin{tabular}{lccccc}
         \toprule[1.5pt]
-        \textbf{Name}          & \textbf{Priority} & \textbf{Initial delay [ms]} & \textbf{Period [ms]} & \textbf{Stack [bytes]} \\
+        \textbf{Name}          & \textbf{Priority\footnote{The priority follows a quantitative pattern, the higher the most important}} & \textbf{Initial delay [ms]} & \textbf{Period [ms]} & \textbf{Stack [bytes]} \\
         \midrule
-        Automatic Beacon       & High    & 60000 & 60000     & 300 \\
-        Command Processing     & Highest & 0     & 100       & 500 \\
-        Heartbeat              & Lowest  & 0     & 500       & 160 \\
-        Housekeeping           & Medium  & 2000  & 10000     & 160 \\
-        Radio Reset            & High    & 60000 & 60000     & 128 \\
-        Startup                & Medium  & 0     & Aperiodic & 128 \\
-        System Reset           & Medium  & 0     & 36000000  & 128 \\
-        Time Control           & Medium  & 1000  & 1000      & 128 \\
-        Uplink                 & Highest & 2000  & 500       & 500 \\
-        Watchdog Reset         & Lowest  & 0     & 100       & 150 \\
+        Antenna Deployment     & 6  & 3600000 & 100       & 150  \\
+        Downlink Manager       & 3  & 550     & 150       & 2000 \\
+        EPS Server             & 3  & 10000   & 750       & 1000 \\
+        Heartbeat              & 1  & 2000    & 500       & 160  \\
+        OBDH Server            & 5  & 200     & 100       & 2000 \\
+        Radio Reset            & 5  & 60000   & 60000     & 128  \\
+        Read Antenna           & 2  & 2000    & 60000     & 150  \\
+        Read Sensors           & 3  & 2000    & 60000     & 128  \\
+        Startup                & 6  & 0       & Aperiodic & 500  \\
+        System Reset           & 2  & 0       & 36000000  & 128  \\
+        Time Control           & 3  & 1000    & 1000      & 128  \\
+        Uplink Manager         & 3  & 500     & 300       & 2000 \\
+        Watchdog Reset         & 1  & 0       & 100       & 150  \\
         \bottomrule[1.5pt]
     \end{tabular}
-    \caption{List of TTC 2.0 Tasks with configuration parameters.}
+    \caption{List of TTC 2.0 tasks with configuration parameters.}
     \label{tab:firmware-tasks}
 \end{table}
 
 Each of the tasks presented in \autoref{tab:firmware-tasks} is described below:
 
 \begin{itemize}
-    \item \textbf{Automatic Beacon}: Automatically transmits a beacon packet if no transmission command is received within 60 seconds.
-    \item \textbf{Command Processing}: Process incoming commands (physical interfaces).
+    \item \textbf{Antenna Deployment}: Initialize the antenna sequence of deploy after 
+    \item \textbf{Downlink Manager}: Monitors for radio request from other tasks and manages downlink FIFO.
+    \item \textbf{EPS Server}: Read only transmit requests from UART bus.
     \item \textbf{Heartbeat}: Blinks a status LED at a rate of 1 Hz. Both microcontrollers have a status LED. This LED indicates that the scheduler is up and running.
-    \item \textbf{Housekeeping}: This task manages the general operation of the TTC.
+    \item \textbf{OBDH Server}: Read requests and send response from the SPI bus.
     \item \textbf{Radio Reset}: Resets the radio at 600 seconds.
+    \item \textbf{Read Antenna}: Reads antenna current status and temperature.
+    \item \textbf{Read Sensors}: Reads the uC and radio temperature and power consumption. 
     \item \textbf{Startup}: Initializes all the devices and peripherals, and variables of the TTC 2.0 module (boot sequence).
     \item \textbf{System Reset}: Resets the microcontroller by software every 10 hours.
-    \item \textbf{Time Control}: Manages the system time by loading the saving the time counter from/to the FRAM memory.
+    \item \textbf{Time Control}: Manages the system time by loading the saving the time counter from/to the internal flash memory.
     \item \textbf{Uplink Manager}: Monitors the radio module for upcoming packages and stores it in memory.
-    \item \textbf{Downlink Manager}: Monitors for radio request from other tasks and manages downlink FIFO.
-    \item \textbf{OBDH Server}: Read requests and send response from the SPI bus.
-    \item \textbf{EPS Server}: Read only transmit requests from UART bus. 
     \item \textbf{Watchdog Reset}: Resets both watchdog timers (internal and external) at every 100 milliseconds.
 \end{itemize}
 
@@ -241,4 +244,4 @@ The Libraries are used for algorithm purposes and are not related to any hardwar
 
 \subsection{Tests}
 
-Tests are used to verify and validate the Drivers and Devices' developed functionality. There are three types of tests: the static test uses the MISRA C: 2012 \cite{misrac2012} guidelines to check for C safety standards, the unitary tests use the Cmocka\footnote{\href{https://cmocka.org/}{https://cmocka.org/}} library with mockups of the hardware, to validate the module in an algorithmic level, and the last test verifies the integration between hardware and firmware.
+Tests are used to verify and validate the Drivers and Devices' developed functionality. There are three types of tests: the static test uses the MISRA-C: 2012 \cite{misrac2012} guidelines to check for C safety standards, the unitary tests use the Cmocka\footnote{\href{https://cmocka.org/}{https://cmocka.org/}} library with mockups of the hardware, to validate the module in an algorithmic level, and the last test verifies the integration between hardware and firmware.
