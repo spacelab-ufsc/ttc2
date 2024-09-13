@@ -27,7 +27,7 @@
  *
  * \version 1.0.0
  *
- * \date 2024/09/09
+ * \date 2024/09/11
  *
  * \addtogroup obdh
  * \{
@@ -104,14 +104,14 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 sys_log_print_hex(obdh_request->parameter);
                 sys_log_new_line();
 
-                if (obdh_request->parameter == CMDPR_PARAM_TX_ENABLE)
+                if ((obdh_request->parameter == CMDPR_PARAM_TX_ENABLE) || (obdh_request->parameter == CMDPR_PARAM_RESET_DEVICE))
                 {
                     obdh_request->data.param_8 = request[3];
                 }
                 else
                 {
                     sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
-                    sys_log_print_hex(request[3]);
+                    sys_log_print_hex(request[2]);
                     sys_log_new_line();
 
                     err = -1;
