@@ -60,8 +60,8 @@ uint16_t cmdpr_param_size(uint8_t param)
         param_size = 2;
     }
     /*uint32_t param */
-    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_COUNTER) ||
-            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER))
+    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_TIMESTAMP) ||
+            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER) || (param == CMDPR_PARAM_TIMESTAMP))
     {
         param_size = 4;
     }

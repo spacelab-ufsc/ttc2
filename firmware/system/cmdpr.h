@@ -49,7 +49,7 @@
 #define CMDPR_PARAM_DEVICE_ID                0x00U       /**< Hardware version */
 #define CMDPR_PARAM_HW_VER                   0x01U       /**< Firmware version */
 #define CMDPR_PARAM_FW_VER                   0x02U       /**< Device ID (0xCC2A or 0xCC2B) */
-#define CMDPR_PARAM_COUNTER                  0x03U       /**< Time counter in milliseconds */
+#define CMDPR_PARAM_TIMESTAMP                0x03U       /**< Time counter in milliseconds */
 #define CMDPR_PARAM_RST_COUNTER              0x04U       /**< Reset counter */
 #define CMDPR_PARAM_LAST_RST_CAUSE           0x05U       /**< Last reset cause */
 #define CMDPR_PARAM_UC_VOLTAGE               0x06U       /**< Input voltage of the uC in mV */
