@@ -115,12 +115,23 @@ void vTaskObdhServer(void)
 
                             break;
                         case CMDPR_PARAM_RESET_DEVICE:
-
                             if (obdh_request.data.param_8 == 0x01)
                             {
                                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to reset system...");
                                 system_reset();
                             }
+                            break;
+
+                        case CMDPR_PARAM_TIMESTAMP:
+                            ttc_data_buf.timestamp = obdh_request.data.param_32;
+
+                            system_set_time((sys_time_t)obdh_request.data.param_32);
+
+                            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Updating system time to ");
+                            sys_log_print_uint(ttc_data_buf.timestamp);
+                            sys_log_print_msg(".");
+                            sys_log_new_line();
+
                             break;
 
                         default:
