@@ -108,6 +108,11 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 {
                     obdh_request->data.param_8 = request[3];
                 }
+                else if (obdh_request->parameter == CMDPR_PARAM_TIMESTAMP)
+                {
+                    obdh_request->data.param_32 = (uint32_t)(request[3]) << 24U | (uint32_t)(request[4]) << 16U |
+                                                  (uint32_t)(request[5]) << 8U | (uint32_t)(request[6]);
+                }
                 else
                 {
                     sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
@@ -211,7 +216,7 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
                 obdh_response->data.param_32 = ttc_data_buf->fw_version;
 
                 break;
-            case CMDPR_PARAM_COUNTER:
+            case CMDPR_PARAM_TIMESTAMP:
                 obdh_response->data.param_32 = ttc_data_buf->timestamp;
 
                 break;
