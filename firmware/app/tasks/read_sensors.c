@@ -34,6 +34,7 @@
  * \{
  */
 
+#include <system/system.h>
 #include <system/sys_log/sys_log.h>
 
 #include <devices/temp_sensor/temp_sensor.h>
@@ -99,7 +100,7 @@ void vTaskReadSensors(void)
         }
 
         /* Data timestamp */
-        ttc_data_buf.timestamp = (uint32_t)xTaskGetTickCount();
+        ttc_data_buf.timestamp = (uint32_t)system_get_time();
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_READ_SENSORS_PERIOD_MS));
     }
