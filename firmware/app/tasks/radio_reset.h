@@ -43,8 +43,8 @@
 #define TASK_RADIO_RESET_NAME               "RadioReset"    /**< Task name. */
 #define TASK_RADIO_RESET_STACK_SIZE         128             /**< Stack size in bytes. */
 #define TASK_RADIO_RESET_PRIORITY           5               /**< Task priority. */
-#define TASK_RADIO_RESET_PERIOD_MS          60000           /**< Task period in milliseconds. */
-#define TASK_RADIO_RESET_INITIAL_DELAY_MS   60000           /**< Delay, in milliseconds, before the first execution. */
+#define TASK_RADIO_RESET_PERIOD_MS          3600000         /**< Task period in milliseconds. */
+#define TASK_RADIO_RESET_INITIAL_DELAY_MS   3600000         /**< Delay, in milliseconds, before the first execution. */
 
 /**
  * \brief Radio reset handle.
