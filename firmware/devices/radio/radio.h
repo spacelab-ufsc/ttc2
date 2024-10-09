@@ -107,6 +107,13 @@ int radio_sleep(void);
 int radio_get_temperature(radio_temp_t *temp);
 
 /**
+ * \brief Resets and initializes the radio module.
+ *
+ * return None.
+ */
+void radio_reset(void);
+
+/**
  * \brief Reads the last available RSSI value of the radio device.
  *
  * \param[in,out] rssi is a pointer to store the read RSSI value.

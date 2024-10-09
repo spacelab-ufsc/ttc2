@@ -162,6 +162,16 @@ int radio_sleep(void)
     return err;
 }
 
+void radio_reset(void)
+{
+    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Reseting radio device...");
+    sys_log_new_line();
+
+    si446x_shutdown();
+    si446x_delay_ms(10U);
+    si446x_power_up();
+}
+
 int radio_get_temperature(radio_temp_t *temp)
 {
     /* TODO */
