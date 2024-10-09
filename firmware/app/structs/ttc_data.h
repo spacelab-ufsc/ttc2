@@ -69,24 +69,25 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t timestamp;             /**< Data timestamp (system ticks). */
-    uint16_t temperature;           /**< uC temperature in Kelvin. */
-    uint16_t voltage;               /**< Input voltage in mV. */
-    uint16_t current;               /**< Input current in mA. */
-    uint16_t power;                 /**< Input power in mW. */
-    uint8_t last_reset_cause;       /**< Last uC reset cause code. */
-    uint16_t reset_counter;         /**< uC reset counter. */
-    uint8_t hw_version;             /**< Hardware version. */
-    uint32_t fw_version;            /**< Firmware version ("v1.2.3" = 0x00010203). */
-    uint16_t device_id;             /**< Device ID (can be 0xCC2A or 0xCC2B) TODO: */
-    uint8_t ant_deploy_count;       /**< Number of antenna deployment tries TODO: */
-    bool ant_deploy_exec;           /**< The deployment has executed*/
-    uint8_t ant_deploy_hib_count;   /**< Hibernation count for deployment */
-    bool ant_deploy_hib_exec;       /**< Hibernation time has completed */
-    radio_data_t radio;             /**< Radio data. */
-    antenna_telemetry_t antenna;    /**< Antenna data. */
-    transmission_buf_t down_buf;    /**< Downlink Buffer */
-    transmission_buf_t up_buf;      /**< Uplink Buffer */
+    uint32_t timestamp;               /**< Data timestamp (system ticks). */
+    uint16_t temperature;             /**< uC temperature in Kelvin. */
+    uint16_t voltage;                 /**< Input voltage in mV. */
+    uint16_t current;                 /**< Input current in mA. */
+    uint16_t power;                   /**< Input power in mW. */
+    uint8_t last_reset_cause;         /**< Last uC reset cause code. */
+    uint16_t reset_counter;           /**< uC reset counter. */
+    uint8_t hw_version;               /**< Hardware version. */
+    uint32_t fw_version;              /**< Firmware version ("v1.2.3" = 0x00010203). */
+    uint16_t device_id;               /**< Device ID (can be 0xCC2A or 0xCC2B). */
+    uint8_t ant_deploy_count;         /**< Number of antenna deployment tries. */
+    uint8_t n_conseq_failed_packets;  /**< Number of consecutive failed packages */
+    bool ant_deploy_exec;             /**< The deployment has executed*/
+    uint8_t ant_deploy_hib_count;     /**< Hibernation count for deployment */
+    bool ant_deploy_hib_exec;         /**< Hibernation time has completed */
+    radio_data_t radio;               /**< Radio data. */
+    antenna_telemetry_t antenna;      /**< Antenna data. */
+    transmission_buf_t down_buf;      /**< Downlink Buffer */
+    transmission_buf_t up_buf;        /**< Uplink Buffer */
 } ttc_data_t;
 
 /**
