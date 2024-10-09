@@ -71,6 +71,7 @@
 #define CMDPR_PARAM_PACKETS_AV_FIFO_RX       0x16U       /**< RX packets available in the FIFO buffer */
 #define CMDPR_PARAM_N_BYTES_FIRST_AV_RX      0x17U       /**< Number of bytes of the first available packet in the RX buffer */
 #define CMDPR_PARAM_RESET_DEVICE             0x18U       /**< Resets the TTC module */
+#define CMDPR_PARAM_CONSEQ_FAILED_PACKETS    0x19U       /**< NUmber of consecutive decode error */
 
 /**
  * \brief CMDPR data packet.
