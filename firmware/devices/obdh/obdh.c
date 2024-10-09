@@ -306,6 +306,10 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
                 obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
 
                 break;
+            case CMDPR_PARAM_CONSEQ_FAILED_PACKETS:
+                obdh_response->data.param_8 = ttc_data_buf->n_conseq_failed_packets;
+
+                break;
             default:
                 break;
         }
