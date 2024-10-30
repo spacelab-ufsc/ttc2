@@ -41,6 +41,8 @@
 #include "uplink_manager.h"
 #include "startup.h"
 
+#include <drivers/si446x/si446x.h>
+
 xTaskHandle xTaskUplinkManagerHandle;
 
 void vTaskUplinkManager(void)
@@ -65,6 +67,8 @@ void vTaskUplinkManager(void)
     uint8_t ngham_decoded_packet[220] = {0};
     uint16_t ngham_decoded_packet_len = 0;
 
+    ttc_data_buf.n_conseq_failed_packets = 0U;
+
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
@@ -74,27 +78,41 @@ void vTaskUplinkManager(void)
             sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Receiving a new package:");
             sys_log_new_line();
 
-            if(radio_recv(rx_packet, 80U, 100U) > 0)
+            if(radio_recv(rx_packet, 128U, 100U) > 0)
             {
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Decoding packet...");
                 sys_log_new_line();
 
                 if(ngham_decode(rx_packet, 220, ngham_decoded_packet, &ngham_decoded_packet_len) == 0)
                 {
-                    uplink_add_packet(ngham_decoded_packet, ngham_decoded_packet_len);
 
-                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Packet successfully received");
+                    uplink_add_packet(ngham_decoded_packet, ngham_decoded_packet_len);
+                    ttc_data_buf.n_conseq_failed_packets = 0U;
+
+                    sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Packet successfully received.");
                     sys_log_new_line();
                 }
                 else
                 {
-                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                    (void)radio_reset();
+                    ttc_data_buf.n_conseq_failed_packets++;
+
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to decode a new packet.");
+                    sys_log_new_line();
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "The number of consecutive failed packages is: ");
+                    sys_log_print_uint((uint32_t)ttc_data_buf.n_conseq_failed_packets);
                     sys_log_new_line();
                 }
             }
             else
             {
-                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet");
+                (void)radio_reset();
+                ttc_data_buf.n_conseq_failed_packets++;
+
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "Failed to receive a new packet.");
+                sys_log_new_line();
+                sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_UPLINK_MANAGER_NAME, "The number of consecutive failed packages is: ");
+                sys_log_print_uint((uint32_t)ttc_data_buf.n_conseq_failed_packets);
                 sys_log_new_line();
             }
         }
