@@ -732,4 +732,39 @@ bool si446x_wait_gpio1(void)
     }
 }
 
+bool si446x_get_temperature(uint16_t *temp)
+{
+    uint8_t en_temp_reading = 0x10U;
+    uint8_t buf[8] = {0};
+    int temp_buf;
+
+    if (!si446x_check_cts())
+    {
+        return false;
+    }
+
+    si446x_slave_enable();
+    si446x_spi_transfer(SI446X_CMD_GET_ADC_READING); /* Send the command */
+    si446x_spi_write(&en_temp_reading, 1U); /* Enables the adc temperature reading */
+    si446x_slave_disable();
+
+
+    if (!si446x_check_cts())
+    {
+        return false;
+    }
+
+    si446x_slave_enable();
+    si446x_spi_transfer(SI446X_CMD_READ_BUF); /* Send READ_BUF command to grab the command parameters */
+    si446x_spi_read(buf, 8U); /* Read the parameters */
+    si446x_slave_disable();
+
+    temp_buf = (int)(buf[5] << 8) | (int)buf[6];
+    temp_buf = (int)((899/4096.0)*(temp_buf) - 293 + 273.15);
+
+    *temp = (uint16_t)temp_buf;
+
+    return true;
+}
+
 /**< \} End of si446x group */

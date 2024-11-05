@@ -491,6 +491,15 @@ int si446x_mutex_take(void);
  */
 int si446x_mutex_give(void);
 
+/**
+ * \brief Reads the chip temperature.
+ *
+ * \param[out] temp: Is a pointer to write the temperature value in K.
+ *
+ * \return The status/error code.
+ */
+bool si446x_get_temperature(uint16_t *temp);
+
 #endif /* SI446X_H_ */
 
 /**< \} End of si446x group */
