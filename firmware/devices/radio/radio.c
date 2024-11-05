@@ -174,8 +174,24 @@ void radio_reset(void)
 
 int radio_get_temperature(radio_temp_t *temp)
 {
-    /* TODO */
-    return -1;
+    int err = -1;
+
+    if(si446x_mutex_take() == 0)
+    {
+        if (si446x_get_temperature((uint16_t *)temp))
+        {
+            err = 0;
+        }
+
+        si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
+    }
+
+    return err;
 }
 
 int radio_get_rssi(radio_rssi_t *rssi)
