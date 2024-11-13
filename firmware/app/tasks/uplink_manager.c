@@ -59,6 +59,7 @@ void vTaskUplinkManager(void)
     ttc_data_buf.radio.rx_fifo_counter = 0U;
     ttc_data_buf.radio.rx_packet_counter = 0U;
     ttc_data_buf.radio.last_rx_packet_bytes = 0U;
+    ttc_data_buf.radio.rssi = 0U;
 
     ttc_data_buf.up_buf.position_to_read = 0U;
     ttc_data_buf.up_buf.position_to_write = 0U;
@@ -80,6 +81,19 @@ void vTaskUplinkManager(void)
 
             if(radio_recv(rx_packet, 128U, 100U) > 0)
             {
+                if (radio_get_rssi(&ttc_data_buf.radio.rssi) == 0)
+                {
+                    sys_log_print_event_from_module(SYS_LOG_INFO,  TASK_UPLINK_MANAGER_NAME, "Latched RSSI is ");
+                    sys_log_print_uint((uint32_t)ttc_data_buf.radio.rssi);
+                    sys_log_print_msg(" dBm");
+                    sys_log_new_line();
+                }
+                else
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR,  TASK_UPLINK_MANAGER_NAME, "Failed to obtain the radio RSSI");
+                    sys_log_new_line();
+                }
+
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_UPLINK_MANAGER_NAME, "Decoding packet...");
                 sys_log_new_line();
 

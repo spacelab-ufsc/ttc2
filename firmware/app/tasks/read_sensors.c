@@ -98,12 +98,6 @@ void vTaskReadSensors(void)
             sys_log_new_line();
         }
 
-        /* Radio RSSI */
-        if (radio_get_rssi(&buf) == 0)
-        {
-            ttc_data_buf.radio.rssi = buf;
-        }
-
         /* Data timestamp */
         ttc_data_buf.timestamp = (uint32_t)system_get_time();
 
