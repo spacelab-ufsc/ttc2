@@ -40,7 +40,7 @@
 #include <system/sys_log/sys_log.h>
 
 #include <drivers/si446x/si446x.h>
-
+#include <drivers/si446x/si446x_registers.h>
 #include <devices/leds/leds.h>
 
 #include "radio.h"
@@ -196,8 +196,19 @@ int radio_get_temperature(radio_temp_t *temp)
 
 int radio_get_rssi(radio_rssi_t *rssi)
 {
-    /* TODO */
-    return -1;
+    int err = -1;
+
+    uint8_t modem_status[8];
+
+    if (si446x_get_cmd(SI446X_CMD_GET_MODEM_STATUS, modem_status, 8U))
+    {
+        err = 0;
+    }
+
+    *rssi = (radio_rssi_t)modem_status[2];
+
+    return err;
+
 }
 
 /** \} End of radio group */
