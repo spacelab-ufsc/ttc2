@@ -81,8 +81,8 @@ static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
 
-#define DMA_TX_TRANSFER_SIZE 7
-#define DMA_RX_TRANSFER_SIZE 7
+#define DMA_TX_TRANSFER_SIZE 8
+#define DMA_RX_TRANSFER_SIZE 8
 
 static uint8_t spi_slave_dma_tx_data[230U] = {0};
 static uint8_t spi_slave_dma_rx_data[230U] = {0};
