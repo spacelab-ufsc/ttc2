@@ -34,13 +34,14 @@
  * \{
  */
 
-
 #ifndef DRIVERS_SPI_SLAVE_SPI_SLAVE_H_
 #define DRIVERS_SPI_SLAVE_SPI_SLAVE_H_
 
 #define SPI_SLAVE_MODULE_NAME         "SPI_SLAVE"
 
 #include <drivers/spi/spi.h>
+
+#define DMA_TRANSFER_SIZE 8U
 
 /**
  * \brief SPI Slave port initialization.
