@@ -75,15 +75,15 @@ int obdh_init(void)
 int obdh_read_request(obdh_request_t *obdh_request)
 {
     int err = 0;
-    uint8_t request[8] = {0};
+    uint8_t request[OBDH_TRANSFER_SIZE] = {0};
 
-    spi_slave_dma_read(request, 8U);
+    spi_slave_dma_read(request, OBDH_TRANSFER_SIZE);
 
     /* Check for preamble */
     if (request[0] != 0x7EU)
     {
         err = -1;
-        spi_slave_dma_change_transfer_size(8U);
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
     }
 
     if (crc8_get_val(request, 7U) != request[7])
@@ -91,7 +91,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Received invalid CRC!");
         sys_log_new_line();
         err = -1;
-        spi_slave_dma_change_transfer_size(8U); /* Resets dma */
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE); /* Resets dma */
     }
 
     obdh_request->command = request[1];
@@ -160,7 +160,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 sys_log_print_msg(" bytes");
                 sys_log_new_line();
 
-                spi_slave_dma_change_transfer_size(8U);
+                spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
 
                 break;
             case CMDPR_CMD_READ_FIRST_PACKET:
@@ -342,7 +342,7 @@ int obdh_flush_request(obdh_request_t *obdh_request)
 static int obdh_write_parameter(obdh_response_t *obdh_response)
 {
     int err = 0;
-    uint8_t response[8] = {0};
+    uint8_t response[OBDH_TRANSFER_SIZE] = {0};
 
     response[0] = 0x7EU;
     response[1] = obdh_response->command;
@@ -379,7 +379,7 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
 
     if (err == 0)
     {
-        spi_slave_dma_write(response, 8);
+        spi_slave_dma_write(response, OBDH_TRANSFER_SIZE);
     }
     else
     {
@@ -432,7 +432,7 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
 
         spi_slave_dma_read(NULL, (obdh_response->data.data_packet.len + 2U + 1U));
 
-        spi_slave_dma_change_transfer_size(8U);
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
 
         err = 0;
     }
