@@ -86,7 +86,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
         spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
     }
 
-    if (crc8_get_val(request, 7U) != request[7])
+    if (err != -1 && crc8_get_val(request, 7U) != request[7])
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Received invalid CRC!");
         sys_log_new_line();
@@ -417,10 +417,10 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
 {
     int err = -1;
 
-    uint8_t transmission_buffer[70U];
+    uint8_t transmission_buffer[128U];
     uint8_t transmission_buffer_p;
 
-    if((obdh_response->data.data_packet.len + 2U + 1U) < 70U)
+    if((obdh_response->data.data_packet.len + 2U + 1U) < 128U)
     {
         spi_slave_dma_change_transfer_size((obdh_response->data.data_packet.len + 2U + 1U));
 
