@@ -84,7 +84,7 @@ void vTaskObdhServer(void)
 
                         break;
                     case CMDPR_CMD_WRITE_PARAM:
-                        obdh_write_read_bytes(7);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         switch(obdh_request.parameter)
                         {
@@ -141,7 +141,7 @@ void vTaskObdhServer(void)
                         }
                         break;
                     case CMDPR_CMD_TRANSMIT_PACKET:
-                        obdh_write_read_bytes(7);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
@@ -153,12 +153,12 @@ void vTaskObdhServer(void)
 
                         obdh_send_response(&obdh_response);
 
-                        obdh_write_read_bytes(7U);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         break;
                     case 0x00:
                         /* Read mode */
-                        obdh_write_read_bytes(7U);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         break;
                     default:

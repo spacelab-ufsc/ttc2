@@ -81,9 +81,6 @@ static int spi_read_isr_rx_buffer(spi_port_t port, uint8_t *data, uint16_t len);
 
 static int spi_slave_setup_gpio(spi_port_t port);
 
-#define DMA_TX_TRANSFER_SIZE 7
-#define DMA_RX_TRANSFER_SIZE 7
-
 static uint8_t spi_slave_dma_tx_data[230U] = {0};
 static uint8_t spi_slave_dma_rx_data[230U] = {0};
 
@@ -100,7 +97,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     static DMA_initParam spi_slave_dma_param_tx = {
         .channelSelect          = DMA_CHANNEL_0,
         .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
-        .transferSize           = DMA_TX_TRANSFER_SIZE,
+        .transferSize           = DMA_TRANSFER_SIZE,
         .triggerSourceSelect    = DMA_TRIGGERSOURCE_13,
         .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
         .triggerTypeSelect      = DMA_TRIGGER_HIGH,
@@ -109,7 +106,7 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
     static DMA_initParam spi_slave_dma_param_rx = {
         .channelSelect          = DMA_CHANNEL_1,
         .transferModeSelect     = DMA_TRANSFER_REPEATED_SINGLE,
-        .transferSize           = DMA_RX_TRANSFER_SIZE,
+        .transferSize           = DMA_TRANSFER_SIZE,
         .triggerSourceSelect    = DMA_TRIGGERSOURCE_12,
         .transferUnitSelect     = DMA_SIZE_SRCBYTE_DSTBYTE,
         .triggerTypeSelect      = DMA_TRIGGER_HIGH,
@@ -309,23 +306,13 @@ int spi_slave_init(spi_port_t port, spi_config_t config)
 
         DMA_enableTransfers(DMA_CHANNEL_0);
 
-        for(i = 0U; i < (uint8_t) DMA_RX_TRANSFER_SIZE; i++)
+        for(i = 0U; i < (uint8_t) DMA_TRANSFER_SIZE; i++)
         {
             spi_slave_dma_rx_data[i] = 0xFFU;
-        }
-
-        for(i = 0U; i < (uint8_t) DMA_TX_TRANSFER_SIZE; i++)
-        {
-            spi_slave_dma_tx_data[i] = 0xFFU;
+            spi_slave_dma_tx_data[i] = 0x00U;
         }
 
         spi_slave_dma_tx_data[0] = 0x7EU;
-        spi_slave_dma_tx_data[1] = 0x00U;
-        spi_slave_dma_tx_data[2] = 0x00U;
-        spi_slave_dma_tx_data[3] = 0x00U;
-        spi_slave_dma_tx_data[4] = 0x00U;
-        spi_slave_dma_tx_data[5] = 0x00U;
-        spi_slave_dma_tx_data[6] = 0x00U;
 
         DMA_init(&spi_slave_dma_param_rx);
 
