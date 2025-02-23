@@ -86,7 +86,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
         spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
     }
 
-    if ((err != -1) && (crc8_get_val(request, OBDH_TRANSFER_SIZE) != request[OBDH_TRANSFER_SIZE]))
+    if ((err != -1) && (crc8_get_val(request, OBDH_TRANSFER_SIZE) != request[OBDH_TRANSFER_SIZE - 1U]))
     {
         sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Received invalid CRC!");
         sys_log_new_line();
