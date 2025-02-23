@@ -121,8 +121,8 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 }
                 else if (obdh_request->parameter == CMDPR_PARAM_TIMESTAMP)
                 {
-                    obdh_request->data.param_32 = (uint32_t)(request[3]) << 24U | (uint32_t)(request[4]) << 16U |
-                                                  (uint32_t)(request[5]) << 8U | (uint32_t)(request[6]);
+                    obdh_request->data.param_32 = ((uint32_t)(request[3]) << 24U) | ((uint32_t)(request[4]) << 16U) |
+                                                  ((uint32_t)(request[5]) << 8U) | ((uint32_t)(request[6]));
                 }
                 else
                 {
