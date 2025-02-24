@@ -49,17 +49,30 @@ jobs:
         run: sudo apt install -y cppcheck
 
       - name: Execute CppCheck on tasks files
-        run: cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/
+        run: |
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/antenna_deployment.c  --include=firmware/app/structs/ttc_data.h --include=firmware/config/config.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/downlink_manager.c --include=firmware/app/structs/ttc_data.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/eps_server.c
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/heartbeat.c
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/obdh_server.c
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/radio_reset.c
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/read_antenna.c --include=firmware/app/structs/ttc_data.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/read_sensors.c --include=firmware/devices/power_sensor/power_sensor.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/startup.c --include=firmware/devices/media/media.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/system_reset.c
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/time_control.c --include=firmware/devices/media/media.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/uplink_manager.c --include=firmware/app/structs/ttc_data.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/watchdog_reset.c
 
       - name: Execute CppCheck on devices files
         run: |
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/antenna
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/power_sensor
+          cppcheck --std=c99 --error-exitcode=-1 --check-level=exhaustive --addon=misra.py firmware/devices/antenna --include=firmware/config/config.h --include=firmware/drivers/isis_antenna/isis_antenna.h
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/eps
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds/ --include=firmware/drivers/gpio/gpio.h
+          cppcheck --std=c99 --error-exitcode=-1 -DDMA_TRANSFER_SIZE=8 --addon=misra.py firmware/devices/obdh --include=./firmware/system/cmdpr.h
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/power_sensor --include=./firmware/drivers/ina22x/ina22x.h
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/obdh
-          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/eps
 
       - name: Execute CppCheck on drivers files
         run: |
