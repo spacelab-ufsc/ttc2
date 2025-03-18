@@ -37,7 +37,7 @@ jobs:
 
   cppcheck-analysis:
     name: cppcheck-analysis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
@@ -60,7 +60,7 @@ jobs:
           cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/read_sensors.c --include=firmware/devices/power_sensor/power_sensor.h
           cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/startup.c --include=firmware/devices/media/media.h
           cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/system_reset.c
-          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/time_control.c --include=firmware/devices/media/media.h
+          cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/time_control.c --include=firmware/devices/media/media.h --include=firmware/drivers/flash/flash.h --include=firmware/config/config.h
           cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/uplink_manager.c --include=firmware/app/structs/ttc_data.h
           cppcheck --std=c99 --force --error-exitcode=-1 --addon=misra.py firmware/app/tasks/watchdog_reset.c
 
@@ -91,7 +91,7 @@ jobs:
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/wdt
 
       - name: Execute CppCheck on system files
-        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/ --suppress=misra-c2012-19.2
+        run: cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/system/ --suppress=misra-c2012-19.2 --include=firmware/app/structs/ttc_data.h --include=firmware/devices/media/media.h --include=firmware/drivers/flash/flash.h -DpdTRUE=1
 
       - name: Execute CppCheck on libraries files
         run: |
