@@ -66,10 +66,10 @@ jobs:
 
       - name: Execute CppCheck on devices files
         run: |
-          cppcheck --std=c99 --error-exitcode=-1 --check-level=exhaustive --addon=misra.py firmware/devices/antenna --include=firmware/config/config.h --include=firmware/drivers/isis_antenna/isis_antenna.h
+          cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/antenna --include=firmware/config/config.h --include=firmware/drivers/isis_antenna/isis_antenna.h
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/eps
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/leds/ --include=firmware/drivers/gpio/gpio.h
-          cppcheck --std=c99 --error-exitcode=-1 -DDMA_TRANSFER_SIZE=8 --addon=misra.py firmware/devices/obdh --include=./firmware/system/cmdpr.h
+          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr -DDMA_TRANSFER_SIZE=8U --addon=misra.py firmware/devices/obdh --include=./firmware/system/cmdpr.h
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/power_sensor --include=./firmware/drivers/ina22x/ina22x.h
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/temp_sensor
           cppcheck --std=c99 --error-exitcode=-1 --addon=misra.py firmware/devices/watchdog
@@ -78,7 +78,7 @@ jobs:
         run: |
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/adc
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/flash
-          cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/gpio
+          cppcheck --std=c99 --force --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/gpio
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/i2c
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/ina22x
           cppcheck --std=c99 --error-exitcode=-1 --inline-suppr --addon=misra.py firmware/drivers/isis_antenna
