@@ -49,6 +49,16 @@ int __wrap_si446x_init(void)
     return mock_type(int);
 }
 
+void __wrap_si446x_shutdown(void)
+{
+    function_called();
+}
+
+void __wrap_si446x_power_up(void)
+{
+    function_called();
+}
+
 void __wrap_si446x_reg_config(void)
 {
     function_called();
@@ -353,6 +363,13 @@ void __wrap_si446x_delay_us(uint32_t us)
 int __wrap_si446x_mutex_take(void)
 {
     return mock_type(int);
+}
+
+bool __wrap_si446x_get_temperature(uint16_t *temp)
+{
+    check_expected_ptr(temp);
+
+    return mock_type(bool);
 }
 
 int __wrap_si446x_mutex_give(void)

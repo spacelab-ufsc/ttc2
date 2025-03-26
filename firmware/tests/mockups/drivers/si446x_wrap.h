@@ -45,6 +45,10 @@
 
 int __wrap_si446x_init(void);
 
+void __wrap_si446x_shutdown(void);
+
+void __wrap_si446x_power_up(void);
+
 void __wrap_si446x_reg_config(void);
 
 void __wrap_si446x_power_on_reset(void);
@@ -132,6 +136,8 @@ void __wrap_si446x_delay_us(uint32_t us);
 int __wrap_si446x_mutex_give(void);
 
 int __wrap_si446x_mutex_take(void);
+
+bool __wrap_si446x_get_temperature(uint16_t *temp);
 
 #endif /* SI446X_WRAP_H_ */
 
