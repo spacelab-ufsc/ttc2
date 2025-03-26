@@ -82,7 +82,7 @@ int system_reset_count(void)
 
     if (media_erase(MEDIA_INT_FLASH, FLASH_SEG_B_ADR) == 0)
     {
-        buf[0] = (uint8_t)(ttc_data_buf.reset_counter & 0xFF);
+        buf[0] = (uint8_t)(ttc_data_buf.reset_counter & 0xFFU);
         buf[1] = (uint8_t)(ttc_data_buf.reset_counter >> 8U);
         buf[2] = system_crc8(buf, 2U);
 

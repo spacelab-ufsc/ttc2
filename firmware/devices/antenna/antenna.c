@@ -253,19 +253,19 @@ int antenna_deploy(uint32_t timeout_ms)
 static void antenna_print_status(isis_antenna_status_t status)
 {
     sys_log_print_event_from_module(SYS_LOG_INFO, ANTENNA_MODULE_NAME, "Antenna 1 status=");
-    sys_log_print_msg((status.antenna_1.status == ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
+    sys_log_print_msg((status.antenna_1.status == (uint8_t)ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
     sys_log_new_line();
 
     sys_log_print_event_from_module(SYS_LOG_INFO, ANTENNA_MODULE_NAME, "Antenna 2 status=");
-    sys_log_print_msg((status.antenna_2.status == ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
+    sys_log_print_msg((status.antenna_2.status == (uint8_t)ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
     sys_log_new_line();
 
     sys_log_print_event_from_module(SYS_LOG_INFO, ANTENNA_MODULE_NAME, "Antenna 3 status=");
-    sys_log_print_msg((status.antenna_3.status == ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
+    sys_log_print_msg((status.antenna_3.status == (uint8_t)ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
     sys_log_new_line();
 
     sys_log_print_event_from_module(SYS_LOG_INFO, ANTENNA_MODULE_NAME, "Antenna 4 status=");
-    sys_log_print_msg((status.antenna_4.status == ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
+    sys_log_print_msg((status.antenna_4.status == (uint8_t)ISIS_ANTENNA_STATUS_DEPLOYED) ? "DEPLOYED" : "NOT DEPLOYED");
     sys_log_new_line();
 }
 

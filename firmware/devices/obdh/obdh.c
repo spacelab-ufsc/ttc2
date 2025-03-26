@@ -96,7 +96,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
     obdh_request->command = request[1];
 
-    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00) && (err != -1)) /* Received a request */
+    if ((obdh_request->command != 0xFFU) && (obdh_request->command != 0x00U) && (err != -1)) /* Received a request */
     {
         switch(obdh_request->command)
         {
