@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 1.0.0
  *
  * \date 2023/07/18
  *
@@ -103,8 +103,3 @@ void vTaskAntennaDeployment(void)
 }
 
 /** \} End of antenna_deployment group */
-
-
-
-
-
