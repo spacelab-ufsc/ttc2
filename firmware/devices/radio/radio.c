@@ -40,7 +40,7 @@
 #include <system/sys_log/sys_log.h>
 
 #include <drivers/si446x/si446x.h>
-
+#include <drivers/si446x/si446x_registers.h>
 #include <devices/leds/leds.h>
 
 #include "radio.h"
@@ -162,16 +162,53 @@ int radio_sleep(void)
     return err;
 }
 
+void radio_reset(void)
+{
+    sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Reseting radio device...");
+    sys_log_new_line();
+
+    si446x_shutdown();
+    si446x_delay_ms(10U);
+    si446x_power_up();
+}
+
 int radio_get_temperature(radio_temp_t *temp)
 {
-    /* TODO */
-    return -1;
+    int err = -1;
+
+    if(si446x_mutex_take() == 0)
+    {
+        if (si446x_get_temperature((uint16_t *)temp))
+        {
+            err = 0;
+        }
+
+        si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
+    }
+
+    return err;
 }
 
 int radio_get_rssi(radio_rssi_t *rssi)
 {
-    /* TODO */
-    return -1;
+    int err = -1;
+
+    uint8_t modem_status[8];
+
+    if (si446x_get_cmd(SI446X_CMD_GET_MODEM_STATUS, modem_status, 8U))
+    {
+        err = 0;
+    }
+
+    *rssi = (radio_rssi_t)modem_status[2];
+
+    return err;
+
 }
 
 /** \} End of radio group */

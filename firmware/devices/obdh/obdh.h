@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.5
+ * \version 1.0.0
  *
  * \date 2023/02/12
  *
@@ -44,6 +44,7 @@ typedef cmdpr_package_t obdh_request_t;
 typedef cmdpr_package_t obdh_response_t;
 
 #define OBDH_MODULE_NAME         "OBDH"
+#define OBDH_TRANSFER_SIZE DMA_TRANSFER_SIZE
 
 /**
  * \brief OBDH initialization.

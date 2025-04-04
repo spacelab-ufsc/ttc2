@@ -84,7 +84,7 @@ void vTaskObdhServer(void)
 
                         break;
                     case CMDPR_CMD_WRITE_PARAM:
-                        obdh_write_read_bytes(7);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         switch(obdh_request.parameter)
                         {
@@ -115,12 +115,23 @@ void vTaskObdhServer(void)
 
                             break;
                         case CMDPR_PARAM_RESET_DEVICE:
-
                             if (obdh_request.data.param_8 == 0x01)
                             {
                                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Received command to reset system...");
                                 system_reset();
                             }
+                            break;
+
+                        case CMDPR_PARAM_TIMESTAMP:
+                            ttc_data_buf.timestamp = obdh_request.data.param_32;
+
+                            system_set_time((sys_time_t)obdh_request.data.param_32);
+
+                            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_OBDH_SERVER_NAME, "Updating system time to ");
+                            sys_log_print_uint(ttc_data_buf.timestamp);
+                            sys_log_print_msg(".");
+                            sys_log_new_line();
+
                             break;
 
                         default:
@@ -130,7 +141,7 @@ void vTaskObdhServer(void)
                         }
                         break;
                     case CMDPR_CMD_TRANSMIT_PACKET:
-                        obdh_write_read_bytes(7);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         downlink_add_packet(obdh_request.data.data_packet.packet, obdh_request.data.data_packet.len);
 
@@ -142,12 +153,12 @@ void vTaskObdhServer(void)
 
                         obdh_send_response(&obdh_response);
 
-                        obdh_write_read_bytes(7U);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         break;
                     case 0x00:
                         /* Read mode */
-                        obdh_write_read_bytes(7U);
+                        obdh_write_read_bytes(OBDH_TRANSFER_SIZE);
 
                         break;
                     default:

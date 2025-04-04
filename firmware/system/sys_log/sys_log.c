@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.23
+ * \version 1.0.0
  * 
  * \date 2019/11/03
  * 
@@ -40,6 +40,7 @@
 
 #include <version.h>
 
+#include "system/system.h"
 #include "sys_log.h"
 #include "sys_log_config.h"
 
@@ -312,7 +313,7 @@ void sys_log_print_system_time(void)
     sys_log_set_color(SYS_LOG_SYSTEM_TIME_COLOR);
 
     sys_log_print_msg("[ ");
-    sys_log_print_uint(xTaskGetTickCount());    /* System time in milliseconds */
+    sys_log_print_uint(system_get_time());    /* System time in milliseconds */
     sys_log_print_msg(" ]");
 
     sys_log_reset_color();

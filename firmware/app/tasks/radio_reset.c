@@ -1,7 +1,7 @@
 /*
  * radio_reset.c
  * 
- * Copyright (C) 2021, SpaceLab.
+ * Copyright The TTC 2.0 Contributors.
  * 
  * This file is part of TTC 2.0.
  * 
@@ -25,13 +25,15 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.1.10
+ * \version 1.0.0
  * 
  * \date 2020/01/29
  * 
  * \addtogroup radio_reset
  * \{
  */
+
+#include <system/sys_log/sys_log.h>
 
 #include "radio_reset.h"
 
@@ -45,6 +47,19 @@ void vTaskRadioReset(void)
     while(1)
     {
         TickType_t last_cycle = xTaskGetTickCount();
+
+        sys_log_print_event_from_module(SYS_LOG_INFO, TASK_RADIO_RESET_NAME, "Resetting radio device...");
+        sys_log_new_line();
+
+        if (radio_init() != 0)
+        {
+            sys_log_print_event_from_module(SYS_LOG_ERROR, TASK_RADIO_RESET_NAME, "Failed to reset the radio device.");
+        }
+        else
+        {
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_RADIO_RESET_NAME, "Successfully reseted the radio device.");
+        }
+        sys_log_new_line();
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_RADIO_RESET_PERIOD_MS));
     }

@@ -34,6 +34,7 @@
  * \{
  */
 
+#include <system/system.h>
 #include <system/sys_log/sys_log.h>
 
 #include <devices/temp_sensor/temp_sensor.h>
@@ -90,16 +91,15 @@ void vTaskReadSensors(void)
         if (radio_get_temperature(&buf) == 0)
         {
             ttc_data_buf.radio.temperature = buf;
-        }
 
-        /* Radio RSSI */
-        if (radio_get_rssi(&buf) == 0)
-        {
-            ttc_data_buf.radio.rssi = buf;
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current radio temperature: ");
+            sys_log_print_uint((uint32_t)buf);
+            sys_log_print_msg(" K");
+            sys_log_new_line();
         }
 
         /* Data timestamp */
-        ttc_data_buf.timestamp = (uint32_t)xTaskGetTickCount();
+        ttc_data_buf.timestamp = (uint32_t)system_get_time();
 
         vTaskDelayUntil(&last_cycle, pdMS_TO_TICKS(TASK_READ_SENSORS_PERIOD_MS));
     }

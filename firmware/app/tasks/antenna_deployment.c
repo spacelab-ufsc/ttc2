@@ -25,7 +25,7 @@
  *
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 0.4.3
+ * \version 1.0.0
  *
  * \date 2023/07/18
  *
@@ -74,7 +74,7 @@ void vTaskAntennaDeployment(void)
     if (ttc_data_buf.ant_deploy_count< CONFIG_ANTENNA_DEPLOYMENT_ATTEMPTS)
     {
         sys_log_print_event_from_module(SYS_LOG_INFO, TASK_ANTENNA_DEPLOYMENT_NAME, "Antenna deployment attempt number ");
-        sys_log_print_uint(ttc_data_buf.ant_deploy_count + 1);
+        sys_log_print_uint(ttc_data_buf.ant_deploy_count + 1U);
         sys_log_print_msg(" of ");
         sys_log_print_uint(CONFIG_ANTENNA_DEPLOYMENT_ATTEMPTS);
         sys_log_print_msg("...");
@@ -93,7 +93,7 @@ void vTaskAntennaDeployment(void)
     else
     {
         sys_log_print_event_from_module(SYS_LOG_INFO, TASK_ANTENNA_DEPLOYMENT_NAME, "All antenna deployments attempts executed! (");
-        sys_log_print_uint(ttc_data_buf.ant_deploy_count + 1);
+        sys_log_print_uint(ttc_data_buf.ant_deploy_count + 1U);
         sys_log_print_msg(")");
         sys_log_new_line();
 
@@ -103,8 +103,3 @@ void vTaskAntennaDeployment(void)
 }
 
 /** \} End of antenna_deployment group */
-
-
-
-
-

@@ -52,11 +52,16 @@
 #include <app/structs/ttc_data.h>
 #include <drivers/spi_slave/spi_slave.h>
 
+#define CRC8_INITIAL_VAL   0x00U       /* CRC8-CCITT initial value. */
+#define CRC8_POLYNOMIAL    0x07U       /* CRC8-CCITT polynomial. */
+
 void generate_random_request(uint8_t *request);
 
 void generate_random_packet(uint8_t *packet, uint16_t len);
 
 void generate_random_response(obdh_response_t *response);
+
+uint8_t crc8_get_val(uint8_t *data, uint8_t len);
 
 /* OBDH Configuration */
 spi_config_t spi_config = {0U, SPI_MODE_0};
@@ -80,17 +85,17 @@ static void obdh_read_request_test(void **state)
 
     obdh_request_t obdh_request;
 
-    uint8_t request[7] = {0};
-    uint16_t i = 0;
+    uint8_t request[OBDH_TRANSFER_SIZE] = {0};
+    uint16_t i = 0U;
 
     /* obdh_write_read_bytes */
     uint8_t buffer[230];
 
     generate_random_request(request);
 
-    expect_value(__wrap_spi_slave_dma_read, len, 7);
+    expect_value(__wrap_spi_slave_dma_read, len, OBDH_TRANSFER_SIZE);
 
-    for(i = 0; i < 7; i++)
+    for(i = 0U; i < OBDH_TRANSFER_SIZE; i++)
     {
         will_return(__wrap_spi_slave_dma_read, request[i]);
     }
@@ -100,7 +105,13 @@ static void obdh_read_request_test(void **state)
     {
         err = -1;
 
-        expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, 7U);
+        expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, OBDH_TRANSFER_SIZE);
+    }
+
+    if ((err != -1) && (crc8_get_val(request, OBDH_TRANSFER_SIZE - 1U) != request[OBDH_TRANSFER_SIZE - 1U]))
+    {
+        expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, OBDH_TRANSFER_SIZE);
+        err = -1;
     }
 
     obdh_request.command = request[1];
@@ -116,13 +127,14 @@ static void obdh_read_request_test(void **state)
             case CMDPR_CMD_WRITE_PARAM:
                 obdh_request.parameter = request[2];
 
-                if (obdh_request.parameter == CMDPR_PARAM_TX_ENABLE)
+                if ((obdh_request.parameter == CMDPR_PARAM_TX_ENABLE) || (obdh_request.parameter == CMDPR_PARAM_RESET_DEVICE))
                 {
                     obdh_request.data.param_8 = request[3];
                 }
-                else if (obdh_request.parameter == CMDPR_PARAM_RESET_DEVICE)
+                else if (obdh_request.parameter == CMDPR_PARAM_TIMESTAMP)
                 {
-                    obdh_request.data.param_8 = request[3];
+                    obdh_request.data.param_32 = (uint32_t)(request[3]) << 24U | (uint32_t)(request[4]) << 16U |
+                                                  (uint32_t)(request[5]) << 8U | (uint32_t)(request[6]);
                 }
                 else
                 {
@@ -140,11 +152,11 @@ static void obdh_read_request_test(void **state)
                 {
                     buffer[i] = 0x00U;
                 }
-        
-                dummy = request[2] + 3U;
+
+                dummy = request[2] + 3U + 1U;
 
                 expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, dummy);
-        
+
                 expect_memory(__wrap_spi_slave_dma_write, data, buffer, (int)dummy);
                 expect_value(__wrap_spi_slave_dma_write, len, dummy);
 
@@ -155,10 +167,10 @@ static void obdh_read_request_test(void **state)
 
                 for(i = 0U; i < dummy; i++)
                 {
-                    will_return(__wrap_spi_slave_dma_read, obdh_request.data.data_packet.packet[i]); 
+                    will_return(__wrap_spi_slave_dma_read, obdh_request.data.data_packet.packet[i]);
                 }
 
-                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, 7U);                
+                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, OBDH_TRANSFER_SIZE);
 
                 break;
             case CMDPR_CMD_READ_FIRST_PACKET:
@@ -183,9 +195,9 @@ static void obdh_send_response_test(void **state)
     int err = 0;
     uint8_t i = 0;
     obdh_response_t obdh_response;
-    uint8_t response[7];
+    uint8_t response[OBDH_TRANSFER_SIZE];
 
-    uint8_t transmission_buffer[70U];
+    uint8_t transmission_buffer[128U];
     uint8_t transmission_buffer_p;
 
     generate_random_response(&(obdh_response));
@@ -203,7 +215,7 @@ static void obdh_send_response_test(void **state)
                 case 1:
                     response[3] = obdh_response.data.param_8;
 
-                    for(i = 4; i < 7; i++)
+                    for(i = 4; i < OBDH_TRANSFER_SIZE; i++)
                     {
                         response[i] = 0x00;
                     }
@@ -212,7 +224,7 @@ static void obdh_send_response_test(void **state)
                 case 2:
                     obdh_response.data.param_16 =  ((uint16_t)(response[3]) << 8) | (uint16_t)(response[4] & 0xFFU);
 
-                    for(i = 5; i < 7; i++)
+                    for(i = 5; i < OBDH_TRANSFER_SIZE; i++)
                     {
                         response[i] = 0x00;
                     }
@@ -229,20 +241,22 @@ static void obdh_send_response_test(void **state)
                     break;
                 }
 
+            response[OBDH_TRANSFER_SIZE-1U] = crc8_get_val(response, OBDH_TRANSFER_SIZE - 1U);
+
             if (err == 0)
             {
-                expect_memory(__wrap_spi_slave_dma_write, data, response, 7U);
-                expect_value(__wrap_spi_slave_dma_write, len, (uint16_t) 7);
+                expect_memory(__wrap_spi_slave_dma_write, data, response, OBDH_TRANSFER_SIZE);
+                expect_value(__wrap_spi_slave_dma_write, len, (uint16_t) OBDH_TRANSFER_SIZE);
             }
 
             break;
         case CMDPR_CMD_READ_FIRST_PACKET:
             err = -1;
 
-            if ((obdh_response.data.data_packet.len + 2) < 70U)
+            if ((obdh_response.data.data_packet.len + 2) < 128U)
             {
 
-                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, (obdh_response.data.data_packet.len + 2));
+                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, (obdh_response.data.data_packet.len + 2 + 1));
 
                 transmission_buffer[0] = 0x7EU;
                 transmission_buffer[1] = 0x04U;
@@ -252,12 +266,15 @@ static void obdh_send_response_test(void **state)
                     transmission_buffer[transmission_buffer_p + 2U] = obdh_response.data.data_packet.packet[transmission_buffer_p];
                 }
 
-                expect_memory(__wrap_spi_slave_dma_write, data, transmission_buffer, (obdh_response.data.data_packet.len + 2));
-                expect_value(__wrap_spi_slave_dma_write, len, obdh_response.data.data_packet.len + 2);
+                /* Adding the CRC value */
+                transmission_buffer[transmission_buffer_p + 2U] = crc8_get_val(transmission_buffer, transmission_buffer_p + 2U);
 
-                expect_value(__wrap_spi_slave_dma_read, len, (obdh_response.data.data_packet.len + 2));
+                expect_memory(__wrap_spi_slave_dma_write, data, transmission_buffer, (obdh_response.data.data_packet.len + 2 + 1));
+                expect_value(__wrap_spi_slave_dma_write, len, obdh_response.data.data_packet.len + 2 + 1);
 
-                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, 7U);
+                expect_value(__wrap_spi_slave_dma_read, len, (obdh_response.data.data_packet.len + 2 + 1));
+
+                expect_value(__wrap_spi_slave_dma_change_transfer_size, transfer_size, OBDH_TRANSFER_SIZE);
 
                 err = 0;
             }
@@ -328,15 +345,15 @@ void generate_random_response(obdh_response_t *response)
         {
         case 1:
             response->data.param_8 = (uint8_t)(rand() % 0x100);
-            
+
             break;
         case 2:
             response->data.param_16 = (uint16_t)(rand() % 0x10000);
-            
+
             break;
         case 4:
             response->data.param_32 = (uint32_t)(rand() % 0x100000000);
-            
+
             break;
         }
     }
@@ -346,4 +363,27 @@ void generate_random_response(obdh_response_t *response)
     }
 }
 
+uint8_t crc8_get_val(uint8_t *data, uint8_t len)
+{
+    uint8_t crc = CRC8_INITIAL_VAL;
+    uint8_t i = 0U;
+    uint8_t j = 0U;
+
+    for(i = 0U; i < len; i++)
+    {
+        crc ^= data[i];
+
+        j = 0U;
+        for (j = 0U; j < 8U; j++)
+        {
+            crc = (crc << 1) ^ ((crc & 0x80U) ? CRC8_POLYNOMIAL : 0U);
+        }
+
+        crc &= 0xFFU;
+    }
+
+    return crc;
+}
+
 /** \} End of obdh_test group */
+

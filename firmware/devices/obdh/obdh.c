@@ -38,6 +38,8 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+#include <libs/crc/crc.h>
+
 #include <system/sys_log/sys_log.h>
 
 #include <system/cmdpr.h>
@@ -73,19 +75,28 @@ int obdh_init(void)
 int obdh_read_request(obdh_request_t *obdh_request)
 {
     int err = 0;
-    uint8_t request[7] = {0};
+    uint8_t request[OBDH_TRANSFER_SIZE] = {0};
 
-    spi_slave_dma_read(request, 7U);
+    spi_slave_dma_read(request, OBDH_TRANSFER_SIZE);
 
-    /*Check for preamble */
+    /* Check for preamble */
     if (request[0] != 0x7EU)
     {
         err = -1;
-        spi_slave_dma_change_transfer_size(7U);
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
     }
+
+    if ((err != -1) && (crc8_get_val(request, OBDH_TRANSFER_SIZE) != request[OBDH_TRANSFER_SIZE - 1U]))
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Received invalid CRC!");
+        sys_log_new_line();
+        err = -1;
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE); /* Resets dma */
+    }
+
     obdh_request->command = request[1];
 
-    if ((obdh_request->command != 0xFF) && (obdh_request->command != 0x00) && (err != -1)) /* Received a request */
+    if ((obdh_request->command != 0xFFU) && (obdh_request->command != 0x00U) && (err != -1)) /* Received a request */
     {
         switch(obdh_request->command)
         {
@@ -108,6 +119,11 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 {
                     obdh_request->data.param_8 = request[3];
                 }
+                else if (obdh_request->parameter == CMDPR_PARAM_TIMESTAMP)
+                {
+                    obdh_request->data.param_32 = ((uint32_t)(request[3]) << 24U) | ((uint32_t)(request[4]) << 16U) |
+                                                  ((uint32_t)(request[5]) << 8U) | ((uint32_t)(request[6]));
+                }
                 else
                 {
                     sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Unknown parameter:");
@@ -122,18 +138,26 @@ int obdh_read_request(obdh_request_t *obdh_request)
 
                 obdh_request->data.data_packet.len = request[2];
 
-                spi_slave_dma_change_transfer_size((request[2] + 3U));
+                /* request[2] is the bytes in the packet, 3U are bytes for the serial protocol, 1U for the CRC */
+                spi_slave_dma_change_transfer_size((request[2] + 3U + 1U));
 
-                obdh_write_read_bytes((request[2] + 3U));
+                obdh_write_read_bytes((request[2] + 3U + 1U));
 
                 vTaskDelay(pdMS_TO_TICKS(130));
 
-                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len + 3U));
+                spi_slave_dma_read(obdh_request->data.data_packet.packet, (obdh_request->data.data_packet.len + 3U + 1U));
+
+                /* Checking if the packet CRC is valid. If not, an error is printed, and the packet will still be transmitted */
+                if (crc8_get_val(obdh_request->data.data_packet.packet, obdh_request->data.data_packet.len + 3U) != obdh_request->data.data_packet.packet[obdh_request->data.data_packet.len + 3U])
+                {
+                    sys_log_print_event_from_module(SYS_LOG_ERROR, OBDH_MODULE_NAME, "Package doesn't match corresponding CRC!");
+                    sys_log_new_line();
+                }
 
                 /* Removing protocol bytes */
-                for (uint16_t i = 0; i < (uint16_t)(request[2]); i++)
+                for (uint16_t i = 0U; i < (uint16_t)(request[2]); i++)
                 {
-                    obdh_request->data.data_packet.packet[i] = obdh_request->data.data_packet.packet[i+3U];
+                    obdh_request->data.data_packet.packet[i] = obdh_request->data.data_packet.packet[i + 3U];
                 }
 
                 sys_log_print_event_from_module(SYS_LOG_INFO, OBDH_MODULE_NAME, "Transmit packet command received: ");
@@ -141,7 +165,7 @@ int obdh_read_request(obdh_request_t *obdh_request)
                 sys_log_print_msg(" bytes");
                 sys_log_new_line();
 
-                spi_slave_dma_change_transfer_size(7U);
+                spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
 
                 break;
             case CMDPR_CMD_READ_FIRST_PACKET:
@@ -211,7 +235,7 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
                 obdh_response->data.param_32 = ttc_data_buf->fw_version;
 
                 break;
-            case CMDPR_PARAM_COUNTER:
+            case CMDPR_PARAM_TIMESTAMP:
                 obdh_response->data.param_32 = ttc_data_buf->timestamp;
 
                 break;
@@ -301,6 +325,10 @@ int obdh_write_response_param(ttc_data_t *ttc_data_buf, obdh_response_t *obdh_re
                 obdh_response->data.param_16 = ttc_data_buf->radio.last_rx_packet_bytes;
 
                 break;
+            case CMDPR_PARAM_CONSEQ_FAILED_PACKETS:
+                obdh_response->data.param_8 = ttc_data_buf->n_conseq_failed_packets;
+
+                break;
             default:
                 break;
         }
@@ -323,7 +351,7 @@ int obdh_flush_request(obdh_request_t *obdh_request)
 static int obdh_write_parameter(obdh_response_t *obdh_response)
 {
     int err = 0;
-    uint8_t response[7] = {0};
+    uint8_t response[OBDH_TRANSFER_SIZE] = {0};
 
     response[0] = 0x7EU;
     response[1] = obdh_response->command;
@@ -355,9 +383,12 @@ static int obdh_write_parameter(obdh_response_t *obdh_response)
             break;
     }
 
+    /* Get CRC Message */
+    response[OBDH_TRANSFER_SIZE - 1U] = crc8_get_val(response, OBDH_TRANSFER_SIZE - 1U);
+
     if (err == 0)
     {
-        spi_slave_dma_write(response, 7);
+        spi_slave_dma_write(response, OBDH_TRANSFER_SIZE);
     }
     else
     {
@@ -386,12 +417,12 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
 {
     int err = -1;
 
-    uint8_t transmission_buffer[70U];
+    uint8_t transmission_buffer[128U];
     uint8_t transmission_buffer_p;
 
-    if((obdh_response->data.data_packet.len + 2) < 70U)
+    if((obdh_response->data.data_packet.len + 2U + 1U) < 128U)
     {
-        spi_slave_dma_change_transfer_size((obdh_response->data.data_packet.len + 2));
+        spi_slave_dma_change_transfer_size((obdh_response->data.data_packet.len + 2U + 1U));
 
         transmission_buffer[0] = 0x7EU;
         transmission_buffer[1] = 0x04U;
@@ -401,13 +432,16 @@ static int obdh_write_packet(obdh_response_t *obdh_response)
             transmission_buffer[transmission_buffer_p + 2U] = obdh_response->data.data_packet.packet[transmission_buffer_p];
         }
 
-        spi_slave_dma_write(transmission_buffer, (obdh_response->data.data_packet.len + 2));
+        /* Adding the CRC value */
+        transmission_buffer[transmission_buffer_p + 2U] = crc8_get_val(transmission_buffer, transmission_buffer_p + 2U);
+
+        spi_slave_dma_write(transmission_buffer, (obdh_response->data.data_packet.len + 2U + 1U));
 
         vTaskDelay(pdMS_TO_TICKS(130));
 
-        spi_slave_dma_read(NULL, (obdh_response->data.data_packet.len + 2));
+        spi_slave_dma_read(NULL, (obdh_response->data.data_packet.len + 2U + 1U));
 
-        spi_slave_dma_change_transfer_size(7U);
+        spi_slave_dma_change_transfer_size(OBDH_TRANSFER_SIZE);
 
         err = 0;
     }

@@ -36,6 +36,8 @@
 
 #include <msp430.h>
 #include <drivers/gpio/gpio.h>
+#include <portmacro.h>
+
 #include <devices/media/media.h>
 #include <app/structs/ttc_data.h>
 
@@ -80,7 +82,7 @@ int system_reset_count(void)
 
     if (media_erase(MEDIA_INT_FLASH, FLASH_SEG_B_ADR) == 0)
     {
-        buf[0] = (uint8_t)(ttc_data_buf.reset_counter & 0xFF);
+        buf[0] = (uint8_t)(ttc_data_buf.reset_counter & 0xFFU);
         buf[1] = (uint8_t)(ttc_data_buf.reset_counter >> 8U);
         buf[2] = system_crc8(buf, 2U);
 
@@ -104,12 +106,16 @@ uint8_t system_get_reset_cause(void)
 
 void system_set_time(sys_time_t tm)
 {
+    portENTER_CRITICAL();
     sys_time = tm;
+    portEXIT_CRITICAL();
 }
 
 void system_increment_time(void)
 {
+    portENTER_CRITICAL();
     sys_time++;
+    portEXIT_CRITICAL();
 }
 
 sys_time_t system_get_time(void)

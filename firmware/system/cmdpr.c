@@ -46,7 +46,8 @@ uint16_t cmdpr_param_size(uint8_t param)
     /*uint8_t param */
     if ((param == CMDPR_PARAM_HW_VER) || (param == CMDPR_PARAM_LAST_RST_CAUSE) || (param == CMDPR_PARAM_LAST_UP_COMMAND) ||
        (param == CMDPR_PARAM_ANT_DEP_STATUS) || (param == CMDPR_PARAM_ANT_DEP_HIB) || (param == CMDPR_PARAM_TX_ENABLE) ||
-       (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX) || (param == CMDPR_PARAM_RESET_DEVICE))
+       (param == CMDPR_PARAM_PACKETS_AV_FIFO_RX) || (param == CMDPR_PARAM_PACKETS_AV_FIFO_TX) || (param == CMDPR_PARAM_RESET_DEVICE) ||
+       (param == CMDPR_PARAM_CONSEQ_FAILED_PACKETS))
     {
         param_size = 1;
 
@@ -60,8 +61,8 @@ uint16_t cmdpr_param_size(uint8_t param)
         param_size = 2;
     }
     /*uint32_t param */
-    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_COUNTER) ||
-            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER))
+    else if ((param == CMDPR_PARAM_FW_VER) || (param == CMDPR_PARAM_TIMESTAMP) ||
+            (param == CMDPR_PARAM_TX_PACKET_COUNTER) || (param == CMDPR_PARAM_RX_VAL_PACKET_COUNTER) || (param == CMDPR_PARAM_TIMESTAMP))
     {
         param_size = 4;
     }
