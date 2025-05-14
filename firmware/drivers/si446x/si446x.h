@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 1.0.0
+ * \version 1.1.0
  * 
  * \date 2024/09/09
  * 
@@ -74,6 +74,20 @@ typedef enum
  * \return The status/error code.
  */
 int si446x_init(void);
+
+/**
+ * \brief Shutdown the device.
+ *
+ * \return None.
+ */
+void si446x_shutdown(void);
+
+/**
+ * \brief Power-up the device.
+ *
+ * \return None.
+ */
+void si446x_power_up(void);
 
 /**
  * \brief Configures the registers of the SI446X device.

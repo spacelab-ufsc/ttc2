@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  * 
- * \version 1.0.0
+ * \version 1.1.0
  * 
  * \date 2024/09/09
  * 
@@ -62,6 +62,20 @@
 const uint8_t SI446X_CONFIGURATION_DATA[] = RADIO_CONFIGURATION_DATA_ARRAY;
 
 uint8_t si446x_mode = 0xFF;
+
+/**
+ * \brief Enables the SPI communication with the device.
+ *
+ * \return None.
+ */
+void si446x_slave_enable(void);
+
+/**
+ * \brief Disables the SPI communication with the device.
+ *
+ * \return None.
+ */
+void si446x_slave_disable(void);
 
 int si446x_init(void)
 {
