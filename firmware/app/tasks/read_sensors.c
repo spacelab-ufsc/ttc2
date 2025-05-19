@@ -77,6 +77,16 @@ void vTaskReadSensors(void)
             ttc_data_buf.current = (uint16_t) pwr_sensor_buf.current;
             ttc_data_buf.voltage = (uint16_t) pwr_sensor_buf.bus_voltage;
             ttc_data_buf.power   = (uint16_t) pwr_sensor_buf.power;
+
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current uC current: ");
+            sys_log_print_uint((uint32_t)pwr_sensor_buf.current);
+            sys_log_print_msg(" mA");
+            sys_log_new_line();
+
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current uC voltage: ");
+            sys_log_print_uint((uint32_t)pwr_sensor_buf.bus_voltage);
+            sys_log_print_msg(" mV");
+            sys_log_new_line();
         }
 
         /* Radio current, voltage and power*/
@@ -85,6 +95,20 @@ void vTaskReadSensors(void)
             ttc_data_buf.radio.current = (uint16_t) pwr_sensor_buf.current;
             ttc_data_buf.radio.voltage = (uint16_t) pwr_sensor_buf.bus_voltage;
             ttc_data_buf.radio.power   = (uint16_t) pwr_sensor_buf.power;
+
+            ttc_data_buf.current = (uint16_t) pwr_sensor_buf.current;
+            ttc_data_buf.voltage = (uint16_t) pwr_sensor_buf.bus_voltage;
+            ttc_data_buf.power   = (uint16_t) pwr_sensor_buf.power;
+
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current radio current: ");
+            sys_log_print_uint((uint32_t)pwr_sensor_buf.current);
+            sys_log_print_msg(" mA");
+            sys_log_new_line();
+
+            sys_log_print_event_from_module(SYS_LOG_INFO, TASK_READ_SENSORS_NAME, "Current radio voltage: ");
+            sys_log_print_uint((uint32_t)pwr_sensor_buf.bus_voltage);
+            sys_log_print_msg(" mV");
+            sys_log_new_line();
         }
 
         /* Radio temperature */
