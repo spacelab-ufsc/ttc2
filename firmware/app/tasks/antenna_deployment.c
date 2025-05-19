@@ -87,6 +87,12 @@ void vTaskAntennaDeployment(void)
 
         for(i = initial_hib_time_counter; i < CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN; i++)
         {
+            uint32_t hib_dur = CONFIG_ANTENNA_DEPLOYMENT_HIBERNATION_MIN - (uint32_t)i;
+            sys_log_print_event_from_module(SYS_LOG_WARNING, TASK_ANTENNA_DEPLOYMENT_NAME, "Antenna deployment will happen in ");
+            sys_log_print_uint(hib_dur);
+            sys_log_print_msg(" minutes!");
+            sys_log_new_line();
+
             vTaskDelay(pdMS_TO_TICKS(60000U));
 
             ttc_data_buf.ant_deploy_hib_count++;
