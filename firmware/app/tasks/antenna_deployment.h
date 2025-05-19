@@ -39,10 +39,12 @@
 
 #include <FreeRTOS.h>
 #include <task.h>
+#include <stdint.h>
 
 #define TASK_ANTENNA_DEPLOYMENT_NAME                    "Antenna Deployment" /**< Task name. */
-#define TASK_ANTENNA_DEPLOYMENT_STACK_SIZE              150                  /**< Stack size in bytes. */
+#define TASK_ANTENNA_DEPLOYMENT_STACK_SIZE              240                  /**< Stack size in bytes. */
 #define TASK_ANTENNA_DEPLOYMENT_PRIORITY                6                    /**< Task priority. */
+#define TASK_ANTENNA_DEPLOYMENT_TIMEOUT_MS              5000                 /**< Wait time to initialize the task in milliseconds. */
 
 /**
  * \brief Antenna deployment handle.
