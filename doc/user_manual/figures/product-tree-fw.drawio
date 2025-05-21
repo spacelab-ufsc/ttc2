@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-08-09T21:18:29.379Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.5.1 Chrome/112.0.5615.204 Electron/24.6.0 Safari/537.36" etag="oEivmmubrlmk8pFQcy4Q" version="21.5.1" type="device">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0" version="27.0.5">
   <diagram id="0qJPchqlG3AJ2SKAlhdZ" name="Page-1">
-    <mxGraphModel dx="1434" dy="838" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="765" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2339" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -624,6 +624,18 @@
             <mxPoint x="1080" y="1350" as="targetPoint" />
             <Array as="points">
               <mxPoint x="1060" y="1350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ObA95esqXlhvvajR6k8s-1" value="CRC" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="680" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ObA95esqXlhvvajR6k8s-2" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1220" y="580" as="sourcePoint" />
+            <mxPoint x="1240" y="710" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1220" y="710" />
             </Array>
           </mxGeometry>
         </mxCell>

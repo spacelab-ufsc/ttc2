@@ -223,10 +223,9 @@ The EPS Server is in RX mode and only the Transmit packet command (ID=3) is avai
     \end{center}
 \end{figure}
 
-\subsection{OBDH server}
-
-The OBDH Server can be used for full communication and all the commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by response (except for command Write parameter ID=2 that only uses a request). For commands that need a response it is required to leave a interval of at least 100ms from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and synchronize wrong transactions. When each side is communicating the listening side needs to send 0x00 while the other side transmits.
-All the request have seven bytes length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size accordingly to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in SPI mode 0 and was tested with 1 MHz clock.
+\subsection{OBDH Server}
+The OBDH Server can be used for full communication because all commands are implemented for this port. The TTC operates as half-duplex with the commands having a request and a followed by a response (except for the command Write parameter ID=2 which only uses a request). For commands that need a response, an interval of at least 100 ms is required from the request to the response. Each communication part, for both sides, in all commands starts with the preamble byte (0x7E) that can be used to detect and synchronize wrong transactions. When each side is communicating, the listening side needs to send 0x00 while the other side transmits.
+All requests have seven bytes of length including the preamble, the response for command ID=1 also has 7 bytes as fixed size, the response from commands ID=3 and ID=4 have a variable size according to the request. The communication for each case is described in Figure \ref{fig:obdh-server-communication}. The TTC operates in SPI mode 0 and was tested with a clock of 1 MHz. All messages have a CRC8-CCITT in the last byte of the package.
 
 \begin{figure}[!ht]
     \begin{center}

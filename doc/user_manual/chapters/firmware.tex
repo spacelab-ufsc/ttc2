@@ -27,7 +27,7 @@ This chapter describes the main characteristics of the firmware part of the TTC 
 
 \section{Product tree}
 
-The product tree of the firmware part of the TTC 2.0 module is available in \autoref{fig:product-tree-fw}. This product tree follows the architecture of the firmware, being divided according to the firmware layers.
+The product tree for the firmware part of the TTC 2.0 module is available in \autoref{fig:product-tree-fw}. This product tree follows the architecture of the firmware, being divided according to the firmware layers.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -39,7 +39,7 @@ The product tree of the firmware part of the TTC 2.0 module is available in \aut
 
 \section{Commands} \label{sec:commands}
 
-To externally control and access the TTC module, some commands are available through the serial interfaces of the board. The commands are almost identical for both microcontrollers (except the command answering behavior) and are available on all interfaces. A list with the commands is available in \autoref{tab:commands}. The format of the commands answers can be seen in \autoref{tab:commands-ans}.
+To externally control and access the TTC module, some commands are available through the serial interfaces of the board. The commands are almost identical for both microcontrollers (except the command response behavior) and are available on all interfaces. A list of the commands is available in \autoref{tab:commands}. The format of the commands answers can be seen in \autoref{tab:commands-ans}. It is important to notice that the SPI interface (used on the OBDH server) uses one more byte for CRC at the end of the message, see \autoref{fig:obdh-server-communication} for more details.
 
 \begin{table}[!ht]
     \centering
@@ -79,15 +79,15 @@ To externally control and access the TTC module, some commands are available thr
 A description of each command is available below and the details about the protocol communication are available at \autoref{sec:server_param}.
 
 \begin{itemize}
-    \item Read parameter/variable (ID = 1): This command is used to read a parameter or variable of the TTC module (see \autoref{tab:ttc2-variables}).
+    \item Read parameter/variable (ID = 1): This command is used to read a parameter or variable from the TTC module (see \autoref{tab:ttc2-variables}).
     \item Write parameter/variable (ID = 2): This command is used to write a value to a given parameter or variable when allowed (see \autoref{tab:ttc2-variables}).
     \item Transmit packet (ID = 3): This command is used to transmit a packet through the radio link of each microcontroller.
-    \item Receive packet (ID = 4): This command is used to read a received packet through the radio link (stored in the internal FIFO of the microcontrollers of the TTC).
+    \item Receive packet (ID = 4): This command is used to read a received packet through the radio link (stored in the internal FIFO of the TTC microcontrollers).
 \end{itemize}
 
 \section{Variables and Parameters}\label{sec:variables}
 
-A list of all the variables of TTC with their identification number (ID) and variable type that can be read from the sensors and peripherals can be seen in \autoref{tab:ttc2-variables}.
+A list of all TTC variables can be seen in \autoref{tab:ttc2-variables} with their identification number (ID) and variable type that can be read from the sensors and peripherals.
 
 \begin{longtable}[c]{cL{0.72\textwidth}lc}
     \toprule[1.5pt]
@@ -96,7 +96,7 @@ A list of all the variables of TTC with their identification number (ID) and var
     0   & Device ID (0xCC2A or 0xCC2B)                                      & uint16 & R \\
     1   & Hardware version                                                  & uint8  & R \\
     2   & Firmware version (ex.: ``v1.2.3'' = 0x00010203)                  & uint32 & R \\
-    3   & Time counter in milliseconds                                       & uint32 & R \\
+    3   & Timestamp in milliseconds                                       & uint32 & R \\
     4   & Reset counter                                                     & uint16 & R \\
     \multirow{18}{*}{5} & Last reset cause: & \multirow{18}{*}{uint8} & \multirow{18}{*}{R} \\
         & - 0x00 = No interrupt pending                                     &        &  \\
@@ -176,7 +176,7 @@ In this level of abstraction, the devices are used to create specific configurat
 
 \subsection{RTOS}
 
-The TTC 2.0 uses FreeRTOS kernel. Using an RTOS-based kernel enables the system to regularly maintain routine functions such as housekeeping, sensor reading, checking for receptions, and dealing with specific delays used in hardware, such as the radio. The priority level of a task dictates who has the most preference for execution. Initial delay and period are used to determine the delay time to execute the task initialization after a boot; this regulates the time between the task executions. The stack is the amount of memory delimited to execute a task.
+The TTC 2.0 uses the FreeRTOS kernel. Using an RTOS-based kernel enables the system to regularly maintain routine functions such as housekeeping, sensor reading, checking for receptions, and dealing with specific delays used in hardware, such as the radio. The priority level of a task dictates who has the most preference for execution. Initial delay and period are used to determine the delay time to execute the task initialization after a boot; this regulates the time between the task executions. The stack is the amount of memory delimited to execute a task.
 
 \subsection{System}
 
@@ -206,7 +206,7 @@ Tasks are the FreeRTOS threads equivalent and are the uppermost abstraction laye
         EPS Server             & 3  & 10000   & 750       & 1000 \\
         Heartbeat              & 1  & 2000    & 500       & 160  \\
         OBDH Server            & 5  & 200     & 100       & 2000 \\
-        Radio Reset            & 5  & 60000   & 60000     & 128  \\
+        Radio Reset            & 5  & 3600000 & 3600000   & 128  \\
         Read Antenna           & 2  & 2000    & 60000     & 150  \\
         Read Sensors           & 3  & 2000    & 60000     & 128  \\
         Startup                & 6  & 0       & Aperiodic & 500  \\
