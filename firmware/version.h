@@ -26,7 +26,7 @@
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
- * \version 1.0.0
+ * \version 1.0.1
  *
  * \date 2024/09/09
  * 
@@ -37,7 +37,7 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define FIRMWARE_VERSION            "1.0.0"
+#define FIRMWARE_VERSION            "1.0.1"
 
 #define FIRMWARE_STATUS             "Production"
 
