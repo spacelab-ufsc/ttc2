@@ -151,7 +151,7 @@ int media_erase(media_t med, uint32_t sector)
         case MEDIA_INT_FLASH:
             if (flash_mutex_take() == 0)
             {
-                if ((sector == FLASH_SEG_A_ADR) || (sector == FLASH_SEG_B_ADR))
+                if ((sector == FLASH_SEG_A_ADR) || (sector == FLASH_SEG_B_ADR) || (sector == FLASH_SEG_C_ADR))
                 {
                     flash_erase((uintptr_t)sector);
                     err = flash_mutex_give();

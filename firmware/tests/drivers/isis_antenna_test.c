@@ -25,7 +25,7 @@
  * 
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * 
- * \version 0.4.1
+ * \version 1.0.1
  * 
  * \date 2021/09/01
  * 
@@ -49,7 +49,7 @@
 
 #define ISIS_ANTENNA_IIC_PORT       I2C_PORT_2
 #define ISIS_ANTENNA_IIC_CLOCK_HZ   100000UL
-#define ISIS_ANTENNA_IIC_ADR        0x31
+#define ISIS_ANTENNA_IIC_ADR        0x32
 #define ISIS_ANTENNA_IIC_EN_PIN     GPIO_PIN_69
 #define ISIS_ANTENNA_IIC_RDY_PIN    GPIO_PIN_62
 
