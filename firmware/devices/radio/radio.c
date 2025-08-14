@@ -1,35 +1,35 @@
 /*
  * radio.c
- * 
+ *
  * Copyright The TTC 2.0 Contributors.
- * 
+ *
  * This file is part of TTC 2.0.
- * 
+ *
  * TTC 2.0 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * TTC 2.0 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with TTC 2.0. If not, see <http:/\/www.gnu.org/licenses/>.
- * 
+ *
  */
 
 /**
  * \brief Radio device implementation.
- * 
+ *
  * \author Gabriel Mariano Marcelino <gabriel.mm8@gmail.com>
  * \author Miguel Boing <miguelboing13@gmail.com>
  *
  * \version 1.0.0
  *
  * \date 2024/09/09
- * 
+ *
  * \addtogroup radio
  * \{
  */
@@ -51,12 +51,32 @@ int radio_init(void)
     sys_log_new_line();
 
     int err = -1;
-    if (si446x_init() == 0)
+
+    /* Create si446x mutex */
+    if (si446x_mutex_create() == 0)
     {
-        if (si446x_rx_init())
+        if (si446x_mutex_take() == 0)
         {
-            err = 0;
+            if (si446x_init() == 0)
+            {
+                if (si446x_rx_init())
+                {
+                    err = 0;
+                }
+            }
+
+            si446x_mutex_give();
         }
+        else
+        {
+            sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control on init.");
+            sys_log_new_line();
+        }
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Failed to create si446 mutex on init.");
+        sys_log_new_line();
     }
 
     return err;
@@ -149,9 +169,9 @@ int radio_sleep(void)
 
     if (si446x_mutex_take() == 0)
     {
-    err = si446x_enter_standby_mode();
+        err = si446x_enter_standby_mode();
 
-    si446x_mutex_give();
+        si446x_mutex_give();
     }
     else
     {
@@ -167,9 +187,18 @@ void radio_reset(void)
     sys_log_print_event_from_module(SYS_LOG_INFO, RADIO_MODULE_NAME, "Reseting radio device...");
     sys_log_new_line();
 
-    si446x_shutdown();
-    si446x_delay_ms(10U);
-    si446x_power_up();
+    if (si446x_mutex_take() == 0)
+    {
+        si446x_shutdown();
+        si446x_delay_ms(10U);
+        si446x_power_up();
+        si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
+    }
 }
 
 int radio_get_temperature(radio_temp_t *temp)
@@ -200,15 +229,23 @@ int radio_get_rssi(radio_rssi_t *rssi)
 
     uint8_t modem_status[8];
 
-    if (si446x_get_cmd(SI446X_CMD_GET_MODEM_STATUS, modem_status, 8U))
+    if (si446x_mutex_take() == 0)
     {
-        err = 0;
+        if (si446x_get_cmd(SI446X_CMD_GET_MODEM_STATUS, modem_status, 8U))
+        {
+            *rssi = (radio_rssi_t)modem_status[2];
+            err = 0;
+        }
+
+        si446x_mutex_give();
+    }
+    else
+    {
+        sys_log_print_event_from_module(SYS_LOG_ERROR, RADIO_MODULE_NAME, "Couldn't get mutex control.");
+        sys_log_new_line();
     }
 
-    *rssi = (radio_rssi_t)modem_status[2];
-
     return err;
-
 }
 
 /** \} End of radio group */
