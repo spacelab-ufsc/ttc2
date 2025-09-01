@@ -65,6 +65,8 @@ int radio_init(void)
                 }
             }
 
+            vTaskDelay(pdMS_TO_TICKS(200U));
+
             si446x_mutex_give();
         }
         else
