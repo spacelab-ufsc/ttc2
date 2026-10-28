@@ -86,7 +86,7 @@ void vTaskDownlinkManager(void)
                 sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Encoding packet...");
                 sys_log_new_line();
 
-                if (radio_send(&ngham_pkt[8], ngham_pkt_len) == 0)
+                if (radio_send(&ngham_pkt[8], ngham_pkt_len - 8U) == 0)
                 {
                     sys_log_print_event_from_module(SYS_LOG_INFO, TASK_DOWNLINK_MANAGER_NAME, "Packet successfully transmitted");
                     sys_log_new_line();/* 8 = Removing preamble and sync word */
